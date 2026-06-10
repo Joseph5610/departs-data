@@ -1,1 +1,1 @@
-[{"stop_id":"U19138Z2","name":"Rohatec, Soboňky","arrival_time":"5:46:00","departure_time":"5:46:00","is_passed":false},{"stop_id":"U19133Z4","name":"Rohatec, Kolonie, Maryša","arrival_time":"5:50:00","departure_time":"6:13:00","is_passed":false}]
+[{"stop_id":"U19138Z2","name":"Rohatec, Soboňky","arrival_time":"5:46:00","departure_time":"5:46:00","lat":48.895421,"lon":17.218332,"is_passed":false},{"stop_id":"U19133Z4","name":"Rohatec, Kolonie, Maryša","arrival_time":"5:50:00","departure_time":"6:13:00","lat":48.888683,"lon":17.208188,"is_passed":false}]

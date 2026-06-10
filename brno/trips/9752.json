@@ -1,1 +1,1 @@
-[{"stop_id":"U18358Z1","name":"Dyjákovice, škola","arrival_time":"15:24:00","departure_time":"15:24:00","is_passed":false},{"stop_id":"U15775Z3","name":"Hevlín, škola","arrival_time":"15:30:00","departure_time":"15:30:00","is_passed":false}]
+[{"stop_id":"U18358Z1","name":"Dyjákovice, škola","arrival_time":"15:24:00","departure_time":"15:24:00","lat":48.772805,"lon":16.303553,"is_passed":false},{"stop_id":"U15775Z3","name":"Hevlín, škola","arrival_time":"15:30:00","departure_time":"15:30:00","lat":48.75151,"lon":16.380257,"is_passed":false}]
