@@ -249,7 +249,8 @@ async function main() {
                 location_type: type,
                 parent_station: s.parent_station || null,
                 zone_id: s.zone_id || null,
-                lines: lines
+                lines: lines,
+                is_centroid: type === 1 || (type === 0 && !s.parent_station)
             }
         };
         features.push(feature);
