@@ -1,0 +1,33 @@
+name: Update Brno GTFS Data
+
+on:
+  schedule:
+    - cron: '19 */8 * * *' # Every 8 hours at minute 19
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download and Process GTFS
+        run: node build.mjs
+
+      - name: Commit and Push changes
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "feat: automated GTFS data update with chunking"
+          file_pattern: "brno/ .last_modified"
