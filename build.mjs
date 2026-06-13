@@ -75,8 +75,10 @@ async function checkLastModified(url, lastModifiedPath) {
             } catch(e) {}
             
             if (etag && lastEtag === etag) {
+                res.resume();
                 resolve({ changed: false, etag });
             } else {
+                res.resume();
                 resolve({ changed: true, etag });
             }
         });
@@ -95,7 +97,7 @@ async function main() {
     const { changed, etag } = await checkLastModified(GTFS_URL, lastModifiedPath);
     if (!changed && !process.env.FORCE_REBUILD) {
         console.log(`No changes detected (ETag/Last-Modified: ${etag}). Exiting.`);
-        return;
+        process.exit(0);
     }
     console.log(`Changes detected or rebuild forced. Processing new GTFS data...`);
 
