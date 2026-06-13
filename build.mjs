@@ -60,9 +60,44 @@ const GTFS_URL = 'https://kordis-jmk.cz/gtfs/gtfs.zip';
 const CITY = 'brno';
 const DATA_DIR = path.join(__dirname, CITY);
 
+async function checkLastModified(url, lastModifiedPath) {
+    return new Promise((resolve, reject) => {
+        const req = https.request(url, { method: 'HEAD' }, (res) => {
+            if (res.statusCode === 301 || res.statusCode === 302) {
+                return checkLastModified(res.headers.location, lastModifiedPath).then(resolve).catch(reject);
+            }
+            const etag = res.headers.etag || res.headers['last-modified'];
+            let lastEtag = '';
+            try {
+                if (fs.existsSync(lastModifiedPath)) {
+                    lastEtag = fs.readFileSync(lastModifiedPath, 'utf8').trim();
+                }
+            } catch(e) {}
+            
+            if (etag && lastEtag === etag) {
+                resolve({ changed: false, etag });
+            } else {
+                resolve({ changed: true, etag });
+            }
+        });
+        req.on('error', reject);
+        req.end();
+    });
+}
+
 async function main() {
     console.log(`[${CITY}] Starting GTFS preprocess...`);
     fs.mkdirSync(DATA_DIR, { recursive: true });
+
+    const lastModifiedPath = path.join(DATA_DIR, '.last_modified');
+
+    console.log(`Checking if ${GTFS_URL} changed...`);
+    const { changed, etag } = await checkLastModified(GTFS_URL, lastModifiedPath);
+    if (!changed && !process.env.FORCE_REBUILD) {
+        console.log(`No changes detected (ETag/Last-Modified: ${etag}). Exiting.`);
+        return;
+    }
+    console.log(`Changes detected or rebuild forced. Processing new GTFS data...`);
 
     const zipPath = path.join(__dirname, 'temp.zip');
     
@@ -249,8 +284,7 @@ async function main() {
                 location_type: type,
                 parent_station: s.parent_station || null,
                 zone_id: s.zone_id || null,
-                lines: lines,
-                is_centroid: type === 1 || (type === 0 && !s.parent_station)
+                lines: lines
             }
         };
         features.push(feature);
@@ -273,10 +307,16 @@ async function main() {
     }
     fs.writeFileSync(path.join(DATA_DIR, 'trip_routes.json'), JSON.stringify(tripRoutesOutput));
     
-    // Write individual stop departure files and trips to external CDN repo
-    const EXTERNAL_REPO_DIR = path.join(__dirname, '..', '..', 'departs-gtfs-data', CITY);
+
+
     const publicDeparturesDir = path.join(__dirname, 'brno', 'departures');
     const publicTripsDir = path.join(__dirname, 'brno', 'trips');
+
+    // --- SAFETY CHECK ---
+    // Prevent accidental data deletion if Kordis provides an empty or corrupted GTFS file
+    if (departuresByStop.size < 1000 || tripsData.size < 5000) {
+        throw new Error(`Safety Check Failed: Only found ${departuresByStop.size} stops and ${tripsData.size} trips. Aborting to prevent data wipeout.`);
+    }
 
     if (fs.existsSync(publicDeparturesDir)) {
         fs.rmSync(publicDeparturesDir, { recursive: true, force: true });
@@ -287,18 +327,26 @@ async function main() {
     fs.mkdirSync(publicDeparturesDir, { recursive: true });
     fs.mkdirSync(publicTripsDir, { recursive: true });
 
-    console.log(`Writing individual departure files for ${departuresByStop.size} stops to external repo...`);
-    let fileCount = 0;
+    console.log(`Writing chunked departure files for ${departuresByStop.size} stops to external repo...`);
+    
+    // Group departures by first 3 chars of stop_id to avoid generating thousands of tiny files
+    const departuresChunks = new Map();
     for (const [stopId, deps] of departuresByStop.entries()) {
-        // Sort departures by timestamp ascending
         deps.sort((a, b) => a[3] - b[3]);
         
-        // Encode stopId to be safe for filesystem
-        const safeStopId = encodeURIComponent(stopId);
-        fs.writeFileSync(path.join(publicDeparturesDir, `${safeStopId}.json`), JSON.stringify(deps));
-        fileCount++;
+        // Use first 3 chars for grouping (e.g. U01, U13)
+        const chunkId = stopId.substring(0, 3).toUpperCase();
+        if (!departuresChunks.has(chunkId)) {
+            departuresChunks.set(chunkId, {});
+        }
+        departuresChunks.get(chunkId)[stopId] = deps;
     }
-    console.log(`Successfully wrote ${fileCount} departure files to external repo.`);
+
+    for (const [chunkId, data] of departuresChunks.entries()) {
+        const safeChunkId = encodeURIComponent(chunkId);
+        fs.writeFileSync(path.join(publicDeparturesDir, `${safeChunkId}.json`), JSON.stringify(data));
+    }
+    console.log(`Successfully wrote ${departuresChunks.size} chunked departure files to external repo.`);
     
     // First map stop names and coords for trips
     const stopNodes = new Map();
@@ -310,12 +358,13 @@ async function main() {
         });
     }
 
-    // Write individual trip files
-    console.log(`Writing individual trip files for ${tripsData.size} trips to external repo...`);
-    let tripCount = 0;
+    // Write chunked trip files
+    // Chunking reduces the file count from ~60,000 to ~150, significantly improving Git/GitHub Pages performance
+    console.log(`Writing chunked trip files for ${tripsData.size} trips to external repo...`);
+    const tripChunks = new Map();
+
     for (const [tripId, stops] of tripsData.entries()) {
         stops.sort((a, b) => a.stop_sequence - b.stop_sequence);
-        // Map to AppVehicleDetail.stations format
         const stations = stops.map(s => {
             const node = stopNodes.get(s.stop_id);
             return {
@@ -325,16 +374,28 @@ async function main() {
                 departure_time: s.departure_time,
                 lat: node?.lat,
                 lon: node?.lon,
-                is_passed: false // determined at runtime
+                is_passed: false
             };
         });
         
-        const safeTripId = encodeURIComponent(tripId);
-        fs.writeFileSync(path.join(publicTripsDir, `${safeTripId}.json`), JSON.stringify(stations));
-        tripCount++;
+        // E.g. tripId="50477", chunkId="504"
+        const chunkId = tripId.substring(0, 3).toUpperCase();
+        if (!tripChunks.has(chunkId)) {
+            tripChunks.set(chunkId, {});
+        }
+        tripChunks.get(chunkId)[tripId] = stations;
     }
-    console.log(`Successfully wrote ${tripCount} trip files to external repo.`);
+
+    for (const [chunkId, data] of tripChunks.entries()) {
+        const safeChunkId = encodeURIComponent(chunkId);
+        fs.writeFileSync(path.join(publicTripsDir, `${safeChunkId}.json`), JSON.stringify(data));
+    }
+    console.log(`Successfully wrote ${tripChunks.size} chunked trip files to external repo.`);
     
+    if (etag) {
+        fs.writeFileSync(lastModifiedPath, etag);
+    }
+
     // Cleanup
     fs.unlinkSync(zipPath);
     console.log('Done!');
