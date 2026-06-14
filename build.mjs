@@ -96,10 +96,10 @@ async function main() {
     console.log(`Checking if ${GTFS_URL} changed...`);
     const { changed, etag } = await checkLastModified(GTFS_URL, lastModifiedPath);
     if (!changed && !process.env.FORCE_REBUILD) {
-        console.log(`No changes detected (ETag/Last-Modified: ${etag}). Exiting.`);
-        process.exit(0);
+        console.log(`No changes detected in GTFS file (ETag/Last-Modified: ${etag}). Continuing to generate the next 48h rolling window of departures...`);
+    } else {
+        console.log(`Changes detected or rebuild forced. Processing new GTFS data...`);
     }
-    console.log(`Changes detected or rebuild forced. Processing new GTFS data...`);
 
     const zipPath = path.join(__dirname, 'temp.zip');
     
