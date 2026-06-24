@@ -58,7 +58,7 @@ function parseCSV(buffer) {
 
 const GTFS_URL = 'https://kordis-jmk.cz/gtfs/gtfs.zip';
 const CITY = 'brno';
-const DATA_DIR = path.join(__dirname, CITY);
+const DATA_DIR = path.join(__dirname, '..', CITY);
 
 async function checkLastModified(url, lastModifiedPath) {
     return new Promise((resolve, reject) => {
@@ -101,7 +101,7 @@ async function main() {
         console.log(`Changes detected or rebuild forced. Processing new GTFS data...`);
     }
 
-    const zipPath = path.join(__dirname, 'temp.zip');
+    const zipPath = path.join(__dirname, '..', 'temp.zip');
     
     console.log(`Downloading GTFS from ${GTFS_URL}...`);
     await downloadFile(GTFS_URL, zipPath);
@@ -311,8 +311,8 @@ async function main() {
     
 
 
-    const publicDeparturesDir = path.join(__dirname, 'brno', 'departures');
-    const publicTripsDir = path.join(__dirname, 'brno', 'trips');
+    const publicDeparturesDir = path.join(__dirname, '..', 'brno', 'departures');
+    const publicTripsDir = path.join(__dirname, '..', 'brno', 'trips');
 
     // --- SAFETY CHECK ---
     // Prevent accidental data deletion if Kordis provides an empty or corrupted GTFS file
