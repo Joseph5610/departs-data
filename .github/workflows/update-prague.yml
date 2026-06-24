@@ -1,8 +1,8 @@
-name: Update Brno GTFS Data
+name: Update Prague Stops Data
 
 on:
   schedule:
-    - cron: '19 */8 * * *' # Every 8 hours at minute 19
+    - cron: '30 */8 * * *' # Every 8 hours at minute 30
   workflow_dispatch: # Allow manual trigger
 
 jobs:
@@ -23,11 +23,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Download and Process GTFS
-        run: node build.mjs
+      - name: Fetch and format stops
+        run: node scripts/build-prague.mjs
 
       - name: Commit and Push changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "feat: automated GTFS data update with chunking"
-          file_pattern: "brno/"
+          commit_message: "feat: automated Prague stops enrichment update"
+          file_pattern: "prague/"
