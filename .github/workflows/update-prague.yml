@@ -2,7 +2,7 @@ name: Update Prague Stops Data
 
 on:
   schedule:
-    - cron: '30 */8 * * *' # Every 8 hours at minute 30
+    - cron: '30 1 * * *' # Every day at 01:30 UTC (03:30 CEST)
   workflow_dispatch: # Allow manual trigger
 
 jobs:
