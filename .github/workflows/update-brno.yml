@@ -2,7 +2,7 @@ name: Update Brno GTFS Data
 
 on:
   schedule:
-    - cron: '19 */8 * * *' # Every 8 hours at minute 19
+    - cron: '19 1 * * *' # Every day at 01:19 UTC (03:19 CEST)
   workflow_dispatch: # Allow manual trigger
 
 jobs:
