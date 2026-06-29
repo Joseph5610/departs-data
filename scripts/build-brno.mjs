@@ -304,8 +304,14 @@ async function main() {
     
     // Save trip->route mapping for GTFS-RT vehicle resolving
     const tripRoutesOutput = {};
-    for (const [tripId, routeId] of trips.entries()) {
-        tripRoutesOutput[tripId] = routeId;
+    for (const [tripId, activeData] of activeTrips.entries()) {
+        const stops = tripsData.get(tripId);
+        if (stops && stops.length > 0) {
+            const startTimeStr = stops[0].departure_time || stops[0].arrival_time;
+            tripRoutesOutput[tripId] = `${activeData.route_id}|${startTimeStr}`;
+        } else {
+            tripRoutesOutput[tripId] = activeData.route_id;
+        }
     }
     fs.writeFileSync(path.join(DATA_DIR, 'trip_routes.json'), JSON.stringify(tripRoutesOutput));
     
