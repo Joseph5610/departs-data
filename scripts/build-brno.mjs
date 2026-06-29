@@ -308,7 +308,9 @@ async function main() {
         const stops = tripsData.get(tripId);
         if (stops && stops.length > 0) {
             const startTimeStr = stops[0].departure_time || stops[0].arrival_time;
-            tripRoutesOutput[tripId] = `${activeData.route_id}|${startTimeStr}`;
+            const lastStop = stops[stops.length - 1];
+            const endTimeStr = lastStop.departure_time || lastStop.arrival_time || startTimeStr;
+            tripRoutesOutput[tripId] = `${activeData.route_id}|${startTimeStr}|${endTimeStr}|${lastStop.stop_id}`;
         } else {
             tripRoutesOutput[tripId] = activeData.route_id;
         }
