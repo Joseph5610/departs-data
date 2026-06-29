@@ -302,20 +302,59 @@ async function main() {
     }
     fs.writeFileSync(path.join(DATA_DIR, 'routes.json'), JSON.stringify(routesOutput));
     
-    // Save trip->route mapping for GTFS-RT vehicle resolving
+    // Save trip->route mapping (reverted back to simple route_id since ArcGIS provides precise trip_ids via api.txt)
     const tripRoutesOutput = {};
     for (const [tripId, activeData] of activeTrips.entries()) {
-        const stops = tripsData.get(tripId);
-        if (stops && stops.length > 0) {
-            const startTimeStr = stops[0].departure_time || stops[0].arrival_time;
-            const lastStop = stops[stops.length - 1];
-            const endTimeStr = lastStop.departure_time || lastStop.arrival_time || startTimeStr;
-            tripRoutesOutput[tripId] = `${activeData.route_id}|${startTimeStr}|${endTimeStr}|${lastStop.stop_id}`;
-        } else {
-            tripRoutesOutput[tripId] = activeData.route_id;
-        }
+        tripRoutesOutput[tripId] = activeData.route_id;
     }
     fs.writeFileSync(path.join(DATA_DIR, 'trip_routes.json'), JSON.stringify(tripRoutesOutput));
+    
+    // Parse api.txt for ArcGIS live tracking mapping
+    console.log('Parsing api.txt for ArcGIS mapping...');
+    let apiTxt = '';
+    try { apiTxt = zip.getEntry('api.txt').getData().toString('utf8'); } catch (e) { console.warn('api.txt not found in GTFS zip'); }
+    
+    const apiMapping = {};
+    if (apiTxt) {
+        const lines = apiTxt.split('\n');
+        for (const line of lines) {
+            // Expected format: "Linka/CVlaku = trip_id: 8/5270 = 61969"
+            const match = line.match(/:\s*([^/]+)\/([^=\s]+)\s*=\s*(\d+)/);
+            if (match) {
+                const lineId = match[1].trim();
+                const routeId = match[2].trim();
+                const tripId = match[3].trim();
+                const key = `${lineId}-${routeId}`;
+                
+                // KORDIS assigns multiple trip_ids to the same Course (LineID-RouteID)
+                // We need the schedule to resolve which one is currently running
+                if (!apiMapping[key]) apiMapping[key] = [];
+                
+                // Get the start and end time from the parsed trip stops
+                const stops = tripsData.get(tripId);
+                let start = "00:00:00";
+                let end = "23:59:59";
+                if (stops && stops.length > 0) {
+                    start = stops[0].departure_time || stops[0].arrival_time;
+                    const lastStop = stops[stops.length - 1];
+                    end = lastStop.departure_time || lastStop.arrival_time || start;
+                }
+                
+                // Avoid duplicating the exact same trip info
+                if (!apiMapping[key].some(t => t.trip_id === tripId)) {
+                    apiMapping[key].push({ trip_id: tripId, start, end });
+                }
+            }
+        }
+        
+        // Sort trips for each course by start time for easier backend binary search / iteration
+        for (const key of Object.keys(apiMapping)) {
+            apiMapping[key].sort((a, b) => a.start.localeCompare(b.start));
+        }
+        
+        console.log(`Extracted ${Object.keys(apiMapping).length} unique courses with ${lines.length} total mappings from api.txt`);
+    }
+    fs.writeFileSync(path.join(DATA_DIR, 'api.json'), JSON.stringify(apiMapping));
     
 
 
