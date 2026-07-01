@@ -296,6 +296,19 @@ async function main() {
     
     console.log(`Writing ${features.length} stops to stops.json...`);
     fs.writeFileSync(path.join(DATA_DIR, 'stops.json'), JSON.stringify(features));
+
+    // Build parent-to-child stops map
+    const parentChildMap = {};
+    for (const s of stopsCsv) {
+        if (s.parent_station) {
+            if (!parentChildMap[s.parent_station]) {
+                parentChildMap[s.parent_station] = [];
+            }
+            parentChildMap[s.parent_station].push(s.stop_id);
+        }
+    }
+    console.log(`Writing parent_child_map.json...`);
+    fs.writeFileSync(path.join(DATA_DIR, 'parent_child_map.json'), JSON.stringify(parentChildMap));
     
     // Also save routes.json for later RT mapping (Phase 3)
     const routesOutput = {};
@@ -390,13 +403,13 @@ async function main() {
 
     console.log(`Writing chunked departure files for ${departuresByStop.size} stops to external repo...`);
     
-    // Group departures by first 3 chars of stop_id to avoid generating thousands of tiny files
+    // Group departures by first 4 chars of stop_id to avoid generating thousands of tiny files
     const departuresChunks = new Map();
     for (const [stopId, deps] of departuresByStop.entries()) {
         deps.sort((a, b) => a[3] - b[3]);
         
-        // Use first 3 chars for grouping (e.g. U01, U13)
-        const chunkId = stopId.substring(0, 3).toUpperCase();
+        // Use first 4 chars for grouping (e.g. U012, U134)
+        const chunkId = stopId.substring(0, 4).toUpperCase();
         if (!departuresChunks.has(chunkId)) {
             departuresChunks.set(chunkId, {});
         }
