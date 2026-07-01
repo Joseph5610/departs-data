@@ -221,9 +221,9 @@ async function main() {
             });
         }
         
-        // Save departure times for active trips
+        // Save departure times for active trips (skip terminating stops where boarding is not allowed)
         const activeTrip = activeTrips.get(st.trip_id);
-        if (activeTrip && st.departure_time) {
+        if (activeTrip && st.departure_time && st.pickup_type !== '1') {
             const [hours, minutes, seconds] = st.departure_time.split(':').map(Number);
             if (!departuresByStop.has(st.stop_id)) departuresByStop.set(st.stop_id, []);
             const deps = departuresByStop.get(st.stop_id);
