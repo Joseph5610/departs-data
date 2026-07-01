@@ -359,6 +359,14 @@ async function main() {
                     const lastStop = stops[stops.length - 1];
                     end = lastStop.departure_time || lastStop.arrival_time || start;
                 }
+
+                const parseTimeToMinutes = (timeStr) => {
+                    const h = parseInt(timeStr.substring(0, 2), 10);
+                    const m = parseInt(timeStr.substring(3, 5), 10);
+                    return h * 60 + m;
+                };
+                const startMins = parseTimeToMinutes(start);
+                const endMins = parseTimeToMinutes(end);
                 
                 // Avoid duplicating the exact same trip info
                 if (!apiMapping[key].some(t => t.trip_id === tripId)) {
@@ -366,6 +374,8 @@ async function main() {
                         trip_id: tripId, 
                         start, 
                         end,
+                        start_mins: startMins,
+                        end_mins: endMins,
                         dates: activeData.dates.map(d => d.str)
                     });
                 }
