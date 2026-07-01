@@ -127,13 +127,14 @@ async function main() {
     const tripsEntry = zip.getEntry('trips.txt');
     const tripsCsv = parseCSV(tripsEntry.getData());
     const trips = new Map();
-    const tripsForDepartures = new Map(); // trip_id -> { route_id, headsign, service_id }
+    const tripsForDepartures = new Map(); // trip_id -> { route_id, headsign, service_id, wheelchair_accessible }
     for (const t of tripsCsv) {
         trips.set(t.trip_id, t.route_id);
         tripsForDepartures.set(t.trip_id, {
             route_id: t.route_id,
             headsign: t.trip_headsign,
-            service_id: t.service_id
+            service_id: t.service_id,
+            wheelchair_accessible: t.wheelchair_accessible
         });
     }
 
@@ -180,14 +181,15 @@ async function main() {
         }
     }
     
-    const activeTrips = new Map(); // trip_id -> { route_id, headsign, dates }
+    const activeTrips = new Map(); // trip_id -> { route_id, headsign, dates, wheelchair_accessible }
     for (const [tripId, t] of tripsForDepartures.entries()) {
         const datesArr = serviceDates.get(t.service_id);
         if (datesArr && datesArr.length > 0) {
             activeTrips.set(tripId, {
                 route_id: t.route_id,
                 headsign: t.headsign,
-                dates: datesArr
+                dates: datesArr,
+                wheelchair_accessible: Number(t.wheelchair_accessible || 0)
             });
         }
     }
@@ -237,8 +239,8 @@ async function main() {
                 }
                 const timestamp = targetMidnight + (finalHours * 3600000) + (minutes * 60000) + (seconds * 1000);
                 
-                // Format: [trip_id, route_id, headsign, timestamp_ms]
-                deps.push([st.trip_id, activeTrip.route_id, activeTrip.headsign, timestamp]);
+                // Format: [trip_id, route_id, headsign, timestamp_ms, wheelchair_accessible]
+                deps.push([st.trip_id, activeTrip.route_id, activeTrip.headsign, timestamp, activeTrip.wheelchair_accessible]);
             }
         }
     }
