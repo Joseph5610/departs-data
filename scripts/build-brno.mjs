@@ -324,6 +324,11 @@ async function main() {
                 const lineId = match[1].trim();
                 const routeId = match[2].trim();
                 const tripId = match[3].trim();
+                
+                // Only map trips that are actually active in the next 48h
+                const activeData = activeTrips.get(tripId);
+                if (!activeData) continue;
+
                 const key = `${lineId}-${routeId}`;
                 
                 // KORDIS assigns multiple trip_ids to the same Course (LineID-RouteID)
@@ -342,7 +347,12 @@ async function main() {
                 
                 // Avoid duplicating the exact same trip info
                 if (!apiMapping[key].some(t => t.trip_id === tripId)) {
-                    apiMapping[key].push({ trip_id: tripId, start, end });
+                    apiMapping[key].push({ 
+                        trip_id: tripId, 
+                        start, 
+                        end,
+                        dates: activeData.dates.map(d => d.str)
+                    });
                 }
             }
         }
