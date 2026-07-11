@@ -1,0 +1,335 @@
+[
+  {
+    "min": 1000,
+    "max": 1017,
+    "vehicle_type": "Tramvaj"
+  },
+  {
+    "min": 1018,
+    "max": 1132,
+    "vehicle_type": "ČKD Tatra K2 / Pragoimex VarioLF2R.E"
+  },
+  {
+    "min": 1133,
+    "max": 1200,
+    "vehicle_type": "Tramvaj"
+  },
+  {
+    "min": 1201,
+    "max": 1246,
+    "vehicle_type": "ČKD Tatra T6A5"
+  },
+  {
+    "min": 1247,
+    "max": 1496,
+    "vehicle_type": "Tramvaj"
+  },
+  {
+    "min": 1497,
+    "max": 1666,
+    "vehicle_type": "ČKD Tatra T3 / Pragoimex T3"
+  },
+  {
+    "min": 1667,
+    "max": 1700,
+    "vehicle_type": "Tramvaj"
+  },
+  {
+    "min": 1701,
+    "max": 1738,
+    "vehicle_type": "ČKD Tatra KT8D5"
+  },
+  {
+    "min": 1739,
+    "max": 1750,
+    "vehicle_type": "Tramvaj"
+  },
+  {
+    "min": 1751,
+    "max": 1754,
+    "vehicle_type": "Pars Nova K3R-N"
+  },
+  {
+    "min": 1755,
+    "max": 1759,
+    "vehicle_type": "Tramvaj"
+  },
+  {
+    "min": 1760,
+    "max": 1799,
+    "vehicle_type": "Škoda 45T",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 1800,
+    "max": 1806,
+    "vehicle_type": "Tramvaj"
+  },
+  {
+    "min": 1807,
+    "max": 1817,
+    "vehicle_type": "Škoda 03T Anitra"
+  },
+  {
+    "min": 1818,
+    "max": 1821,
+    "vehicle_type": "Tramvaj"
+  },
+  {
+    "min": 1822,
+    "max": 1862,
+    "vehicle_type": "Pragoimex EVO2",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 1863,
+    "max": 1899,
+    "vehicle_type": "Tramvaj"
+  },
+  {
+    "min": 1900,
+    "max": 1929,
+    "vehicle_type": "Škoda 13T",
+    "is_air_conditioned": false
+  },
+  {
+    "min": 1930,
+    "max": 1949,
+    "vehicle_type": "Škoda 13T",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 1950,
+    "max": 1999,
+    "vehicle_type": "Tramvaj"
+  },
+  {
+    "min": 2000,
+    "max": 2000,
+    "vehicle_type": "Autobus"
+  },
+  {
+    "min": 2001,
+    "max": 2044,
+    "vehicle_type": "Iveco Urbanway 18M CNG",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 2045,
+    "max": 2622,
+    "vehicle_type": "Autobus"
+  },
+  {
+    "min": 2623,
+    "max": 2646,
+    "vehicle_type": "Solaris Urbino 18",
+    "is_air_conditioned": false
+  },
+  {
+    "min": 2647,
+    "max": 2691,
+    "vehicle_type": "Solaris Urbino 18",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 2692,
+    "max": 2910,
+    "vehicle_type": "Autobus"
+  },
+  {
+    "min": 2911,
+    "max": 2914,
+    "vehicle_type": "Iveco Crossway LE 12M",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 2915,
+    "max": 2999,
+    "vehicle_type": "Autobus"
+  },
+  {
+    "min": 3000,
+    "max": 3064,
+    "vehicle_type": "Trolejbus"
+  },
+  {
+    "min": 3065,
+    "max": 3076,
+    "vehicle_type": "SOR TNS 12",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 3077,
+    "max": 3300,
+    "vehicle_type": "Trolejbus"
+  },
+  {
+    "min": 3301,
+    "max": 3310,
+    "vehicle_type": "Škoda 26Tr"
+  },
+  {
+    "min": 3311,
+    "max": 3350,
+    "vehicle_type": "Škoda 32Tr",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 3351,
+    "max": 3617,
+    "vehicle_type": "Trolejbus"
+  },
+  {
+    "min": 3618,
+    "max": 3647,
+    "vehicle_type": "Škoda 31Tr"
+  },
+  {
+    "min": 3648,
+    "max": 3687,
+    "vehicle_type": "Škoda 27Tr",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 3688,
+    "max": 3999,
+    "vehicle_type": "Trolejbus"
+  },
+  {
+    "min": 4800,
+    "max": 4800,
+    "vehicle_type": "Loď"
+  },
+  {
+    "min": 4801,
+    "max": 4801,
+    "vehicle_type": "Loď - Brno"
+  },
+  {
+    "min": 4802,
+    "max": 4804,
+    "vehicle_type": "Loď"
+  },
+  {
+    "min": 4805,
+    "max": 4805,
+    "vehicle_type": "Loď - Morava"
+  },
+  {
+    "min": 4806,
+    "max": 4822,
+    "vehicle_type": "Loď"
+  },
+  {
+    "min": 4823,
+    "max": 4823,
+    "vehicle_type": "Loď - Lipsko"
+  },
+  {
+    "min": 4824,
+    "max": 4824,
+    "vehicle_type": "Loď - Utrecht"
+  },
+  {
+    "min": 4825,
+    "max": 4825,
+    "vehicle_type": "Loď - Vídeň"
+  },
+  {
+    "min": 4826,
+    "max": 4826,
+    "vehicle_type": "Loď - Stuttgart"
+  },
+  {
+    "min": 4827,
+    "max": 4827,
+    "vehicle_type": "Loď - Dallas"
+  },
+  {
+    "min": 4828,
+    "max": 4899,
+    "vehicle_type": "Loď"
+  },
+  {
+    "min": 7000,
+    "max": 7000,
+    "vehicle_type": "Autobus"
+  },
+  {
+    "min": 7001,
+    "max": 7006,
+    "vehicle_type": "SOR NBG 12"
+  },
+  {
+    "min": 7007,
+    "max": 7012,
+    "vehicle_type": "Irisbus Citelis 12M CNG"
+  },
+  {
+    "min": 7013,
+    "max": 7044,
+    "vehicle_type": "SOR NBG 12"
+  },
+  {
+    "min": 7045,
+    "max": 7100,
+    "vehicle_type": "Iveco Urbanway 12M CNG",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 7101,
+    "max": 7101,
+    "vehicle_type": "SOR NBG 12",
+    "is_air_conditioned": false
+  },
+  {
+    "min": 7102,
+    "max": 7116,
+    "vehicle_type": "SOR NBG 12",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 7117,
+    "max": 7525,
+    "vehicle_type": "Autobus"
+  },
+  {
+    "min": 7526,
+    "max": 7526,
+    "vehicle_type": "Isuzu Novo Citi Life",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 7527,
+    "max": 7671,
+    "vehicle_type": "Autobus"
+  },
+  {
+    "min": 7672,
+    "max": 7686,
+    "vehicle_type": "Iveco Urbanway 12M",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 7687,
+    "max": 7737,
+    "vehicle_type": "SOR NS 12",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 7738,
+    "max": 7825,
+    "vehicle_type": "Autobus"
+  },
+  {
+    "min": 7826,
+    "max": 7830,
+    "vehicle_type": "Iveco Crossway LE City",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 7831,
+    "max": 7999,
+    "vehicle_type": "Autobus"
+  }
+]
