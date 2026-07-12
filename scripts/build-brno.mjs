@@ -203,6 +203,17 @@ async function main() {
     const departuresByStop = new Map(); // stop_id -> Array of departures
     const tripsData = new Map(); // trip_id -> Array of stops
 
+    // Pass 1: compute max stop_sequence per active trip so we can exclude the last stop
+    // (Brno GTFS does not reliably set pickup_type=1 on the terminal stop)
+    const tripMaxStopSeq = new Map(); // trip_id -> max stop_sequence
+    for (const st of stopTimesCsv) {
+        if (!activeTrips.has(st.trip_id)) continue;
+        const seq = Number(st.stop_sequence);
+        const cur = tripMaxStopSeq.get(st.trip_id);
+        if (cur === undefined || seq > cur) tripMaxStopSeq.set(st.trip_id, seq);
+    }
+
+    // Pass 2: build all indexes
     for (const st of stopTimesCsv) {
         if (!stopRoutes.has(st.stop_id)) {
             stopRoutes.set(st.stop_id, new Set());
@@ -223,9 +234,12 @@ async function main() {
             });
         }
         
-        // Save departure times for active trips (skip terminating stops where boarding is not allowed)
+        // Save departure times for active trips.
+        // Exclude: no pickup (pickup_type=1), OR this is the last stop in the trip
+        // (the terminal stop — vehicles only arrive there, they don't depart from it).
         const activeTrip = activeTrips.get(st.trip_id);
-        if (activeTrip && st.departure_time && st.pickup_type !== '1') {
+        const isLastStop = tripMaxStopSeq.get(st.trip_id) === Number(st.stop_sequence);
+        if (activeTrip && st.departure_time && st.pickup_type !== '1' && !isLastStop) {
             const [hours, minutes, seconds] = st.departure_time.split(':').map(Number);
             if (!departuresByStop.has(st.stop_id)) departuresByStop.set(st.stop_id, []);
             const deps = departuresByStop.get(st.stop_id);
