@@ -37,7 +37,10 @@ async function syncStops() {
 
                     enrichmentMap[id] = {
                         l: lines,
-                        n: g.fullName || g.name
+                        n: g.fullName || g.name,
+                        mtt: s.mainTrafficType || g.mainTrafficType,
+                        alat: g.avgLat,
+                        alon: g.avgLon
                     };
                 });
             });
