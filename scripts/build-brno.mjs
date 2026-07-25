@@ -345,6 +345,33 @@ async function main() {
         validStopIds.add(s.stop_id);
     }
     
+    // Radial micro-offset pass for physical platform stops sharing exact coordinates
+    const physicalFeatures = features.filter(f => f.properties.location_type === 0);
+    const coordMap = new Map();
+    for (const f of physicalFeatures) {
+        const key = `${f.geometry.coordinates[0].toFixed(6)},${f.geometry.coordinates[1].toFixed(6)}`;
+        if (!coordMap.has(key)) coordMap.set(key, []);
+        coordMap.get(key).push(f);
+    }
+
+    const OFFSET_DIST = 0.00012; // ~12 meters separation
+    let offsetCount = 0;
+    for (const group of coordMap.values()) {
+        if (group.length <= 1) continue;
+        offsetCount += group.length;
+        const count = group.length;
+        group.forEach((f, idx) => {
+            const angle = (2 * Math.PI * idx) / count;
+            const deltaLng = OFFSET_DIST * Math.cos(angle);
+            const deltaLat = OFFSET_DIST * Math.sin(angle);
+            f.geometry.coordinates = [
+                Number((f.geometry.coordinates[0] + deltaLng).toFixed(6)),
+                Number((f.geometry.coordinates[1] + deltaLat).toFixed(6))
+            ];
+        });
+    }
+    console.log(`Applied radial micro-offsets to ${offsetCount} co-located platform stops.`);
+
     console.log(`Writing ${features.length} valid stops to stops.json...`);
     fs.writeFileSync(path.join(DATA_DIR, 'stops.json'), JSON.stringify(features));
 
