@@ -215,11 +215,17 @@ async function main() {
 
     // Pass 2: build all indexes
     for (const st of stopTimesCsv) {
-        if (!stopRoutes.has(st.stop_id)) {
-            stopRoutes.set(st.stop_id, new Set());
-        }
+        if (!activeTrips.has(st.trip_id)) continue;
+
         const routeId = trips.get(st.trip_id);
-        if (routeId) {
+        const isLastStop = tripMaxStopSeq.get(st.trip_id) === Number(st.stop_sequence);
+        const isNoPickup = st.pickup_type === '1';
+
+        // Only record line for this stop if passengers can actually board (not last stop, not pickup_type=1)
+        if (routeId && !isLastStop && !isNoPickup) {
+            if (!stopRoutes.has(st.stop_id)) {
+                stopRoutes.set(st.stop_id, new Set());
+            }
             stopRoutes.get(st.stop_id).add(routeId);
         }
         
@@ -238,8 +244,7 @@ async function main() {
         // Exclude: no pickup (pickup_type=1), OR this is the last stop in the trip
         // (the terminal stop — vehicles only arrive there, they don't depart from it).
         const activeTrip = activeTrips.get(st.trip_id);
-        const isLastStop = tripMaxStopSeq.get(st.trip_id) === Number(st.stop_sequence);
-        if (activeTrip && st.departure_time && st.pickup_type !== '1' && !isLastStop) {
+        if (activeTrip && st.departure_time && !isNoPickup && !isLastStop) {
             const [hours, minutes, seconds] = st.departure_time.split(':').map(Number);
             if (!departuresByStop.has(st.stop_id)) departuresByStop.set(st.stop_id, []);
             const deps = departuresByStop.get(st.stop_id);
@@ -264,7 +269,29 @@ async function main() {
     const stopsEntry = zip.getEntry('stops.txt');
     const stopsCsv = parseCSV(stopsEntry.getData());
     
+    // Identify physical stops (type 0) that have active boarding lines
+    const validPhysicalStopIds = new Set();
+    const parentToChildPhysicalMap = new Map(); // parent_station -> array of valid physical stop_ids
+
+    for (const s of stopsCsv) {
+        const type = Number(s.location_type || 0);
+        if (type === 0) {
+            const routeIds = stopRoutes.get(s.stop_id);
+            if (routeIds && routeIds.size > 0) {
+                validPhysicalStopIds.add(s.stop_id);
+                if (s.parent_station) {
+                    if (!parentToChildPhysicalMap.has(s.parent_station)) {
+                        parentToChildPhysicalMap.set(s.parent_station, []);
+                    }
+                    parentToChildPhysicalMap.get(s.parent_station).push(s.stop_id);
+                }
+            }
+        }
+    }
+
     const features = [];
+    const validStopIds = new Set();
+
     for (const s of stopsCsv) {
         // Skip stops without location
         if (!s.stop_lat || !s.stop_lon) continue;
@@ -273,6 +300,18 @@ async function main() {
         // We want physical stops (0), stations (1) and entrances (2)
         if (type !== 0 && type !== 1 && type !== 2) continue;
         
+        if (type === 0) {
+            // Skip physical stops that have no boarding routes (exit-only or inactive)
+            if (!validPhysicalStopIds.has(s.stop_id)) continue;
+        } else if (type === 1) {
+            // Skip parent stations that have no valid child physical stops remaining
+            const children = parentToChildPhysicalMap.get(s.stop_id);
+            if (!children || children.length === 0) continue;
+        } else if (type === 2) {
+            // Skip entrances whose parent station is excluded
+            if (s.parent_station && !parentToChildPhysicalMap.has(s.parent_station)) continue;
+        }
+
         const routeIds = stopRoutes.get(s.stop_id) || new Set();
         const lines = [];
         
@@ -306,15 +345,16 @@ async function main() {
             }
         };
         features.push(feature);
+        validStopIds.add(s.stop_id);
     }
     
-    console.log(`Writing ${features.length} stops to stops.json...`);
+    console.log(`Writing ${features.length} valid stops to stops.json...`);
     fs.writeFileSync(path.join(DATA_DIR, 'stops.json'), JSON.stringify(features));
 
     // Build parent-to-child stops map
     const parentChildMap = {};
     for (const s of stopsCsv) {
-        if (s.parent_station) {
+        if (s.parent_station && validStopIds.has(s.stop_id) && validStopIds.has(s.parent_station)) {
             if (!parentChildMap[s.parent_station]) {
                 parentChildMap[s.parent_station] = [];
             }
