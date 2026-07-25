@@ -297,18 +297,7 @@ async function main() {
         // We want physical stops (0), stations (1) and entrances (2)
         if (type !== 0 && type !== 1 && type !== 2) continue;
         
-        if (type === 0) {
-            // Skip physical stops that have no boarding routes (exit-only or inactive)
-            if (!validPhysicalStopIds.has(s.stop_id)) continue;
-        } else if (type === 1) {
-            // Skip parent stations that have no valid child physical stops remaining
-            const children = parentToChildPhysicalMap.get(s.stop_id);
-            if (!children || children.length === 0) continue;
-        } else if (type === 2) {
-            // Skip entrances whose parent station is excluded
-            if (s.parent_station && !parentToChildPhysicalMap.has(s.parent_station)) continue;
-        }
-
+        const isDropOffOnly = type === 0 && !validPhysicalStopIds.has(s.stop_id);
         const routeIds = stopRoutes.get(s.stop_id) || new Set();
         const lines = [];
         
@@ -338,6 +327,7 @@ async function main() {
                 location_type: type,
                 parent_station: s.parent_station || null,
                 zone_id: s.zone_id || null,
+                is_drop_off_only: isDropOffOnly || undefined,
                 lines: lines
             }
         };
