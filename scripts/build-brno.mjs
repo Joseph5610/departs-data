@@ -203,11 +203,9 @@ async function main() {
     const departuresByStop = new Map(); // stop_id -> Array of departures
     const tripsData = new Map(); // trip_id -> Array of stops
 
-    // Pass 1: compute max stop_sequence per active trip so we can exclude the last stop
-    // (Brno GTFS does not reliably set pickup_type=1 on the terminal stop)
+    // Pass 1: compute max stop_sequence per trip across the entire GTFS timetable
     const tripMaxStopSeq = new Map(); // trip_id -> max stop_sequence
     for (const st of stopTimesCsv) {
-        if (!activeTrips.has(st.trip_id)) continue;
         const seq = Number(st.stop_sequence);
         const cur = tripMaxStopSeq.get(st.trip_id);
         if (cur === undefined || seq > cur) tripMaxStopSeq.set(st.trip_id, seq);
@@ -215,19 +213,20 @@ async function main() {
 
     // Pass 2: build all indexes
     for (const st of stopTimesCsv) {
-        if (!activeTrips.has(st.trip_id)) continue;
-
         const routeId = trips.get(st.trip_id);
         const isLastStop = tripMaxStopSeq.get(st.trip_id) === Number(st.stop_sequence);
         const isNoPickup = st.pickup_type === '1';
 
-        // Only record line for this stop if passengers can actually board (not last stop, not pickup_type=1)
+        // Record line for this stop if passengers can actually board (not last stop, not pickup_type=1)
+        // Evaluates all GTFS schedule trips so daytime, weekday, and holiday stops are preserved regardless of build time
         if (routeId && !isLastStop && !isNoPickup) {
             if (!stopRoutes.has(st.stop_id)) {
                 stopRoutes.set(st.stop_id, new Set());
             }
             stopRoutes.get(st.stop_id).add(routeId);
         }
+
+        if (!activeTrips.has(st.trip_id)) continue;
         
         // Collect trip data for vehicle details
         if (st.departure_time) {
@@ -240,9 +239,7 @@ async function main() {
             });
         }
         
-        // Save departure times for active trips.
-        // Exclude: no pickup (pickup_type=1), OR this is the last stop in the trip
-        // (the terminal stop — vehicles only arrive there, they don't depart from it).
+        // Save departure times for active 48h trips.
         const activeTrip = activeTrips.get(st.trip_id);
         if (activeTrip && st.departure_time && !isNoPickup && !isLastStop) {
             const [hours, minutes, seconds] = st.departure_time.split(':').map(Number);
