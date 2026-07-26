@@ -176,6 +176,16 @@
   },
   {
     "min": 3351,
+    "max": 3489,
+    "vehicle_type": "Trolejbus"
+  },
+  {
+    "min": 3490,
+    "max": 3515,
+    "vehicle_type": "Škoda 15Tr"
+  },
+  {
+    "min": 3516,
     "max": 3617,
     "vehicle_type": "Trolejbus"
   },
@@ -301,6 +311,12 @@
   },
   {
     "min": 7527,
+    "max": 7570,
+    "vehicle_type": "Iveco Urbanway 12M CNG",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 7571,
     "max": 7671,
     "vehicle_type": "Autobus"
   },
@@ -329,6 +345,12 @@
   },
   {
     "min": 7831,
+    "max": 7848,
+    "vehicle_type": "SOR ICN 9,5",
+    "is_air_conditioned": true
+  },
+  {
+    "min": 7849,
     "max": 7999,
     "vehicle_type": "Autobus"
   }
