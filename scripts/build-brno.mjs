@@ -465,6 +465,7 @@ async function main() {
     const currentTripSignatures = {};
     const signatureToNewTripId = new Map();
     const currentTripRouteShort = {};
+    const currentByTopology = new Map();
 
     for (const [tripId, stops] of tripsData.entries()) {
         if (!stops || stops.length === 0) continue;
@@ -485,6 +486,19 @@ async function main() {
         if (!signatureToNewTripId.has(sig)) {
             signatureToNewTripId.set(sig, tripId);
         }
+
+        const parseTimeToMinutes = (timeStr) => {
+            if (!timeStr) return 0;
+            const p = timeStr.split(':');
+            return parseInt(p[0]) * 60 + parseInt(p[1]);
+        };
+        const topologyKey = `${routeShort}|${directionId}|${startStop}|${endStop}`;
+        if (!currentByTopology.has(topologyKey)) currentByTopology.set(topologyKey, []);
+        currentByTopology.get(topologyKey).push({ 
+            tripId, 
+            startMins: parseTimeToMinutes(startTime), 
+            endMins: parseTimeToMinutes(endTime) 
+        });
     }
 
     const previousTripsPath = path.join(DATA_DIR, 'previous_trips.json');
@@ -497,9 +511,45 @@ async function main() {
             let collisionCount = 0;
             let droppedCount = 0;
 
+            let fuzzyCount = 0;
+
             // 1. Generate aliases from previous_trips to current GTFS
             for (const [oldTripId, oldSig] of Object.entries(previousTrips)) {
-                const newTripId = signatureToNewTripId.get(oldSig);
+                let newTripId = signatureToNewTripId.get(oldSig);
+                
+                // Fallback to fuzzy time matching if strict match fails (max 5 min shift)
+                if (!newTripId) {
+                    const p = oldSig.split('|');
+                    if (p.length === 6) {
+                        const topologyKey = `${p[0]}|${p[1]}|${p[4]}|${p[5]}`;
+                        const candidates = currentByTopology.get(topologyKey);
+                        if (candidates) {
+                            const parseTimeToMinutes = (timeStr) => {
+                                if (!timeStr) return 0;
+                                const pts = timeStr.split(':');
+                                return parseInt(pts[0]) * 60 + parseInt(pts[1]);
+                            };
+                            const startMins = parseTimeToMinutes(p[2]);
+                            const endMins = parseTimeToMinutes(p[3]);
+                            
+                            let bestMatch = null;
+                            let minDiff = Infinity;
+                            for (const c of candidates) {
+                                const startDiff = Math.abs(c.startMins - startMins);
+                                const endDiff = Math.abs(c.endMins - endMins);
+                                if (startDiff <= 5 && endDiff <= 5 && startDiff < minDiff) {
+                                    minDiff = startDiff;
+                                    bestMatch = c.tripId;
+                                }
+                            }
+                            if (bestMatch) {
+                                newTripId = bestMatch;
+                                fuzzyCount++;
+                            }
+                        }
+                    }
+                }
+
                 if (newTripId) {
                     const currentRouteShort = currentTripRouteShort[newTripId];
                     const oldRouteShort = oldSig.split('|')[0];
@@ -545,7 +595,7 @@ async function main() {
                 if (tripAliases[key] === key) delete tripAliases[key];
             }
 
-            console.log(`Generated/Chained ${Object.keys(tripAliases).length} total trip aliases (${collisionCount} collisions fixed, ${droppedCount} dropped).`);
+            console.log(`Generated/Chained ${Object.keys(tripAliases).length} total trip aliases (${collisionCount} collisions fixed, ${fuzzyCount} fuzzy matched, ${droppedCount} dropped).`);
             fs.writeFileSync(existingAliasesPath, JSON.stringify(tripAliases));
         } catch (err) {
             console.error('Failed to parse previous_trips.json for alias generation:', err);
