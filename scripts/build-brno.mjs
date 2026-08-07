@@ -134,7 +134,8 @@ async function main() {
             route_id: t.route_id,
             headsign: t.trip_headsign,
             service_id: t.service_id,
-            wheelchair_accessible: t.wheelchair_accessible
+            wheelchair_accessible: t.wheelchair_accessible,
+            direction_id: t.direction_id || '0'
         });
     }
 
@@ -463,41 +464,89 @@ async function main() {
     console.log('Generating trip signatures and checking for legacy trip_aliases...');
     const currentTripSignatures = {};
     const signatureToNewTripId = new Map();
+    const currentTripRouteShort = {};
 
     for (const [tripId, stops] of tripsData.entries()) {
         if (!stops || stops.length === 0) continue;
         stops.sort((a, b) => a.stop_sequence - b.stop_sequence);
         const activeTrip = activeTrips.get(tripId);
         const routeId = activeTrip?.route_id || '';
+        const route = routes.get(routeId);
+        const routeShort = route?.name || routeId;
+        const directionId = activeTrip?.direction_id || '0';
         const startTime = stops[0].departure_time || stops[0].arrival_time || '';
         const endTime = stops[stops.length - 1].departure_time || stops[stops.length - 1].arrival_time || startTime;
         const startStop = stops[0].stop_id || '';
         const endStop = stops[stops.length - 1].stop_id || '';
 
-        const sig = `${routeId}|${startTime}|${endTime}|${startStop}|${endStop}`;
+        const sig = `${routeShort}|${directionId}|${startTime}|${endTime}|${startStop}|${endStop}`;
         currentTripSignatures[tripId] = sig;
+        currentTripRouteShort[tripId] = routeShort;
         if (!signatureToNewTripId.has(sig)) {
             signatureToNewTripId.set(sig, tripId);
         }
     }
 
     const previousTripsPath = path.join(DATA_DIR, 'previous_trips.json');
+    const existingAliasesPath = path.join(DATA_DIR, 'trip_aliases.json');
     if (fs.existsSync(previousTripsPath)) {
         try {
             const previousTrips = JSON.parse(fs.readFileSync(previousTripsPath, 'utf8'));
             const tripAliases = {};
-            let aliasCount = 0;
+            const newAliasesFromPrev = {};
+            let collisionCount = 0;
+            let droppedCount = 0;
 
+            // 1. Generate aliases from previous_trips to current GTFS
             for (const [oldTripId, oldSig] of Object.entries(previousTrips)) {
                 const newTripId = signatureToNewTripId.get(oldSig);
-                if (newTripId && oldTripId !== newTripId) {
-                    tripAliases[oldTripId] = newTripId;
-                    aliasCount++;
+                if (newTripId) {
+                    const currentRouteShort = currentTripRouteShort[newTripId];
+                    const oldRouteShort = oldSig.split('|')[0];
+                    if (currentRouteShort !== oldRouteShort) {
+                        newAliasesFromPrev[oldTripId] = newTripId; // collision fix
+                        collisionCount++;
+                    } else if (oldTripId !== newTripId) {
+                        newAliasesFromPrev[oldTripId] = newTripId; // rename
+                    }
+                } else {
+                    newAliasesFromPrev[oldTripId] = null; // dropped
+                    droppedCount++;
                 }
             }
 
-            console.log(`Generated ${aliasCount} trip aliases against previous static GTFS release.`);
-            fs.writeFileSync(path.join(DATA_DIR, 'trip_aliases.json'), JSON.stringify(tripAliases));
+            // 2. Chain existing aliases to preserve history (important for RT feeds lagging behind)
+            if (fs.existsSync(existingAliasesPath)) {
+                const existingAliases = JSON.parse(fs.readFileSync(existingAliasesPath, 'utf8'));
+                for (const [veryOldId, prevId] of Object.entries(existingAliases)) {
+                    if (prevId === null) {
+                        tripAliases[veryOldId] = null;
+                        continue;
+                    }
+                    if (prevId in newAliasesFromPrev) {
+                        tripAliases[veryOldId] = newAliasesFromPrev[prevId];
+                    } else if (prevId in currentTripSignatures) {
+                        tripAliases[veryOldId] = prevId; // Still valid in current GTFS
+                    } else {
+                        tripAliases[veryOldId] = null; // Target no longer exists
+                    }
+                }
+            }
+            
+            // 3. Add any new aliases that weren't covered by history chaining
+            for (const [prevId, newId] of Object.entries(newAliasesFromPrev)) {
+                if (!(prevId in tripAliases)) {
+                    tripAliases[prevId] = newId;
+                }
+            }
+
+            // Filter out self-aliases just in case
+            for (const key of Object.keys(tripAliases)) {
+                if (tripAliases[key] === key) delete tripAliases[key];
+            }
+
+            console.log(`Generated/Chained ${Object.keys(tripAliases).length} total trip aliases (${collisionCount} collisions fixed, ${droppedCount} dropped).`);
+            fs.writeFileSync(existingAliasesPath, JSON.stringify(tripAliases));
         } catch (err) {
             console.error('Failed to parse previous_trips.json for alias generation:', err);
         }
