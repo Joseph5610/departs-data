@@ -396,7 +396,7 @@ async function main() {
     // Parse api.txt for ArcGIS live tracking mapping
     console.log('Parsing api.txt for ArcGIS mapping...');
     let apiTxt = '';
-    try { apiTxt = zip.getEntry('api.txt').getData().toString('utf8'); } catch (e) { console.warn('api.txt not found in GTFS zip'); }
+    try { const apiEntry = zip.getEntry('api.txt'); apiTxt = apiEntry ? apiEntry.getData().toString('utf16le') : ''; } catch (e) { console.warn('api.txt not found in GTFS zip'); }
     
     const apiMapping = {};
     if (apiTxt) {
