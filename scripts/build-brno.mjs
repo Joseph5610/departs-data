@@ -459,6 +459,52 @@ async function main() {
     }
     fs.writeFileSync(path.join(DATA_DIR, 'api.json'), JSON.stringify(apiMapping));
     
+    // --- AUTOMATIC TRIP ALIAS GENERATION ---
+    console.log('Generating trip signatures and checking for legacy trip_aliases...');
+    const currentTripSignatures = {};
+    const signatureToNewTripId = new Map();
+
+    for (const [tripId, stops] of tripsData.entries()) {
+        if (!stops || stops.length === 0) continue;
+        stops.sort((a, b) => a.stop_sequence - b.stop_sequence);
+        const activeTrip = activeTrips.get(tripId);
+        const routeId = activeTrip?.route_id || '';
+        const startTime = stops[0].departure_time || stops[0].arrival_time || '';
+        const endTime = stops[stops.length - 1].departure_time || stops[stops.length - 1].arrival_time || startTime;
+        const startStop = stops[0].stop_id || '';
+        const endStop = stops[stops.length - 1].stop_id || '';
+
+        const sig = `${routeId}|${startTime}|${endTime}|${startStop}|${endStop}`;
+        currentTripSignatures[tripId] = sig;
+        if (!signatureToNewTripId.has(sig)) {
+            signatureToNewTripId.set(sig, tripId);
+        }
+    }
+
+    const previousTripsPath = path.join(DATA_DIR, 'previous_trips.json');
+    if (fs.existsSync(previousTripsPath)) {
+        try {
+            const previousTrips = JSON.parse(fs.readFileSync(previousTripsPath, 'utf8'));
+            const tripAliases = {};
+            let aliasCount = 0;
+
+            for (const [oldTripId, oldSig] of Object.entries(previousTrips)) {
+                const newTripId = signatureToNewTripId.get(oldSig);
+                if (newTripId && oldTripId !== newTripId) {
+                    tripAliases[oldTripId] = newTripId;
+                    aliasCount++;
+                }
+            }
+
+            console.log(`Generated ${aliasCount} trip aliases against previous static GTFS release.`);
+            fs.writeFileSync(path.join(DATA_DIR, 'trip_aliases.json'), JSON.stringify(tripAliases));
+        } catch (err) {
+            console.error('Failed to parse previous_trips.json for alias generation:', err);
+        }
+    }
+
+    // Save current trip signatures for the next timetable build
+    fs.writeFileSync(previousTripsPath, JSON.stringify(currentTripSignatures));
 
 
     const publicDeparturesDir = path.join(__dirname, '..', 'brno', 'departures');
