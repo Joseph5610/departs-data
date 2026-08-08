@@ -516,41 +516,13 @@ async function main() {
             // 1. Generate aliases from previous_trips to current GTFS
             for (const [oldTripId, oldSig] of Object.entries(previousTrips)) {
                 let newTripId = signatureToNewTripId.get(oldSig);
-                
-                // Fallback to fuzzy time matching if strict match fails (max 5 min shift)
-                if (!newTripId) {
-                    const p = oldSig.split('|');
-                    if (p.length === 6) {
-                        const topologyKey = `${p[0]}|${p[1]}|${p[4]}|${p[5]}`;
-                        const candidates = currentByTopology.get(topologyKey);
-                        if (candidates) {
-                            const parseTimeToMinutes = (timeStr) => {
-                                if (!timeStr) return 0;
-                                const pts = timeStr.split(':');
-                                return parseInt(pts[0]) * 60 + parseInt(pts[1]);
-                            };
-                            const startMins = parseTimeToMinutes(p[2]);
-                            const endMins = parseTimeToMinutes(p[3]);
-                            
-                            let bestMatch = null;
-                            let minDiff = Infinity;
-                            for (const c of candidates) {
-                                const startDiff = Math.abs(c.startMins - startMins);
-                                const endDiff = Math.abs(c.endMins - endMins);
-                                if (startDiff <= 5 && endDiff <= 5 && startDiff < minDiff) {
-                                    minDiff = startDiff;
-                                    bestMatch = c.tripId;
-                                }
-                            }
-                            if (bestMatch) {
-                                newTripId = bestMatch;
-                                fuzzyCount++;
-                            }
-                        }
-                    }
-                }
 
                 if (newTripId) {
+                    // DO NOT alias reused trip IDs
+                    if (oldTripId in currentTripSignatures && oldTripId !== newTripId) {
+                        continue;
+                    }
+
                     const currentRouteShort = currentTripRouteShort[newTripId];
                     const oldRouteShort = oldSig.split('|')[0];
                     if (currentRouteShort !== oldRouteShort) {
@@ -571,6 +543,9 @@ async function main() {
                 for (const [veryOldId, prevId] of Object.entries(existingAliases)) {
                     if (prevId === null) {
                         tripAliases[veryOldId] = null;
+                        continue;
+                    }
+                    if (veryOldId in currentTripSignatures) {
                         continue;
                     }
                     if (prevId in newAliasesFromPrev) {
