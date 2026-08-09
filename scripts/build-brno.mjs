@@ -217,6 +217,7 @@ async function main() {
         const routeId = trips.get(st.trip_id);
         const isLastStop = tripMaxStopSeq.get(st.trip_id) === Number(st.stop_sequence);
         const isNoPickup = st.pickup_type === '1';
+        const isRequestStop = st.pickup_type === '3' || st.drop_off_type === '3' || st.pickup_type === '2' || st.drop_off_type === '2';
 
         // Record line for this stop if passengers can actually board (not last stop, not pickup_type=1)
         // Evaluates all GTFS schedule trips so daytime, weekday, and holiday stops are preserved regardless of build time
@@ -236,7 +237,8 @@ async function main() {
                 stop_id: st.stop_id,
                 arrival_time: st.arrival_time,
                 departure_time: st.departure_time,
-                stop_sequence: Number(st.stop_sequence)
+                stop_sequence: Number(st.stop_sequence),
+                is_request_stop: isRequestStop
             });
         }
         
@@ -256,8 +258,8 @@ async function main() {
                 }
                 const timestamp = targetMidnight + (finalHours * 3600000) + (minutes * 60000) + (seconds * 1000);
                 
-                // Format: [trip_id, route_id, headsign, timestamp_ms, wheelchair_accessible]
-                deps.push([st.trip_id, activeTrip.route_id, activeTrip.headsign, timestamp, activeTrip.wheelchair_accessible]);
+                // Format: [trip_id, route_id, headsign, timestamp_ms, wheelchair_accessible, is_request_stop]
+                deps.push([st.trip_id, activeTrip.route_id, activeTrip.headsign, timestamp, activeTrip.wheelchair_accessible, isRequestStop ? 1 : 0]);
             }
         }
     }
