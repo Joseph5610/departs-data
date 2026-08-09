@@ -648,7 +648,8 @@ async function main() {
                 departure_time: s.departure_time,
                 lat: node?.lat,
                 lon: node?.lon,
-                is_passed: false
+                is_passed: false,
+                is_request_stop: s.is_request_stop
             };
         });
         
