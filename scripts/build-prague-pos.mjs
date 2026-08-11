@@ -62,11 +62,20 @@ async function buildPointsOfSale() {
         }
 
         const processedList = rawPosList.map(pos => {
+            let address = pos.address || '';
+            // Strip escaped quotes wrapping the text
+            if (address.startsWith('"') && address.endsWith('"')) {
+                address = address.slice(1, -1);
+            }
+            // Sanitize raw HTML tags from PID source (e.g. convert <a href="...">text</a> to text or URL)
+            address = address.replace(/<a\s+[^>]*href=["']?([^"'>]+)["']?[^>]*>(.*?)<\/a>/gi, '$2 ($1)');
+            address = address.replace(/<[^>]+>/g, '');
+
             return {
                 id: pos.id,
                 type: pos.type,
                 name: pos.name,
-                address: pos.address,
+                address: address.trim(),
                 lat: pos.lat,
                 lon: pos.lon,
                 openingHours: pos.openingHours || [],
