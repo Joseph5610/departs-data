@@ -637,7 +637,8 @@ async function main() {
         stopNodes.set(f.properties.stop_id, {
             name: f.properties.stop_name,
             lon: f.geometry.coordinates[0],
-            lat: f.geometry.coordinates[1]
+            lat: f.geometry.coordinates[1],
+            zone_id: f.properties.zone_id || null
         });
     }
 
@@ -658,6 +659,7 @@ async function main() {
                 lat: node?.lat,
                 lon: node?.lon,
                 is_passed: false,
+                zone_id: node?.zone_id || null,
                 is_request_stop: s.is_request_stop
             };
         });
