@@ -678,6 +678,77 @@ async function main() {
     }
     console.log(`Successfully wrote ${tripChunks.size} chunked trip files to external repo.`);
     
+    // --- SHAPE FETCHING ---
+    console.log('Fetching missing GTFS shapes for Brno from external API...');
+    const publicShapesDir = path.join(__dirname, '..', 'brno', 'shapes');
+    if (fs.existsSync(publicShapesDir)) {
+        fs.rmSync(publicShapesDir, { recursive: true, force: true });
+    }
+    fs.mkdirSync(publicShapesDir, { recursive: true });
+
+    const SHAPE_TOKEN = '$LISSY_API_TOKEN';
+    const fetchShapes = (from, to) => {
+        return new Promise((resolve, reject) => {
+            const url = `https://dexter.fit.vutbr.cz/lissy/api/shapes/getTodayShapes?gtfs_trips_from=${from}&gtfs_trips_to=${to}`;
+            https.get(url, { headers: { Authorization: SHAPE_TOKEN } }, (res) => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => {
+                    try { resolve(JSON.parse(data)); }
+                    catch (e) { reject(e); }
+                });
+            }).on('error', reject);
+        });
+    };
+
+    const roundShape = (shape) => {
+        return shape.map(line => line.map(point => [
+            Number(point[0].toFixed(5)),
+            Number(point[1].toFixed(5))
+        ]));
+    };
+
+    const tripShapesMap = {}; // trip_id -> shape_id
+    const shapesChunks = new Map(); // chunkId -> { shape_id -> geometry }
+    
+    try {
+        for (let i = 0; i < 25000; i += 5000) {
+            console.log(`Fetching shapes from offset ${i} to ${i + 5000}...`);
+            const res = await fetchShapes(i, i + 5000);
+            if (!Array.isArray(res) || res.length === 0) break;
+            
+            for (const item of res) {
+                // Save shape to chunk (group by first 2 chars of shape_id)
+                const shapeIdStr = String(item.shape_id);
+                const chunkId = shapeIdStr.substring(0, 2);
+                if (!shapesChunks.has(chunkId)) {
+                    shapesChunks.set(chunkId, {});
+                }
+                shapesChunks.get(chunkId)[shapeIdStr] = roundShape(item.shape);
+
+                // Map trips to shape_id
+                for (const tripId of item.gtfs_trips) {
+                    const activeTrip = activeTrips.get(String(tripId));
+                    if (activeTrip) {
+                        tripShapesMap[tripId] = shapeIdStr;
+                    }
+                }
+            }
+        }
+        
+        console.log(`Writing chunked shape files for ${shapesChunks.size} chunks to external repo...`);
+        for (const [chunkId, data] of shapesChunks.entries()) {
+            const safeChunkId = encodeURIComponent(chunkId);
+            fs.writeFileSync(path.join(publicShapesDir, `${safeChunkId}.json`), JSON.stringify(data));
+        }
+        
+        console.log(`Writing trip_shapes.json mapping for ${Object.keys(tripShapesMap).length} trips...`);
+        fs.writeFileSync(path.join(DATA_DIR, 'trip_shapes.json'), JSON.stringify(tripShapesMap));
+
+    } catch (e) {
+        console.error("Failed to fetch or process shapes, skipping shape generation.", e);
+    }
+    
     if (etag) {
         fs.writeFileSync(lastModifiedPath, etag);
     }
