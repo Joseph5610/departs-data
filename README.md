@@ -53,4 +53,9 @@ node scripts/build-prague.mjs
 
 ## 📄 License
 
-This project is licensed under the MIT License. Data is sourced from the respective open-data portals of PID (Prague) and Kordis (Brno).
+This project is licensed under the MIT License. 
+
+Data is sourced from the respective open-data portals and third-party APIs:
+- [PID Open Data](https://pid.cz/o-systemu/opendata/) (Prague)
+- [IDS JMK / Kordis](https://data.brno.cz/datasets/379d2e9a7907460c8ca7fda1f3e84328) (Brno)
+- [Lissy API](https://github.com/Jorgen98/Lissy) (Brno GTFS Shapes)
