@@ -715,15 +715,23 @@ async function main() {
         const shapesChunks = new Map(); // chunkId -> { shape_id -> geometry }
         
         try {
-            for (let i = 0; i < 25000; i += 5000) {
-                console.log(`Fetching shapes from offset ${i} to ${i + 5000}...`);
-                const res = await fetchShapes(i, i + 5000);
-                if (!Array.isArray(res) || res.length === 0) break;
+        let maxTripId = 0;
+        for (const tripId of activeTrips.keys()) {
+            const numId = parseInt(tripId, 10);
+            if (!isNaN(numId) && numId > maxTripId) {
+                maxTripId = numId;
+            }
+        }
+        
+        // Fetch in batches of 5000 up to maxTripId
+        for (let i = 0; i <= maxTripId; i += 5000) {
+            console.log(`Fetching shapes from offset ${i} to ${i + 5000}...`);
+            const res = await fetchShapes(i, i + 5000);
+            if (!Array.isArray(res) || res.length === 0) break;
                 
-                for (const item of res) {
-                    // Save shape to chunk (group by first 2 chars of shape_id)
-                    const shapeIdStr = String(item.shape_id);
-                    const chunkId = shapeIdStr.substring(0, 2);
+            for (const item of res) {
+                const shapeIdStr = String(item.shape_id);
+                const chunkId = shapeIdStr.substring(0, 2);
                     if (!shapesChunks.has(chunkId)) {
                         shapesChunks.set(chunkId, {});
                     }
