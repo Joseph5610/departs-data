@@ -706,8 +706,8 @@ async function main() {
 
         const roundShape = (shape) => {
             return shape.map(line => line.map(point => [
-                Number(point[0].toFixed(5)),
-                Number(point[1].toFixed(5))
+                Number(point[1].toFixed(5)), // lon
+                Number(point[0].toFixed(5))  // lat
             ]));
         };
 
