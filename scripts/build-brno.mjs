@@ -484,6 +484,39 @@ async function main() {
         console.log(`Extracted ${Object.keys(apiMapping).length} unique courses with ${lines.length} total mappings from api.txt`);
     }
     fs.writeFileSync(path.join(DATA_DIR, 'api.json'), JSON.stringify(apiMapping));
+
+    // --- COMPACT TRIP WINDOWS ---
+    // api.json is grouped by course and carries fields the backend never reads. The Worker only
+    // ever needs a trip's operating window and which days it runs, so emit exactly that, keyed by
+    // trip_id. That removes both a 2.5MB parse and a ~20k entry lookup build from every cold
+    // isolate - which matters because that cache is per-isolate, not shared.
+    //
+    // dayFlags is a bitmask over `days`; -1 means the trip has no date restriction.
+    const dayValues = new Set();
+    for (const trips of Object.values(apiMapping)) {
+        for (const t of trips) {
+            for (const d of (t.dates || [])) dayValues.add(d);
+        }
+    }
+    const days = [...dayValues].sort();
+    const dayPos = new Map(days.map((d, i) => [d, i]));
+
+    const tripWindows = {};
+    for (const trips of Object.values(apiMapping)) {
+        for (const t of trips) {
+            let flags = 0;
+            if (!t.dates || t.dates.length === 0) {
+                flags = -1;
+            } else {
+                for (const d of t.dates) flags |= 1 << dayPos.get(d);
+            }
+            tripWindows[t.trip_id] = [t.start_mins, t.end_mins, flags];
+        }
+    }
+
+    const tripWindowsPayload = JSON.stringify({ days, trips: tripWindows });
+    fs.writeFileSync(path.join(DATA_DIR, 'trip_windows.json'), tripWindowsPayload);
+    console.log(`Wrote trip_windows.json: ${Object.keys(tripWindows).length} trips, ${(tripWindowsPayload.length / 1024).toFixed(0)}KB across days ${days.join(',')}`);
     
     // --- AUTOMATIC TRIP ALIAS GENERATION ---
     console.log('Generating trip signatures and checking for legacy trip_aliases...');
