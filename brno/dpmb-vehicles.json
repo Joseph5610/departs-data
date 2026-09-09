@@ -6,8 +6,18 @@
   },
   {
     "min": 1018,
+    "max": 1122,
+    "vehicle_type": "Pragoimex VarioLF2R.E"
+  },
+  {
+    "min": 1123,
+    "max": 1123,
+    "vehicle_type": "ČKD Tatra K2"
+  },
+  {
+    "min": 1124,
     "max": 1132,
-    "vehicle_type": "ČKD Tatra K2 / Pragoimex VarioLF2R.E"
+    "vehicle_type": "Pragoimex VarioLF2R.E"
   },
   {
     "min": 1133,
