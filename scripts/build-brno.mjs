@@ -692,7 +692,7 @@ async function main() {
     } else {
         const fetchShapes = (from, to) => {
             return new Promise((resolve, reject) => {
-                const url = `https://dexter.fit.vutbr.cz/lissy/api/shapes/getTodayShapes?gtfs_trips_from=${from}&gtfs_trips_to=${to}`;
+                const url = `https://dexter.fit.vutbr.cz/lissy/api/shapes/getTodayShapes?gtfs_trips_from=${from}&gtfs_trips_to=${to}&switchCoords=true&reduceCoords=true`;
                 https.get(url, { headers: { Authorization: SHAPE_TOKEN } }, (res) => {
                     let data = '';
                     res.on('data', chunk => data += chunk);
@@ -704,12 +704,7 @@ async function main() {
             });
         };
 
-        const roundShape = (shape) => {
-            return shape.map(line => line.map(point => [
-                Number(point[1].toFixed(5)), // lon
-                Number(point[0].toFixed(5))  // lat
-            ]));
-        };
+        // Note: switchCoords=true and reduceCoords=true are handled server-side by the API.
 
         const tripShapesMap = {}; // trip_id -> shape_id
         const shapesChunks = new Map(); // chunkId -> { shape_id -> geometry }
@@ -735,7 +730,7 @@ async function main() {
                     if (!shapesChunks.has(chunkId)) {
                         shapesChunks.set(chunkId, {});
                     }
-                    shapesChunks.get(chunkId)[shapeIdStr] = roundShape(item.shape);
+                    shapesChunks.get(chunkId)[shapeIdStr] = item.shape;
 
                     // Map trips to shape_id (only active trips)
                     for (const tripId of item.gtfs_trips) {
