@@ -5,6 +5,20 @@ import https from 'https';
 import AdmZip from 'adm-zip';
 import { parse } from 'csv-parse/sync';
 
+/**
+ * Number of shape buckets. Chosen so the largest chunk stays around 200KB for the current
+ * Brno network (~3.9k shapes / 48MB of geometry). The consuming Worker derives the same
+ * bucket from the shape_id, so this value MUST be kept in sync with SHAPE_CHUNK_COUNT in
+ * departs-app `functions/_adapters/gtfs/core/config.ts`.
+ */
+const SHAPE_CHUNK_COUNT = 512;
+
+/** Maps a shape_id to its chunk file name. Must match the Worker implementation exactly. */
+function shapeChunkId(shapeId) {
+    const numeric = parseInt(shapeId, 10);
+    return String((Number.isNaN(numeric) ? 0 : Math.abs(numeric)) % SHAPE_CHUNK_COUNT);
+}
+
 function getTodayAndTomorrow() {
     // Return arrays of YYYYMMDD and midnight timestamps
     const tz = 'Europe/Prague';
@@ -680,11 +694,11 @@ async function main() {
     
     // --- SHAPE FETCHING ---
     console.log('Fetching missing GTFS shapes for Brno from external API...');
-    const publicShapesDir = path.join(__dirname, '..', 'brno', 'shapes');
-    if (fs.existsSync(publicShapesDir)) {
-        fs.rmSync(publicShapesDir, { recursive: true, force: true });
-    }
-    fs.mkdirSync(publicShapesDir, { recursive: true });
+    const publicShapeChunksDir = path.join(__dirname, '..', 'brno', 'shape_chunks');
+
+    // NOTE: the legacy `brno/shapes/` directory is deliberately left in place and no longer written.
+    // A deployed Worker that still reads the old prefix-keyed chunks keeps serving from the last
+    // generated copy until the new build ships. Delete that directory once shape_chunks/ is live.
 
     const SHAPE_TOKEN = process.env.LISSY_API_TOKEN;
     if (!SHAPE_TOKEN) {
@@ -707,7 +721,7 @@ async function main() {
         // Note: switchCoords=true and reduceCoords=true are handled server-side by the API.
 
         const tripShapesMap = {}; // trip_id -> shape_id
-        const shapesChunks = new Map(); // chunkId -> { shape_id -> geometry }
+        const allShapes = new Map(); // shape_id -> geometry
         
         try {
         let maxTripId = 0;
@@ -726,11 +740,7 @@ async function main() {
                 
             for (const item of res) {
                 const shapeIdStr = String(item.shape_id);
-                const chunkId = shapeIdStr.substring(0, 2);
-                    if (!shapesChunks.has(chunkId)) {
-                        shapesChunks.set(chunkId, {});
-                    }
-                    shapesChunks.get(chunkId)[shapeIdStr] = item.shape;
+                    allShapes.set(shapeIdStr, item.shape);
 
                     // Map trips to shape_id (only active trips)
                     for (const tripId of item.gtfs_trips) {
@@ -742,11 +752,38 @@ async function main() {
                 }
             }
             
-            console.log(`Writing chunked shape files for ${shapesChunks.size} chunks to external repo...`);
-            for (const [chunkId, data] of shapesChunks.entries()) {
-                const safeChunkId = encodeURIComponent(chunkId);
-                fs.writeFileSync(path.join(publicShapesDir, `${safeChunkId}.json`), JSON.stringify(data));
+            // Bucket shapes by `shape_id % SHAPE_CHUNK_COUNT`. The previous scheme keyed chunks on the
+            // first two characters of the shape_id, which produced wildly uneven files (one reached
+            // 9.5MB) that the Worker had to parse in full to read a single polyline.
+            //
+            // A modulo is derivable from the shape_id on both sides, so no index file is needed, and
+            // adding or removing a shape only ever rewrites its own bucket instead of cascading.
+            const shapesChunks = new Map(); // chunkId -> { shape_id -> geometry }
+            for (const [shapeIdStr, geometry] of allShapes) {
+                const chunkId = shapeChunkId(shapeIdStr);
+                if (!shapesChunks.has(chunkId)) {
+                    shapesChunks.set(chunkId, {});
+                }
+                shapesChunks.get(chunkId)[shapeIdStr] = geometry;
             }
+
+            console.log(`Writing ${shapesChunks.size} shape chunks for ${allShapes.size} shapes to external repo...`);
+            fs.mkdirSync(publicShapeChunksDir, { recursive: true });
+
+            // Remove buckets that no longer have any shapes, so deleted geometry does not linger.
+            for (const existing of fs.readdirSync(publicShapeChunksDir)) {
+                if (existing.endsWith('.json') && !shapesChunks.has(existing.replace('.json', ''))) {
+                    fs.unlinkSync(path.join(publicShapeChunksDir, existing));
+                }
+            }
+
+            let largestChunkBytes = 0;
+            for (const [chunkId, data] of shapesChunks.entries()) {
+                const payload = JSON.stringify(data);
+                largestChunkBytes = Math.max(largestChunkBytes, payload.length);
+                fs.writeFileSync(path.join(publicShapeChunksDir, `${chunkId}.json`), payload);
+            }
+            console.log(`Largest shape chunk: ${(largestChunkBytes / 1024).toFixed(0)}KB`);
             
             console.log(`Writing trip_shapes.json mapping for ${Object.keys(tripShapesMap).length} trips...`);
             fs.writeFileSync(path.join(DATA_DIR, 'trip_shapes.json'), JSON.stringify(tripShapesMap));
