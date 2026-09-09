@@ -696,9 +696,6 @@ async function main() {
     console.log('Fetching missing GTFS shapes for Brno from external API...');
     const publicShapeChunksDir = path.join(__dirname, '..', 'brno', 'shape_chunks');
 
-    // NOTE: the legacy `brno/shapes/` directory is deliberately left in place and no longer written.
-    // A deployed Worker that still reads the old prefix-keyed chunks keeps serving from the last
-    // generated copy until the new build ships. Delete that directory once shape_chunks/ is live.
 
     const SHAPE_TOKEN = process.env.LISSY_API_TOKEN;
     if (!SHAPE_TOKEN) {
@@ -740,17 +737,17 @@ async function main() {
                 
             for (const item of res) {
                 const shapeIdStr = String(item.shape_id);
-                    allShapes.set(shapeIdStr, item.shape);
+                allShapes.set(shapeIdStr, item.shape);
 
-                    // Map trips to shape_id (only active trips)
-                    for (const tripId of item.gtfs_trips) {
-                        const activeTrip = activeTrips.get(String(tripId));
-                        if (activeTrip) {
-                            tripShapesMap[tripId] = shapeIdStr;
-                        }
+                // Map trips to shape_id (only active trips)
+                for (const tripId of item.gtfs_trips) {
+                    const activeTrip = activeTrips.get(String(tripId));
+                    if (activeTrip) {
+                        tripShapesMap[tripId] = shapeIdStr;
                     }
                 }
             }
+        }
             
             // Bucket shapes by `shape_id % SHAPE_CHUNK_COUNT`. The previous scheme keyed chunks on the
             // first two characters of the shape_id, which produced wildly uneven files (one reached
