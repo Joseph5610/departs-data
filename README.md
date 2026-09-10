@@ -1,6 +1,6 @@
 # Departs App - Static Data & GTFS Processing
 
-This repository serves as the static data backend and CDN for [departs.app](https://departs.app), a real-time public transport departure board application for Prague (PID) and Brno (IDS JMK).
+This repository serves as the static data backend and CDN for [departs.app](https://departs.app), a real-time public transport departure board application for Prague (PID), Brno (IDS JMK) and Prešov (DPMP).
 
 By leveraging **GitHub Actions** and **GitHub Pages**, this repository continuously fetches, processes, and hosts static transit data, offloading heavy processing and large files from the main application's frontend and Cloudflare Workers.
 
@@ -13,6 +13,7 @@ To maintain a clean and scalable pipeline, the repository is strictly divided in
 - `/scripts` - Contains Node.js scripts used to fetch and process data.
 - `/brno` - Output directory containing chunked JSON files for the Brno network.
 - `/prague` - Output directory containing enrichment JSON files for the Prague network.
+- `/presov` - Output directory containing chunked JSON files for the Prešov network.
 - `/.github/workflows` - CI/CD pipelines that run the scripts on scheduled intervals.
 
 ## 🏙 City Data Pipelines
@@ -36,6 +37,15 @@ Unlike Brno, Prague provides excellent real-time APIs (Golemio). However, we nee
 2. Formats and shrinks the data into a fast O(1) lookup map.
 3. Generates `stops-enrichment.json` which is aggressively cached by the `departs-app` edge workers.
 
+### 🇸🇰 Prešov (DPMP)
+*Script:* `scripts/build-presov.mjs` | *Action:* `update-presov.yml` (Runs daily)
+
+DPMP publishes a monthly GTFS `.zip` via the Mesto Prešov ArcGIS portal. The output mirrors Brno's file set, with a few feed-specific steps:
+1. Strips the monthly `feed_version` prefix from trip and service ids.
+2. Synthesises parent stations by grouping same-named platforms, since the feed has none.
+3. Derives request stops from the `*` stop-name suffix and injects official DPMP line colors.
+4. Emits `trip_windows.json` (with `direction_id`) for yesterday, today and tomorrow, used to match the realtime CSV to trips.
+
 ## 🚀 Local Development
 
 To run the pipelines locally:
@@ -46,6 +56,9 @@ npm install
 
 # Run Brno GTFS processing
 node scripts/build-brno.mjs
+
+# Run Prešov GTFS processing
+node scripts/build-presov.mjs
 
 # Run Prague enrichment sync
 node scripts/build-prague.mjs
@@ -59,3 +72,4 @@ Data is sourced from the respective open-data portals and third-party APIs:
 - [PID Open Data](https://pid.cz/o-systemu/opendata/) (Prague)
 - [IDS JMK / Kordis](https://data.brno.cz/datasets/379d2e9a7907460c8ca7fda1f3e84328) (Brno)
 - [Lissy API](https://github.com/Jorgen98/Lissy) (Brno GTFS Shapes)
+- [GTFS – MHD Prešov](https://www.arcgis.com/home/item.html?id=f1033ca6c2f4461d9aba285e1c7cb079) (Prešov, DPMP, CC BY 4.0)
