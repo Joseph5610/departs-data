@@ -45,6 +45,11 @@ const CONFIG = {
         '39': '#800080',
         '45': '#FF0066',
     },
+    /** Line groups without a map color, in DPMP/imhd.sk colors: school lines (A, C, … and H) and night lines. */
+    ROUTE_COLOR_RULES: [
+        { pattern: /^[A-Z]$/, color: '#EF7F1A' },
+        { pattern: /^N\d+$/, color: '#00378A' },
+    ],
     DEFAULT_ROUTE_COLOR: '#999999',
 
     /** Abort thresholds guarding against an empty or truncated upstream feed. */
@@ -99,6 +104,13 @@ const timeToMinutes = (t) => {
     const [h, m] = t.split(':');
     return parseInt(h, 10) * 60 + parseInt(m, 10);
 };
+
+function routeColorFor(name) {
+    const key = name.toUpperCase();
+    return CONFIG.ROUTE_COLORS[key]
+        ?? CONFIG.ROUTE_COLOR_RULES.find(rule => rule.pattern.test(key))?.color
+        ?? CONFIG.DEFAULT_ROUTE_COLOR;
+}
 
 const REQUEST_STOP_SUFFIX = /\s*\*\s*$/;
 
@@ -191,7 +203,7 @@ async function main() {
         routes.set(r.route_id, {
             name,
             type: r.route_type,
-            route_color: r.route_color ? `#${r.route_color}` : (CONFIG.ROUTE_COLORS[name.toUpperCase()] ?? CONFIG.DEFAULT_ROUTE_COLOR)
+            route_color: r.route_color ? `#${r.route_color}` : routeColorFor(name)
         });
     }
 
