@@ -1,0 +1,243 @@
+[
+  {
+    "min": 123,
+    "max": 123,
+    "vehicle_type": "Škoda 14 Tr 17/6M"
+  },
+  {
+    "min": 348,
+    "max": 348,
+    "vehicle_type": "Solaris Urbino 12/II",
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 377,
+    "max": 380,
+    "vehicle_type": "Solaris Urbino 12/III",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 384,
+    "max": 386,
+    "vehicle_type": "Solaris Urbino 12/III",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 387,
+    "max": 389,
+    "vehicle_type": "Iveco First FCLLI 70C17",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 391,
+    "max": 392,
+    "vehicle_type": "Solaris Urbino 12/III",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 393,
+    "max": 393,
+    "vehicle_type": "Solaris Urbino 18/III",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 394,
+    "max": 396,
+    "vehicle_type": "Solaris Urbino 12/III",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 397,
+    "max": 398,
+    "vehicle_type": "Solaris Urbino 18/III",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 409,
+    "max": 409,
+    "vehicle_type": "Irisbus Crossway LE 12.8M",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 412,
+    "max": 412,
+    "vehicle_type": "SOR NB 18 City",
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 413,
+    "max": 414,
+    "vehicle_type": "SOR NB 12 City",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 415,
+    "max": 424,
+    "vehicle_type": "SOR NB 18 City",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 425,
+    "max": 427,
+    "vehicle_type": "SOR NB 12 City",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 428,
+    "max": 430,
+    "vehicle_type": "Iveco Urbanway 18M",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 601,
+    "max": 605,
+    "vehicle_type": "SOR EBN 8",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 701,
+    "max": 701,
+    "vehicle_type": "Škoda 24 Tr Irisbus",
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 706,
+    "max": 706,
+    "vehicle_type": "Škoda 24 Tr Irisbus",
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 709,
+    "max": 709,
+    "vehicle_type": "Škoda 25 Tr Irisbus",
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 713,
+    "max": 713,
+    "vehicle_type": "Škoda 31 Tr SOR",
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 715,
+    "max": 716,
+    "vehicle_type": "Škoda 31 Tr SOR",
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 717,
+    "max": 718,
+    "vehicle_type": "Škoda 31 Tr SOR",
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 719,
+    "max": 719,
+    "vehicle_type": "Škoda 31 Tr SOR",
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 720,
+    "max": 721,
+    "vehicle_type": "Škoda 31 Tr SOR",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 722,
+    "max": 731,
+    "vehicle_type": "Škoda 31 Tr SOR",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 732,
+    "max": 732,
+    "vehicle_type": "Škoda 30 Tr SOR",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 733,
+    "max": 736,
+    "vehicle_type": "Škoda 30 Tr SOR",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 737,
+    "max": 740,
+    "vehicle_type": "Škoda 30 Tr SOR",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 741,
+    "max": 746,
+    "vehicle_type": "Škoda 31 Tr SOR",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 801,
+    "max": 804,
+    "vehicle_type": "SOR TNS 12 A04",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 805,
+    "max": 805,
+    "vehicle_type": "Škoda 27 TrA0 Solaris",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 806,
+    "max": 806,
+    "vehicle_type": "Škoda 27 TrA0 Solaris",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 807,
+    "max": 810,
+    "vehicle_type": "Škoda 27 TrA0 Solaris",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 3446,
+    "max": 3450,
+    "vehicle_type": "MAN 12C Lion’s City NL330 EfficientHybrid",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 3451,
+    "max": 3451,
+    "vehicle_type": "MAN Lion s Intercity LE 43C",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  },
+  {
+    "min": 3452,
+    "max": 3453,
+    "vehicle_type": "Isuzu Citiport 12",
+    "is_air_conditioned": true,
+    "is_wheelchair_accessible": true
+  }
+]
