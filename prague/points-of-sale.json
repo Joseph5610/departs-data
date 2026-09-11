@@ -10836,46 +10836,5 @@
       "card",
       "contactless"
     ]
-  },
-  {
-    "id": "ro213",
-    "type": "carrierOffice",
-    "name": "Hořovice",
-    "address": "Předprodejní kancelář města Hořovice na Palackého nám. 253/4",
-    "lat": 49.8367767,
-    "lon": 13.9035311,
-    "openingHours": [
-      {
-        "from": 0,
-        "to": 0,
-        "hours": "8:00-12:00,12:30-16:00"
-      },
-      {
-        "from": 1,
-        "to": 1,
-        "hours": "8:00-12:00,12:30-15:30"
-      },
-      {
-        "from": 2,
-        "to": 2,
-        "hours": "8:00-12:00,12:30-17:00"
-      },
-      {
-        "from": 3,
-        "to": 3,
-        "hours": "8:00-12:00,12:30-15:30"
-      },
-      {
-        "from": 4,
-        "to": 4,
-        "hours": "8:00-13:00"
-      }
-    ],
-    "services": [],
-    "payMethods": [
-      "cash",
-      "card",
-      "contactless"
-    ]
   }
 ]
