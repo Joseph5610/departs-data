@@ -28,6 +28,10 @@ jobs:
         env:
           LISSY_API_TOKEN: ${{ secrets.LISSY_API_TOKEN }}
 
+      # Other data workflows push to the same branch; start from their latest commit.
+      - name: Rebase onto the latest data
+        run: git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com pull --rebase --autostash origin ${{ github.ref_name }}
+
       - name: Commit and Push changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
