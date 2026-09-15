@@ -1,0 +1,43 @@
+name: Update DÚK JDF Data
+
+on:
+  schedule:
+    - cron: '51 1 * * *' # Every day at 01:51 UTC (03:51 CEST); CIS JŘ republishes the export each evening
+    - cron: '41 11 * * *' # Midday run: applies the platform hints learned since the morning
+  push: # Rebuild when the pipeline itself changes
+    branches: [master]
+    paths:
+      - 'scripts/build-duk.mjs'
+      - '.github/workflows/update-duk.yml'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download and Process JDF
+        run: node scripts/build-duk.mjs
+
+      # Other data workflows push to the same branch; start from their latest commit.
+      - name: Rebase onto the latest data
+        run: git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com pull --rebase --autostash origin ${{ github.ref_name }}
+
+      - name: Commit and Push changes
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "feat: automated DÚK JDF data update"
+          file_pattern: "duk/"
