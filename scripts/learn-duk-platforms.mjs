@@ -89,7 +89,7 @@ function createTripIndex() {
 }
 
 /** Platforms of each board departure, traced to the static trip leaving at that minute. */
-async function learnFromBoards(hints, { routes, aliases, trips, today }) {
+async function learnFromBoards(hints, { routes, trips, today }) {
     const parentChildMap = readJson(path.join(DATA_DIR, 'parent_child_map.json'), {});
     const stations = Object.entries(parentChildMap)
         .filter(([, children]) => children.length >= 2)
@@ -146,7 +146,7 @@ async function learnFromBoards(hints, { routes, aliases, trips, today }) {
                 if (!call) continue;
                 const nextNode = trips.nextNodeAfter(call.tripId, node, localParts(departureMs).minuteOfDay);
                 if (!nextNode) continue;
-                hints[platformHintKey(node, call.routeId, nextNode)] = { post: (aliases[`${node}-${d.StationPost}`] ?? `${node}-${d.StationPost}`).split('-')[1], seen: today };
+                hints[platformHintKey(node, call.routeId, nextNode)] = { post: String(d.StationPost), seen: today };
                 traced++;
             }
         }));
@@ -155,7 +155,7 @@ async function learnFromBoards(hints, { routes, aliases, trips, today }) {
 }
 
 /** Platforms vehicles report standing at, traced through the trip they run. */
-async function learnFromVehicles(hints, { tripRoutes, aliases, trips, today }) {
+async function learnFromVehicles(hints, { tripRoutes, trips, today }) {
     const traffic = await fetchJson(CONFIG.TRAFFIC_URL);
     if (!traffic) throw new Error('Portabo traffic fetch failed');
 
@@ -173,7 +173,7 @@ async function learnFromVehicles(hints, { tripRoutes, aliases, trips, today }) {
         if (!v.CISLineID || !v.RouteID || !v.StationNode || !post || post >= CONFIG.FIRST_UNNUMBERED_POST) continue;
         const line = String(v.CISLineID).padStart(CONFIG.LINE_NUMBER_LENGTH, '0');
         const node = String(v.StationNode);
-        const platform = (aliases[`${node}-${post}`] ?? `${node}-${post}`).split('-')[1];
+        const platform = String(post);
         for (const tripId of tripsByNumber.get(`${line}|${v.RouteID}`) ?? []) {
             const nextNode = trips.nextNodeAfter(tripId, node);
             if (!nextNode) continue;
@@ -192,7 +192,6 @@ async function main() {
     const context = {
         routes: readJson(path.join(DATA_DIR, 'routes.json'), {}),
         tripRoutes: readJson(path.join(DATA_DIR, 'trip_routes.json'), {}),
-        aliases: readJson(path.join(DATA_DIR, 'post_aliases.json'), {}),
         trips: createTripIndex(),
         today: localParts(Date.now()).date,
     };
