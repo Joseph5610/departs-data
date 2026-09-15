@@ -50,9 +50,8 @@ const CONFIG = {
     FIRST_UNNUMBERED_POST: 90,
     /** Posts from here on are ferry landings. */
     FERRY_POST_START: 200,
-    /** Platforms of a station closer than this are spread apart so their map markers do not overlap. */
-    MIN_PLATFORM_SEPARATION_M: 25,
-    PLATFORM_SEPARATION_PASSES: 3,
+    /** Platforms Portabo puts on the exact same point are fanned out on a circle this wide, as for Brno. */
+    STACKED_PLATFORM_OFFSET_DEG: 0.00012,
     /** Detour, in metres, that outweighs a platform being left of the direction of travel. */
     LEFT_SIDE_PENALTY_M: 500,
     /** [w, s, e, n] around the kraj and its cross-border termini; Portabo parks unknown platforms in Tallinn. */
@@ -597,52 +596,28 @@ function findImplausibleStops(timetable, resolved) {
     return suspects;
 }
 
-/**
- * Moves a node's platforms that would overlap on the map (closer than MIN_PLATFORM_SEPARATION_M)
- * onto a circle around their common centre, keeping their order around it, so each stays tappable.
- */
-function separatePlatforms(platforms) {
-    const minSep = CONFIG.MIN_PLATFORM_SEPARATION_M;
-    const clusters = [];
-    const assigned = new Set();
-    for (const seed of platforms) {
-        if (assigned.has(seed)) continue;
-        const cluster = [seed];
-        assigned.add(seed);
-        for (let i = 0; i < cluster.length; i++) {
-            for (const other of platforms) {
-                if (!assigned.has(other) && distanceM(cluster[i], other) < minSep) {
-                    cluster.push(other);
-                    assigned.add(other);
-                }
-            }
-        }
-        clusters.push(cluster);
-    }
+const round6 = (x) => Number(x.toFixed(6));
 
-    const out = [];
-    for (const cluster of clusters) {
-        if (cluster.length === 1) {
-            out.push(cluster[0]);
-            continue;
-        }
-        const centre = {
-            lat: cluster.reduce((s, p) => s + p.lat, 0) / cluster.length,
-            lon: cluster.reduce((s, p) => s + p.lon, 0) / cluster.length,
-        };
-        const angleOf = (p) => { const v = localXY(centre, p); return Math.hypot(v.x, v.y) < 0.5 ? null : Math.atan2(v.y, v.x); };
-        const ordered = cluster.map((p, i) => ({ p, angle: angleOf(p) ?? (2 * Math.PI * i) / cluster.length })).sort((a, b) => a.angle - b.angle);
-        const radius = minSep / (2 * Math.sin(Math.PI / cluster.length));
-        const metresPerDegLon = 111_320 * Math.cos(centre.lat * Math.PI / 180);
-        ordered.forEach(({ p }, i) => {
-            const angle = ordered[0].angle + (2 * Math.PI * i) / cluster.length;
-            out.push({ ...p, lat: centre.lat + (radius * Math.sin(angle)) / 110_540, lon: centre.lon + (radius * Math.cos(angle)) / metresPerDegLon });
-        });
+/** Platforms on the exact same point, fanned out on a small circle so each marker can be tapped (same as Brno). */
+function fanOutStackedPlatforms(platforms) {
+    const stacks = new Map();
+    for (const p of platforms) {
+        const key = `${p.lon.toFixed(6)},${p.lat.toFixed(6)}`;
+        if (!stacks.has(key)) stacks.set(key, []);
+        stacks.get(key).push(p);
     }
-    return out;
+    return platforms.map(p => {
+        const stack = stacks.get(`${p.lon.toFixed(6)},${p.lat.toFixed(6)}`);
+        if (stack.length <= 1) return p;
+        const angle = (2 * Math.PI * stack.indexOf(p)) / stack.length;
+        return {
+            ...p,
+            lon: Number((p.lon + CONFIG.STACKED_PLATFORM_OFFSET_DEG * Math.cos(angle)).toFixed(6)),
+            lat: Number((p.lat + CONFIG.STACKED_PLATFORM_OFFSET_DEG * Math.sin(angle)).toFixed(6)),
+        };
+    });
 }
 
-/** Metres east and north of `origin`, precise enough for directions within a stop's surroundings. */
 function localXY(origin, point) {
     return {
         x: (point.lon - origin.lon) * 111_320 * Math.cos(origin.lat * Math.PI / 180),
@@ -829,23 +804,10 @@ async function main() {
     const topUnmatched = [...unmatchedNames].sort((a, b) => b[1] - a[1]).slice(0, CONFIG.UNMATCHED_REPORT_COUNT);
     console.log(`Most frequent unmatched stops: ${topUnmatched.map(([name, n]) => `${name} ×${n}`).join(', ')}`);
 
-    // --- PLATFORMS: posts sharing a position (typically rail posts 92 and 101) are one platform ---
-    const round6 = (x) => Number(x.toFixed(6));
-    const postAliases = {};
-    const platformsOf = new Map();
-    for (const node of index.nodes.values()) {
-        const byPosition = new Map();
-        for (const platform of node.platforms) {
-            const position = `${round6(platform.lon)},${round6(platform.lat)}`;
-            const kept = byPosition.get(position);
-            if (kept) postAliases[`${node.id}-${platform.post}`] = `${node.id}-${kept.post}`;
-            else byPosition.set(position, platform);
-        }
-        let platforms = [...byPosition.values()];
-        for (let pass = 0; pass < CONFIG.PLATFORM_SEPARATION_PASSES; pass++) platforms = separatePlatforms(platforms);
-        platformsOf.set(node.id, platforms);
-    }
+    // --- PLATFORMS: one per Portabo post, as GetStations lists them ---
     const hints = loadPlatformHints();
+    const platformsOf = new Map();
+    for (const node of index.nodes.values()) platformsOf.set(node.id, fanOutStackedPlatforms(node.platforms));
     for (const t of activeTrips.values()) assignPlatforms(t, platformsOf, hints, routes[t.routeId]?.type);
 
     // --- DEPARTURES, TRIPS, WINDOWS ---
@@ -943,7 +905,6 @@ async function main() {
 
     fs.writeFileSync(path.join(DATA_DIR, 'stops.json'), JSON.stringify(features));
     fs.writeFileSync(path.join(DATA_DIR, 'parent_child_map.json'), JSON.stringify(parentChildMap));
-    fs.writeFileSync(path.join(DATA_DIR, 'post_aliases.json'), JSON.stringify(postAliases));
     fs.writeFileSync(path.join(DATA_DIR, 'routes.json'), JSON.stringify(routes));
     fs.writeFileSync(path.join(DATA_DIR, 'trip_routes.json'), JSON.stringify(tripRoutes));
     // JDF has no geometry; the app draws the route stop to stop.
