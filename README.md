@@ -1,6 +1,6 @@
 # Departs App - Static Data & GTFS Processing
 
-This repository serves as the static data backend and CDN for [departs.app](https://departs.app), a real-time public transport departure board application for Prague (PID), Brno (IDS JMK) and Prešov (DPMP).
+This repository serves as the static data backend and CDN for [departs.app](https://departs.app), a real-time public transport departure board application for Prague (PID), Brno (IDS JMK), Prešov (DPMP) and Ústecký kraj (DÚK).
 
 By leveraging **GitHub Actions** and **GitHub Pages**, this repository continuously fetches, processes, and hosts static transit data, offloading heavy processing and large files from the main application's frontend and Cloudflare Workers.
 
@@ -14,6 +14,7 @@ To maintain a clean and scalable pipeline, the repository is strictly divided in
 - `/brno` - Output directory containing chunked JSON files for the Brno network.
 - `/prague` - Output directory containing enrichment JSON files for the Prague network.
 - `/presov` - Output directory containing chunked JSON files for the Prešov network.
+- `/duk` - Output directory containing chunked JSON files for the Ústecký kraj network.
 - `/.github/workflows` - CI/CD pipelines that run the scripts on scheduled intervals.
 
 ## 🏙 City Data Pipelines
@@ -46,6 +47,21 @@ DPMP publishes a monthly GTFS `.zip` via the Mesto Prešov ArcGIS portal. The ou
 3. Derives request stops from the `*` stop-name suffix and injects official DPMP line colors.
 4. Emits `trip_windows.json` (with `direction_id`) for yesterday, today and tomorrow, used to match the realtime CSV to trips.
 
+### 🇨🇿 Ústecký kraj (DÚK)
+*Script:* `scripts/build-duk.mjs` | *Action:* `update-duk.yml` (Runs daily)
+
+The kraj currently publishes no GTFS, so timetables come from the national CIS JŘ export in JDF: bus lines (`portal.cisjr.cz/pub/JDF/JDF.zip`) and urban rail, i.e. trolleybuses, trams and funiculars (`portal.cisjr.cz/pub/draha/mestske/JDF.zip`). The output mirrors Prešov's file set:
+1. Keeps the kraj's lines: line numbers starting `51`, `52`, `55`–`59` (its licensing offices), tagged with the DÚK system code `30421` in `LinExt.txt`, or calling at any stop in one of its districts (PID and other cross-border lines).
+2. Reads JDF 1.9, 1.10 and 1.11 layouts and evaluates the pevné/časové kódy (including Czech public holidays) for yesterday, today and tomorrow.
+3. On each day applies only a line's most recently started timetables, since CIS files every change as a new timetable valid to the licence end; where those share a trip number, a detour wins.
+4. Uses Portabo nodes (the ids the DÚK realtime feed reports) as stops, matched to JDF stops by name, since JDF has no coordinates or national stop ids. Bare names on city lines (JDF type A/B) are treated as streets of the line's town and only match near the rest of the line; matches forcing an implausible detour are rejected and the line re-resolved without them.
+5. Names trips `<spoj>-<line>-<timetable>` so the app maps realtime `CISLineID` + `RouteID` onto them. No shapes are produced.
+6. Emits one station (`centroid-<node>`) per Portabo node with one platform (`<node>-<post>`) per Portabo post; posts sharing a position are merged (`post_aliases.json`), platforms closer than 25 m are spread apart so their markers do not overlap, and rail/ferry posts (90+) carry no platform number. Departures chunks stay keyed by the bare node and carry the platform each trip is expected at.
+7. Names lines by `LinExt` (X, XU28), a small override table (LD, MHD) or the last three digits, and colours Ústí city lines as DPmÚL does.
+8. Places each trip call on a platform: JDF names only the stop, so `learn-duk-platforms.mjs` reads hourly from the Portabo live boards and vehicle positions which platform each line uses towards its next stop (`platform_hints.json`, expired after 60 days unseen), falling back to the platform right of the direction of travel.
+
+Trains are published only as NeTEx (`ftp.cisjr.cz/netex/`) and are not built yet. Stops Portabo lacks or places at a placeholder position (most Most/Litvínov city stops) stay in trip timelines with an empty `stop_id` and no coordinates.
+
 ## 🚀 Local Development
 
 To run the pipelines locally:
@@ -60,16 +76,26 @@ node scripts/build-brno.mjs
 # Run Prešov GTFS processing
 node scripts/build-presov.mjs
 
+# Run Ústecký kraj JDF processing
+node scripts/build-duk.mjs
+
 # Run Prague enrichment sync
 node scripts/build-prague.mjs
 ```
 
 ## 📄 License
 
-This project is licensed under the MIT License. 
+**Scripts** (`/scripts`, workflows): MIT License, see [LICENSE](LICENSE).
 
-Data is sourced from the respective open-data portals and third-party APIs:
-- [PID Open Data](https://pid.cz/o-systemu/opendata/) (Prague)
-- [IDS JMK / Kordis](https://data.brno.cz/datasets/379d2e9a7907460c8ca7fda1f3e84328) (Brno)
-- [Lissy API](https://github.com/Jorgen98/Lissy) (Brno GTFS Shapes)
-- [GTFS – MHD Prešov](https://www.arcgis.com/home/item.html?id=f1033ca6c2f4461d9aba285e1c7cb079) (Prešov, DPMP, CC BY 4.0)
+**Data** (`/brno`, `/duk`, `/prague`, `/presov`, served at `https://data.departs.app`): adapted from the sources below and published under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). When you reuse it, credit the original sources as listed and departs.app as the adapter, and state your own changes. The data are provided as is, without warranty; their providers do not endorse departs.app or this repository.
+
+| Output | Source (credit) | Licence | Changes made here |
+| --- | --- | --- | --- |
+| `/prague` | [PID open data](https://pid.cz/o-systemu/opendata/), stop list (ROPID) | CC BY 4.0 | Stops reduced to an id → station, line and zone lookup (`stops-enrichment.json`). |
+| `/brno` | [Jízdní řád IDS JMK ve formátu GTFS](https://data.brno.cz/datasets/379d2e9a7907460c8ca7fda1f3e84328) (Statutární město Brno, KORDIS JMK) | CC BY 4.0 | Filtered to a rolling 48-hour window, restructured into per-stop and per-trip JSON chunks, parent stations and platforms grouped. |
+| `/brno` | Route shapes from [Lissy](https://github.com/Jorgen98/Lissy) (FIT VUT Brno) | No public licence; used with an API token | Attached to trips as simplified shapes. |
+| `/presov` | [GTFS – MHD Prešov](https://www.arcgis.com/home/item.html?id=f1033ca6c2f4461d9aba285e1c7cb079) (Dopravný podnik mesta Prešov, a.s.) | CC BY 4.0 | Monthly id prefixes stripped, parent stations synthesised, request stops and line colours added, three-day window chunked to JSON. |
+| `/duk` | [Jízdní řády veřejné linkové dopravy (CIS JŘ, JDF)](https://data.gov.cz/datová-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatové-sady%2F66003008%2F1463646434) (Ministerstvo dopravy ČR) | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) (CC0 equivalent) | Filtered to the kraj's lines, calendars evaluated, stop names matched to Portabo nodes, trips placed on platforms, lines named and coloured; operator and other personal data are not carried over. |
+| `/duk` | [Ústecký kraj open data (Portabo)](https://lkod.portabo.cz/datasets): stops (`cis/GetStations`), departure boards and vehicle positions used to learn platforms | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) | Stop positions and platforms, merged and spread apart; platforms lines use (`platform_hints.json`) learned from boards and vehicles. |
+
+The CC BY 4.0 sources require attribution and an indication of changes; the Czech open-data sources require neither, but are credited all the same. departs.app shows the same credits in its Settings, next to the realtime feeds it reads directly.
