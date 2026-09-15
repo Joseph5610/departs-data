@@ -625,23 +625,12 @@ function localXY(origin, point) {
     };
 }
 
-/** Identifies where a line leaves a station for; must match `learn-duk-platforms.mjs`. */
-function platformHintKey(nodeId, routeId, nextNodeId) {
-    return `${nodeId}|${routeId}|${nextNodeId ?? 'end'}`;
-}
-
-/** Platforms `learn-duk-platforms.mjs` has seen lines use, keyed by `platformHintKey`. */
-function loadPlatformHints() {
-    const file = path.join(DATA_DIR, 'platform_hints.json');
-    return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
-}
-
 /**
- * Picks the platform each located stop call uses; JDF names the stop, not the platform. Traffic
- * keeps right, so the platform right of the direction of travel wins, then the one closest to the
- * line between the neighbouring calls.
+ * Estimates the platform each located stop call uses, for drawing the trip's route; JDF names the
+ * stop, not the platform. Traffic keeps right, so the platform right of the direction of travel
+ * wins, then the one closest to the line between the neighbouring calls.
  */
-function assignPlatforms(trip, platformsOf, hints, routeType) {
+function assignPlatforms(trip, platformsOf, routeType) {
     const located = trip.stopTimes.filter(st => st.node);
     const isFerry = routeType === CONFIG.ROUTE_TYPES.P;
     located.forEach((st, i) => {
@@ -650,14 +639,6 @@ function assignPlatforms(trip, platformsOf, hints, routeType) {
         const platforms = ofMode.length ? ofMode : all;
         if (platforms.length <= 1) {
             st.platform = platforms[0] ?? null;
-            st.isPlatformKnown = true;
-            return;
-        }
-        const hinted = hints[platformHintKey(st.node.id, trip.routeId, located[i + 1]?.node.id)];
-        const known = hinted && platforms.find(p => p.post === hinted.post);
-        if (known) {
-            st.platform = known;
-            st.isPlatformKnown = true;
             return;
         }
         const prev = i > 0 ? (located[i - 1].platform ?? located[i - 1].node) : null;
@@ -676,9 +657,7 @@ function assignPlatforms(trip, platformsOf, hints, routeType) {
             const score = detour + (isLeft ? CONFIG.LEFT_SIDE_PENALTY_M : 0);
             if (score < bestScore) { bestScore = score; best = platform; }
         }
-        // A guess places the route line; departures and platform line lists use known platforms only.
         st.platform = best;
-        st.isPlatformKnown = false;
     });
 }
 
@@ -805,10 +784,9 @@ async function main() {
     console.log(`Most frequent unmatched stops: ${topUnmatched.map(([name, n]) => `${name} ×${n}`).join(', ')}`);
 
     // --- PLATFORMS: one per Portabo post, as GetStations lists them ---
-    const hints = loadPlatformHints();
     const platformsOf = new Map();
     for (const node of index.nodes.values()) platformsOf.set(node.id, fanOutStackedPlatforms(node.platforms));
-    for (const t of activeTrips.values()) assignPlatforms(t, platformsOf, hints, routes[t.routeId]?.type);
+    for (const t of activeTrips.values()) assignPlatforms(t, platformsOf, routes[t.routeId]?.type);
 
     // --- DEPARTURES, TRIPS, WINDOWS ---
     const departuresByStop = new Map();
@@ -832,16 +810,14 @@ async function main() {
             const isRequestStop = st.symbols.has(SYMBOL.REQUEST_STOP);
             if (isLast || !st.node) return;
 
-            // Routes with an unknown platform are listed on every platform of the station.
-            const routeKey = st.isPlatformKnown ? `${st.node.id}-${st.platform.post}` : st.node.id;
-            if (!stopRoutes.has(routeKey)) stopRoutes.set(routeKey, new Set());
-            stopRoutes.get(routeKey).add(t.routeId);
+            if (!stopRoutes.has(st.node.id)) stopRoutes.set(st.node.id, new Set());
+            stopRoutes.get(st.node.id).add(t.routeId);
 
             if (!departuresByStop.has(st.node.id)) departuresByStop.set(st.node.id, []);
             const deps = departuresByStop.get(st.node.id);
             for (const day of t.dates) {
-                // Format: [trip_id, route_id, headsign, timestamp_ms, wheelchair_accessible, is_request_stop, platform_post]
-                deps.push([tripId, t.routeId, t.headsign, day.midnight + st.departure * 60_000, t.wheelchair, isRequestStop ? 1 : 0, st.isPlatformKnown ? st.platform.post : null]);
+                // Format: [trip_id, route_id, headsign, timestamp_ms, wheelchair_accessible, is_request_stop]
+                deps.push([tripId, t.routeId, t.headsign, day.midnight + st.departure * 60_000, t.wheelchair, isRequestStop ? 1 : 0]);
             }
         });
 
@@ -866,9 +842,9 @@ async function main() {
         for (const st of t.stopTimes) if (st.node) servedNodes.set(st.node.id, st.node);
     }
 
-    const linesOf = (...keys) => {
+    const linesOf = (nodeId) => {
         const seen = new Map();
-        for (const routeId of keys.flatMap(key => [...(stopRoutes.get(key) ?? [])])) {
+        for (const routeId of stopRoutes.get(nodeId) ?? []) {
             const route = routes[routeId];
             if (route && !seen.has(route.name)) seen.set(route.name, route);
         }
@@ -888,7 +864,7 @@ async function main() {
         for (const platform of platformsOf.get(node.id)) {
             const id = `${node.id}-${platform.post}`;
             const platformCode = Number(platform.post) < CONFIG.FIRST_UNNUMBERED_POST ? platform.post : null;
-            const lines = linesOf(id, node.id);
+            const lines = linesOf(node.id);
             features.push({
                 type: 'Feature',
                 geometry: { type: 'Point', coordinates: [round6(platform.lon), round6(platform.lat)] },

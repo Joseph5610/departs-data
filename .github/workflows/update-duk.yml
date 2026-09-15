@@ -3,7 +3,6 @@ name: Update DÚK JDF Data
 on:
   schedule:
     - cron: '51 1 * * *' # Every day at 01:51 UTC (03:51 CEST); CIS JŘ republishes the export each evening
-    - cron: '41 11 * * *' # Midday run: applies the platform hints learned since the morning
   push: # Rebuild when the pipeline itself changes
     branches: [master]
     paths:
