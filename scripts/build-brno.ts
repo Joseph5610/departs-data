@@ -123,13 +123,14 @@ function readCourses(zip: AdmZip): Map<string, string> {
  * is no longer downloadable once KORDIS replaces it.
  *
  * Only real mappings are emitted: a null would make the app discard that vehicle entirely.
+ * Returns the map so other steps can translate ids from the same stale export.
  */
 function generateAliases(
     dataDir: string,
     courseOf: Map<string, string>,
     activeTrips: ReadonlyMap<string, ActiveTrip>,
     todayStr: string,
-): void {
+): Record<string, string> {
     const coursePath = path.join(dataDir, CONFIG.COURSE_FILE);
     const stored: unknown = fs.existsSync(coursePath) ? JSON.parse(fs.readFileSync(coursePath, 'utf8')) : null;
     // Older builds wrote a bare map; treat it as a single generation.
@@ -170,6 +171,7 @@ function generateAliases(
 
     // The signature-based state this replaces is no longer read by anything.
     fs.rmSync(path.join(dataDir, 'previous_trips.json'), { force: true });
+    return tripAliases;
 }
 
 async function main(): Promise<void> {
@@ -381,7 +383,7 @@ async function main(): Promise<void> {
     writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
     console.log(`Wrote ${features.length} stops`);
 
-    generateAliases(DATA_DIR, readCourses(zip), activeTrips, days[0]!.str);
+    const tripAliases = generateAliases(DATA_DIR, readCourses(zip), activeTrips, days[0]!.str);
 
     // --- DEPARTURES ---
     sortDepartures(departuresByStop);
@@ -441,8 +443,13 @@ async function main(): Promise<void> {
                 for (const item of res) {
                     const shapeIdStr = String(item.shape_id);
                     allShapes.set(shapeIdStr, item.shape);
-                    for (const tripId of item.gtfs_trips) {
-                        if (activeTrips.has(String(tripId))) tripShapes[String(tripId)] = shapeIdStr;
+                    // Lissy reports trip ids from its own copy of the GTFS, which lags the current
+                    // export. Those ids get recycled, so trusting them attaches a shape to whatever
+                    // trip inherited the number - the same trap as the realtime feed.
+                    for (const rawTripId of item.gtfs_trips) {
+                        const raw = String(rawTripId);
+                        const resolved = tripAliases[raw] ?? raw;
+                        if (activeTrips.has(resolved)) tripShapes[resolved] = shapeIdStr;
                     }
                 }
             }
