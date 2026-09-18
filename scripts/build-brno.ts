@@ -30,6 +30,8 @@ const CONFIG = {
     /** Trip-id range fetched per Lissy request. */
     SHAPE_BATCH_SIZE: 5000,
     DEFAULT_ROUTE_COLOR: '#007DA8',
+    /** KORDIS run identifier per trip, the only id stable across exports. */
+    COURSE_FILE: 'trip_courses.json',
 
     /** Abort thresholds guarding against an empty or truncated upstream feed. */
     MIN_DEPARTURE_STOPS: 1000,
@@ -90,81 +92,65 @@ function fetchShapes(token: string, from: number, to: number): Promise<LissyShap
     });
 }
 
+/** `api.txt` maps each trip to its KORDIS run: `Linka/CVlaku = trip_id: 78/1052 = 35274`. */
+function readCourses(zip: AdmZip): Map<string, string> {
+    const entry = zip.getEntry('api.txt');
+    const out = new Map<string, string>();
+    if (!entry) {
+        console.warn('api.txt not found in GTFS zip; realtime trip matching will degrade.');
+        return out;
+    }
+    const buf = entry.getData();
+    const isUtf16Le = (buf[0] === 0xFF && buf[1] === 0xFE) || (buf.length > 2 && buf[1] === 0 && buf[3] === 0);
+    for (const line of (isUtf16Le ? buf.toString('utf16le') : buf.toString('utf8')).split('\n')) {
+        const m = line.match(/:\s*([^/]+)\/([^=\s]+)\s*=\s*(\d+)/);
+        if (m) out.set(m[3]!.trim(), `${m[1]!.trim()}/${m[2]!.trim()}`);
+    }
+    return out;
+}
+
 /**
- * Carries trip ids forward across GTFS exports, so a realtime feed still reporting the previous
- * export's ids resolves. Trips are matched by signature; an id that no longer exists maps to null.
+ * Maps the trip ids the realtime feed still broadcasts onto the current export's ids.
  *
- * The signature format is stored state in previous_trips.json — changing it invalidates every
- * alias for one cycle, so the constant direction field stays even though the feed has real values.
+ * KORDIS renumbers effectively every trip on each export (measured: 0 of 29,544 carried-over runs
+ * kept their id) while the feed keeps sending the previous numbering, so the run id from `api.txt`
+ * is the only usable key. The previous export's map has to be carried forward because the old zip
+ * is no longer downloadable once KORDIS replaces it.
+ *
+ * Only real mappings are emitted: a null would make the app discard that vehicle entirely.
  */
-function generateAliases(dataDir: string, currentTripSignatures: Record<string, string>, signatureToNewTripId: Map<string, string>, currentTripRouteShort: Record<string, string>): void {
-    const previousTripsPath = path.join(dataDir, 'previous_trips.json');
-    const existingAliasesPath = path.join(dataDir, 'trip_aliases.json');
+function generateAliases(
+    dataDir: string,
+    courseOf: Map<string, string>,
+    activeTrips: ReadonlyMap<string, ActiveTrip>,
+    todayStr: string,
+): void {
+    const coursePath = path.join(dataDir, CONFIG.COURSE_FILE);
+    const previousCourses: Record<string, string> = fs.existsSync(coursePath)
+        ? JSON.parse(fs.readFileSync(coursePath, 'utf8')) as Record<string, string>
+        : {};
 
-    if (fs.existsSync(previousTripsPath)) {
-        try {
-            const previousTrips = JSON.parse(fs.readFileSync(previousTripsPath, 'utf8')) as Record<string, string>;
-            const tripAliases: Record<string, string | null> = {};
-            const newAliasesFromPrev: Record<string, string | null> = {};
-            let collisionCount = 0;
-            let droppedCount = 0;
-
-            // 1. Generate aliases from previous_trips to current GTFS
-            for (const [oldTripId, oldSig] of Object.entries(previousTrips)) {
-                const newTripId = signatureToNewTripId.get(oldSig);
-
-                if (newTripId) {
-                    // DO NOT alias reused trip IDs
-                    if (oldTripId in currentTripSignatures && oldTripId !== newTripId) continue;
-
-                    const currentRouteShort = currentTripRouteShort[newTripId];
-                    const oldRouteShort = oldSig.split('|')[0];
-                    if (currentRouteShort !== oldRouteShort) {
-                        newAliasesFromPrev[oldTripId] = newTripId; // collision fix
-                        collisionCount++;
-                    } else if (oldTripId !== newTripId) {
-                        newAliasesFromPrev[oldTripId] = newTripId; // rename
-                    }
-                } else if (!(oldTripId in currentTripSignatures)) {
-                    newAliasesFromPrev[oldTripId] = null; // dropped
-                    droppedCount++;
-                }
-            }
-
-            // 2. Chain existing aliases to preserve history (important for RT feeds lagging behind)
-            if (fs.existsSync(existingAliasesPath)) {
-                const existingAliases = JSON.parse(fs.readFileSync(existingAliasesPath, 'utf8')) as Record<string, string | null>;
-                for (const [veryOldId, prevId] of Object.entries(existingAliases)) {
-                    // A dropped id that the current export uses again is a live trip, not an alias.
-                    if (veryOldId in currentTripSignatures) continue;
-                    if (prevId === null) {
-                        tripAliases[veryOldId] = null;
-                        continue;
-                    }
-                    if (prevId in newAliasesFromPrev) tripAliases[veryOldId] = newAliasesFromPrev[prevId]!;
-                    else if (prevId in currentTripSignatures) tripAliases[veryOldId] = prevId; // Still valid in current GTFS
-                    else tripAliases[veryOldId] = null; // Target no longer exists
-                }
-            }
-
-            // 3. Add any new aliases that weren't covered by history chaining
-            for (const [prevId, newId] of Object.entries(newAliasesFromPrev)) {
-                if (!(prevId in tripAliases)) tripAliases[prevId] = newId;
-            }
-
-            // An alias for a live trip id would make the app discard that trip's vehicles.
-            for (const key of Object.keys(tripAliases)) {
-                if (tripAliases[key] === key || key in currentTripSignatures) delete tripAliases[key];
-            }
-
-            console.log(`Generated/Chained ${Object.keys(tripAliases).length} total trip aliases (${collisionCount} collisions fixed, ${droppedCount} dropped).`);
-            fs.writeFileSync(existingAliasesPath, JSON.stringify(tripAliases));
-        } catch (err) {
-            console.error('Failed to parse previous_trips.json for alias generation:', err);
-        }
+    // Prefer the trip running today where a run has variants across service days.
+    const currentByCourse = new Map<string, string>();
+    for (const tripId of activeTrips.keys()) {
+        const course = courseOf.get(tripId);
+        if (!course) continue;
+        const runsToday = activeTrips.get(tripId)!.dates.some(d => d.str === todayStr);
+        if (runsToday || !currentByCourse.has(course)) currentByCourse.set(course, tripId);
     }
 
-    fs.writeFileSync(previousTripsPath, JSON.stringify(currentTripSignatures));
+    const tripAliases: Record<string, string> = {};
+    for (const [legacyTripId, course] of Object.entries(previousCourses)) {
+        const current = currentByCourse.get(course);
+        if (current && current !== legacyTripId) tripAliases[legacyTripId] = current;
+    }
+
+    fs.writeFileSync(path.join(dataDir, 'trip_aliases.json'), JSON.stringify(tripAliases));
+    fs.writeFileSync(coursePath, JSON.stringify(Object.fromEntries(courseOf)));
+    console.log(`Mapped ${Object.keys(tripAliases).length} legacy trip ids onto current trips via ${currentByCourse.size} runs.`);
+
+    // The signature-based state this replaces is no longer read by anything.
+    fs.rmSync(path.join(dataDir, 'previous_trips.json'), { force: true });
 }
 
 async function main(): Promise<void> {
@@ -354,9 +340,6 @@ async function main(): Promise<void> {
     // dayFlags is a bitmask over `days`.
     const dayPos = new Map(days.map((d, i) => [d.str, i]));
     const tripWindows: Record<string, TripWindow> = {};
-    const currentTripSignatures: Record<string, string> = {};
-    const signatureToNewTripId = new Map<string, string>();
-    const currentTripRouteShort: Record<string, string> = {};
 
     for (const [tripId, stops] of tripsData) {
         stops.sort((a, b) => a.stop_sequence - b.stop_sequence);
@@ -369,12 +352,6 @@ async function main(): Promise<void> {
         for (const d of activeTrips.get(tripId)!.dates) flags |= 1 << dayPos.get(d.str)!;
         tripWindows[tripId] = [timeToMinutes(startTime), timeToMinutes(endTime), flags];
 
-        const routeShort = routes.get(activeTrips.get(tripId)!.route_id)?.name || activeTrips.get(tripId)!.route_id;
-        currentTripRouteShort[tripId] = routeShort;
-        // The '0' is a frozen field of the stored signature format; see generateAliases.
-        const sig = `${routeShort}|0|${startTime}|${endTime}|${first.stop_id}|${last.stop_id}`;
-        currentTripSignatures[tripId] = sig;
-        if (!signatureToNewTripId.has(sig)) signatureToNewTripId.set(sig, tripId);
     }
 
     // --- SAFETY CHECK ---
@@ -385,8 +362,7 @@ async function main(): Promise<void> {
     writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
     console.log(`Wrote ${features.length} stops`);
 
-    console.log('Generating trip signatures and checking for legacy trip_aliases...');
-    generateAliases(DATA_DIR, currentTripSignatures, signatureToNewTripId, currentTripRouteShort);
+    generateAliases(DATA_DIR, readCourses(zip), activeTrips, days[0]!.str);
 
     // --- DEPARTURES ---
     sortDepartures(departuresByStop);
