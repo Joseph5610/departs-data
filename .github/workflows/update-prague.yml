@@ -51,6 +51,11 @@ jobs:
           OUT_DIR: ${{ github.workspace }}/out/prague
           GOLEMIO_API_KEY: ${{ secrets.GOLEMIO_API_KEY }}
 
+      - name: Build connections from PID GTFS
+        run: node scripts/build-prague-connections.ts
+        env:
+          OUT_DIR: ${{ github.workspace }}/out/prague
+
       # The data branch holds exactly one commit, so publishing amends it. --force-with-lease
       # refuses if the branch moved while we were building; on a lease failure we re-apply this
       # city's output onto the new tip and retry, so a concurrent run is never overwritten.

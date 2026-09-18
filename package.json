@@ -8,6 +8,7 @@
     "build:presov": "node scripts/build-presov.ts",
     "build:duk": "node scripts/build-duk.ts",
     "build:prague": "node scripts/build-prague.ts",
+    "build:prague-connections": "node scripts/build-prague-connections.ts",
     "build:prague-pos": "node scripts/build-prague-pos.ts"
   },
   "repository": {

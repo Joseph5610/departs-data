@@ -1,11 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type AdmZip from 'adm-zip';
-import type { DepartureRow, ParentChildMap, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
+import type { ContinuationRow, DepartureRow, ParentChildMap, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
 import { departuresChunkId, shapeChunkId, tripChunkId } from './lib/contract.ts';
 import { fetchJson, fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { clusterByDistance } from './lib/cluster.ts';
+import { readServiceDates } from './lib/calendar.ts';
 import { fanOutColocated, round6 } from './lib/geo.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
 
@@ -54,6 +55,9 @@ const CONFIG = {
     ],
     DEFAULT_ROUTE_COLOR: '#999999',
 
+    /** How long after arriving a vehicle may leave again as the trip its stop headsign names. */
+    CONTINUATION_WINDOW_MINS: 20,
+
     /** Abort thresholds guarding against an empty or truncated upstream feed. */
     MIN_DEPARTURE_STOPS: 200,
     MIN_ACTIVE_TRIPS: 500,
@@ -61,16 +65,12 @@ const CONFIG = {
 
 const DATA_DIR = outputDir(CONFIG.CITY);
 
-const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
-
 /** Columns this build depends on; anything absent aborts at the header rather than downstream. */
 const TABLES = {
     feedInfo: { required: [], optional: ['feed_version', 'feed_start_date', 'feed_end_date'], fileOptional: true },
     routes: { required: ['route_id', 'route_type'], optional: ['route_short_name', 'route_long_name', 'route_color'] },
     trips: { required: ['trip_id', 'route_id', 'service_id', 'trip_headsign'], optional: ['direction_id', 'wheelchair_accessible', 'shape_id'] },
-    calendar: { required: ['service_id', 'start_date', 'end_date', ...WEEKDAYS], fileOptional: true },
-    calendarDates: { required: ['service_id', 'date', 'exception_type'], fileOptional: true },
-    stopTimes: { required: ['trip_id', 'stop_id', 'stop_sequence', 'arrival_time', 'departure_time'], optional: ['pickup_type', 'drop_off_type'] },
+    stopTimes: { required: ['trip_id', 'stop_id', 'stop_sequence', 'arrival_time', 'departure_time'], optional: ['pickup_type', 'drop_off_type', 'stop_headsign'] },
     stops: { required: ['stop_id', 'stop_name'], optional: ['stop_lat', 'stop_lon', 'location_type', 'zone_id'] },
     shapes: { required: ['shape_id', 'shape_pt_sequence', 'shape_pt_lat', 'shape_pt_lon'], fileOptional: true },
 } as const;
@@ -91,6 +91,21 @@ function cleanStopName(raw: string): string {
 /** Grouping key tolerant of the feed's inconsistent spacing ("Rázc. Cemjata" vs "Rázc.Cemjata"). */
 function stationKey(name: string): string {
     return name.toLowerCase().replace(/\.\s*/g, '.').replace(/\s+/g, ' ').trim();
+}
+
+interface StopHeadsign { headsign: string | null; continues: { line: string; headsign: string } | null }
+
+/**
+ * Splits a DPMP stop headsign. Plain text replaces the trip headsign from that stop on
+ * ("PODHRADÍK SEVERNÁ-ČIERNY MOST"); `->5 Sabinovská` means the vehicle continues as line 5, and
+ * the text before the arrow, when present, is the destination of the current trip.
+ */
+function parseStopHeadsign(raw: string): StopHeadsign {
+    const text = raw.trim();
+    if (!text) return { headsign: null, continues: null };
+    const m = text.match(/^(.*?)\s*->\s*(\S+)\s+(.+)$/);
+    if (!m) return { headsign: text, continues: null };
+    return { headsign: m[1]!.trim() || null, continues: { line: m[2]!, headsign: m[3]!.trim() } };
 }
 
 function slugify(name: string): string {
@@ -151,28 +166,8 @@ async function main(): Promise<void> {
 
     // --- CALENDAR ---
     const days = getServiceDays(CONFIG.TIMEZONE, CONFIG.DAY_OFFSETS);
-    const dayByStr = new Map(days.map(d => [d.str, d]));
     const serviceDates = new Map<string, Set<ServiceDay>>();
-    const addServiceDate = (serviceId: string, day: ServiceDay) => {
-        let set = serviceDates.get(serviceId);
-        if (!set) { set = new Set(); serviceDates.set(serviceId, set); }
-        set.add(day);
-    };
-
-    for (const cal of readTable(zip, 'calendar.txt', TABLES.calendar)) {
-        const serviceId = normalizeId(cal.service_id);
-        for (const day of days) {
-            if (day.str < cal.start_date || day.str > cal.end_date) continue;
-            if (cal[WEEKDAYS[day.weekday]!] === '1') addServiceDate(serviceId, day);
-        }
-    }
-    for (const ex of readTable(zip, 'calendar_dates.txt', TABLES.calendarDates)) {
-        const day = dayByStr.get(ex.date);
-        if (!day) continue;
-        const serviceId = normalizeId(ex.service_id);
-        if (ex.exception_type === '1') addServiceDate(serviceId, day);
-        else if (ex.exception_type === '2') serviceDates.get(serviceId)?.delete(day);
-    }
+    for (const [rawId, dates] of readServiceDates(zip, days)) serviceDates.set(normalizeId(rawId), dates);
 
     const activeTrips = new Map<string, ActiveTrip>();
     for (const [tripId, t] of trips) {
@@ -202,6 +197,17 @@ async function main(): Promise<void> {
     const stopRoutes = new Map<string, Set<string>>();
     const departuresByStop = new Map<string, DepartureRow[]>();
     const tripsData = new Map<string, StopTime[]>();
+
+    const parsedHeadsigns = new Map<string, StopHeadsign>();
+    const parseCached = (raw: string): StopHeadsign => {
+        let parsed = parsedHeadsigns.get(raw);
+        if (!parsed) { parsed = parseStopHeadsign(raw); parsedHeadsigns.set(raw, parsed); }
+        return parsed;
+    };
+    /** The line and direction each trip continues as, from its stop headsigns. */
+    const tripContinues = new Map<string, { line: string; headsign: string }>();
+    /** Departure rows that announce a continuation, filled once continuations are resolved. */
+    const pendingContinuations: Array<{ deps: DepartureRow[]; index: number; tripId: string }> = [];
 
     for (const st of stopTimesCsv) {
         const tripId = normalizeId(st.trip_id);
@@ -233,13 +239,18 @@ async function main(): Promise<void> {
             is_request_stop: isRequestStop,
         });
 
+        const stopHeadsign = parseCached(st.stop_headsign ?? '');
+        if (stopHeadsign.continues) tripContinues.set(tripId, stopHeadsign.continues);
+
         if (isNoPickup || isLastStop) continue;
 
         const offsetMs = timeToOffsetMs(st.departure_time);
+        const headsign = stopHeadsign.headsign ?? activeTrip.headsign;
         let deps = departuresByStop.get(st.stop_id);
         if (!deps) { deps = []; departuresByStop.set(st.stop_id, deps); }
         for (const day of activeTrip.dates) {
-            deps.push([tripId, activeTrip.route_id, activeTrip.headsign, day.midnight + offsetMs, activeTrip.wheelchair_accessible, isRequestStop ? 1 : 0]);
+            if (stopHeadsign.continues) pendingContinuations.push({ deps, index: deps.length, tripId });
+            deps.push([tripId, activeTrip.route_id, headsign, day.midnight + offsetMs, activeTrip.wheelchair_accessible, isRequestStop ? 1 : 0]);
         }
     }
 
@@ -354,6 +365,60 @@ async function main(): Promise<void> {
     writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, tripShapes });
     console.log(`Wrote ${stations.length} stations over ${platforms.length} platforms`);
 
+    // --- CONTINUATIONS: the feed has no block_id, so match the named line leaving the same stop ---
+    // Services are day types, so a trip on the same service_id runs on exactly the same days.
+    const stopNameById = new Map(stopsCsv.map(s => [s.stop_id, stationKey(cleanStopName(s.stop_name))]));
+    const routeIdByName = new Map<string, string>();
+    for (const [routeId, r] of routes) routeIdByName.set(r.name, routeId);
+
+    const bySequence = (a: StopTime, b: StopTime) => a.stop_sequence - b.stop_sequence;
+    const tripStarts = new Map<string, Array<[number, string]>>();
+    for (const [tripId, stops] of tripsData) {
+        const first = stops.reduce((a, b) => (bySequence(a, b) <= 0 ? a : b));
+        const trip = activeTrips.get(tripId)!;
+        const key = `${stopNameById.get(first.stop_id)}|${routes.get(trip.route_id)?.name}|${trip.service_id}`;
+        let list = tripStarts.get(key);
+        if (!list) { list = []; tripStarts.set(key, list); }
+        list.push([timeToOffsetMs(first.departure_time), tripId]);
+    }
+    for (const list of tripStarts.values()) list.sort((a, b) => a[0] - b[0]);
+
+    const continuationOf = new Map<string, ContinuationRow>();
+    const windowMs = CONFIG.CONTINUATION_WINDOW_MINS * 60_000;
+    let matched = 0, ambiguous = 0;
+    for (const [tripId, next] of tripContinues) {
+        const stops = tripsData.get(tripId)!;
+        const last = stops.reduce((a, b) => (bySequence(a, b) >= 0 ? a : b));
+        const arrivalMs = timeToOffsetMs(last.arrival_time || last.departure_time);
+        const key = `${stopNameById.get(last.stop_id)}|${next.line}|${activeTrips.get(tripId)!.service_id}`;
+        let found: [number, string] | undefined;
+        let candidates = 0;
+        for (const start of tripStarts.get(key) ?? []) {
+            if (start[0] < arrivalMs) continue;
+            if (start[0] - arrivalMs > windowMs) break;
+            found ??= start;
+            candidates++;
+        }
+        if (found) matched++;
+        if (candidates > 1) ambiguous++;
+        const nextStops = found ? tripsData.get(found[1])! : null;
+        continuationOf.set(tripId, [
+            found ? found[1] : null,
+            found ? activeTrips.get(found[1])!.route_id : (routeIdByName.get(next.line) ?? null),
+            next.line,
+            next.headsign,
+            nextStops ? nextStops.reduce((a, b) => (bySequence(a, b) <= 0 ? a : b)).departure_time : null,
+        ]);
+    }
+    console.log(`Continuations: ${tripContinues.size} announced, ${matched} matched to a trip (${ambiguous} with several candidates, earliest kept)`);
+
+    for (const { deps, index, tripId } of pendingContinuations) {
+        const continues = continuationOf.get(tripId);
+        if (!continues) continue;
+        const [id, routeId, headsign, ts, wheelchair, isRequest] = deps[index]!;
+        deps[index] = [id, routeId, headsign, ts, wheelchair, isRequest, { continues }];
+    }
+
     // --- DEPARTURES ---
     sortDepartures(departuresByStop);
     const departuresChunks = chunkBy(departuresByStop, departuresChunkId);
@@ -364,6 +429,8 @@ async function main(): Promise<void> {
     const platformById = new Map(platforms.map(p => [p.stop_id, p]));
     const tripStops = new Map<string, TripStop[]>();
     for (const [tripId, stops] of tripsData) {
+        const continues = continuationOf.get(tripId);
+        const lastSequence = continues ? Math.max(...stops.map(s => s.stop_sequence)) : -1;
         tripStops.set(tripId, stops.map((s): TripStop => {
             const node = platformById.get(s.stop_id);
             return {
@@ -376,6 +443,7 @@ async function main(): Promise<void> {
                 is_passed: false,
                 zone_id: node?.zone_id || null,
                 is_request_stop: s.is_request_stop,
+                ...(continues && s.stop_sequence === lastSequence ? { continues_as: continues } : {}),
             };
         }));
     }

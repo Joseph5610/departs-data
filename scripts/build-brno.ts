@@ -2,11 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import https from 'node:https';
 import type AdmZip from 'adm-zip';
-import type { DepartureRow, ParentChildMap, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
+import type { DepartureRow, FeederRow, ParentChildMap, RouteInfo, StopFeature, TripConnection, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
 import { departuresChunkId, shapeChunkId, tripChunkId } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { fanOutColocated } from './lib/geo.ts';
+import { readServiceDates } from './lib/calendar.ts';
+import { readHeldConnections, tripStopKey } from './lib/connections.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
 
 /**
@@ -38,6 +40,9 @@ const CONFIG = {
      */
     COURSE_GENERATIONS: 2,
 
+    /** Connections held for less than this are planned only and not emitted. */
+    MIN_CONNECTION_WAIT_S: 1,
+
     /** Abort thresholds guarding against an empty or truncated upstream feed. */
     MIN_DEPARTURE_STOPS: 1000,
     MIN_ACTIVE_TRIPS: 5000,
@@ -45,14 +50,10 @@ const CONFIG = {
 
 const DATA_DIR = outputDir(CONFIG.CITY);
 
-const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
-
 /** Columns this build depends on; anything absent aborts at the header rather than downstream. */
 const TABLES = {
     routes: { required: ['route_id', 'route_type', 'route_short_name'], optional: ['route_color'] },
     trips: { required: ['trip_id', 'route_id', 'service_id', 'trip_headsign'], optional: ['direction_id', 'wheelchair_accessible'] },
-    calendar: { required: ['service_id', 'start_date', 'end_date', ...WEEKDAYS], fileOptional: true },
-    calendarDates: { required: ['service_id', 'date', 'exception_type'], fileOptional: true },
     stopTimes: { required: ['trip_id', 'stop_id', 'stop_sequence', 'arrival_time', 'departure_time'], optional: ['pickup_type', 'drop_off_type'] },
     stops: { required: ['stop_id', 'stop_name'], optional: ['stop_lat', 'stop_lon', 'location_type', 'parent_station', 'platform_code', 'zone_id'] },
 } as const;
@@ -223,26 +224,7 @@ async function main(): Promise<void> {
 
     // --- CALENDAR ---
     const days = getServiceDays(CONFIG.TIMEZONE, CONFIG.DAY_OFFSETS);
-    const dayByStr = new Map(days.map(d => [d.str, d]));
-    const serviceDates = new Map<string, Set<ServiceDay>>();
-    const addServiceDate = (serviceId: string, day: ServiceDay) => {
-        let set = serviceDates.get(serviceId);
-        if (!set) { set = new Set(); serviceDates.set(serviceId, set); }
-        set.add(day);
-    };
-
-    for (const cal of readTable(zip, 'calendar.txt', TABLES.calendar)) {
-        for (const day of days) {
-            if (day.str < cal.start_date || day.str > cal.end_date) continue;
-            if (cal[WEEKDAYS[day.weekday]!] === '1') addServiceDate(cal.service_id, day);
-        }
-    }
-    for (const ex of readTable(zip, 'calendar_dates.txt', TABLES.calendarDates)) {
-        const day = dayByStr.get(ex.date);
-        if (!day) continue;
-        if (ex.exception_type === '1') addServiceDate(ex.service_id, day);
-        else if (ex.exception_type === '2') serviceDates.get(ex.service_id)?.delete(day);
-    }
+    const serviceDates = readServiceDates(zip, days);
 
     const activeTrips = new Map<string, ActiveTrip>();
     for (const [tripId, t] of trips) {
@@ -257,6 +239,13 @@ async function main(): Promise<void> {
         }
     }
     console.log(`Found ${activeTrips.size} active trips for next 48h`);
+
+    const courseOf = readCourses(zip);
+    const { outgoing, incoming } = readHeldConnections(zip, tripId => activeTrips.has(tripId), CONFIG.MIN_CONNECTION_WAIT_S);
+    /** Scheduled times at the stops that take part in a connection. */
+    const connectionTimes = new Map<string, { arrival: string; departure: string }>();
+    /** Departure rows that wait for feeders, filled once every feeder arrival is known. */
+    const pendingFeeders: Array<{ deps: DepartureRow[]; index: number; day: ServiceDay; key: string }> = [];
 
     // --- STOP TIMES ---
     const stopTimesCsv = readTable(zip, 'stop_times.txt', TABLES.stopTimes);
@@ -288,6 +277,10 @@ async function main(): Promise<void> {
         }
 
         const activeTrip = activeTrips.get(st.trip_id);
+        const stKey = tripStopKey(st.trip_id, st.stop_id);
+        if (outgoing.has(stKey) || incoming.has(stKey)) {
+            connectionTimes.set(stKey, { arrival: st.arrival_time || st.departure_time, departure: st.departure_time || st.arrival_time });
+        }
         if (!activeTrip || !st.departure_time) continue;
 
         let stops = tripsData.get(st.trip_id);
@@ -305,7 +298,9 @@ async function main(): Promise<void> {
         const offsetMs = timeToOffsetMs(st.departure_time);
         let deps = departuresByStop.get(st.stop_id);
         if (!deps) { deps = []; departuresByStop.set(st.stop_id, deps); }
+        const waitsForFeeders = incoming.has(stKey);
         for (const day of activeTrip.dates) {
+            if (waitsForFeeders) pendingFeeders.push({ deps, index: deps.length, day, key: stKey });
             deps.push([st.trip_id, activeTrip.route_id, activeTrip.headsign, day.midnight + offsetMs, activeTrip.wheelchair_accessible, isRequestStop ? 1 : 0]);
         }
     }
@@ -393,9 +388,31 @@ async function main(): Promise<void> {
     writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
     console.log(`Wrote ${features.length} stops`);
 
-    const tripAliases = generateAliases(DATA_DIR, readCourses(zip), activeTrips, days[0]!.str);
+    const tripAliases = generateAliases(DATA_DIR, courseOf, activeTrips, days[0]!.str);
 
     // --- DEPARTURES ---
+    // A connection lists every calendar variant of the feeder run; keep the one running that day.
+    let feederRows = 0;
+    for (const { deps, index, day, key } of pendingFeeders) {
+        const feeders: FeederRow[] = [];
+        const seenRuns = new Set<string>();
+        for (const c of incoming.get(key)!) {
+            const feeder = activeTrips.get(c.fromTrip)!;
+            const arrival = connectionTimes.get(tripStopKey(c.fromTrip, c.fromStop))?.arrival;
+            if (!arrival || !feeder.dates.includes(day)) continue;
+            const run = courseOf.get(c.fromTrip) ?? c.fromTrip;
+            if (seenRuns.has(run)) continue;
+            seenRuns.add(run);
+            feeders.push([c.fromTrip, feeder.route_id, day.midnight + timeToOffsetMs(arrival), c.minTransferS, c.maxWaitS]);
+        }
+        if (feeders.length === 0) continue;
+        feeders.sort((a, b) => a[2] - b[2]);
+        const [tripId, routeId, headsign, ts, wheelchair, isRequest] = deps[index]!;
+        deps[index] = [tripId, routeId, headsign, ts, wheelchair, isRequest, { feeders }];
+        feederRows++;
+    }
+    console.log(`Attached feeders to ${feederRows} departures`);
+
     sortDepartures(departuresByStop);
     const departuresChunks = chunkBy(departuresByStop, departuresChunkId);
     writeChunks(path.join(DATA_DIR, 'departures'), departuresChunks);
@@ -409,10 +426,26 @@ async function main(): Promise<void> {
         zone_id: f.properties.zone_id,
     }]));
 
+    const connectionsAt = (tripId: string, stopId: string): TripConnection[] | undefined => {
+        const list = outgoing.get(tripStopKey(tripId, stopId));
+        if (!list) return undefined;
+        const out: TripConnection[] = [];
+        for (const c of list) {
+            const departure = connectionTimes.get(tripStopKey(c.toTrip, c.toStop))?.departure;
+            const onward = activeTrips.get(c.toTrip)!;
+            if (departure) out.push([c.toTrip, onward.route_id, onward.headsign, departure, c.minTransferS, c.maxWaitS]);
+        }
+        out.sort((a, b) => timeToOffsetMs(a[3]) - timeToOffsetMs(b[3]));
+        return out.length > 0 ? out : undefined;
+    };
+
+    let tripConnections = 0;
     const tripStops = new Map<string, TripStop[]>();
     for (const [tripId, stops] of tripsData) {
         tripStops.set(tripId, stops.map((s): TripStop => {
             const node = stopNodes.get(s.stop_id);
+            const connections = connectionsAt(tripId, s.stop_id);
+            if (connections) tripConnections += connections.length;
             return {
                 stop_id: s.stop_id,
                 name: node?.name || s.stop_id,
@@ -423,9 +456,11 @@ async function main(): Promise<void> {
                 is_passed: false,
                 zone_id: node?.zone_id || null,
                 is_request_stop: s.is_request_stop,
+                ...(connections ? { connections } : {}),
             };
         }));
     }
+    console.log(`Attached ${tripConnections} onward connections to trip stops`);
     const tripChunks = chunkBy(tripStops, tripChunkId);
     writeChunks(path.join(DATA_DIR, 'trips'), tripChunks);
     console.log(`Wrote ${tripChunks.size} trip chunks for ${tripsData.size} trips`);
