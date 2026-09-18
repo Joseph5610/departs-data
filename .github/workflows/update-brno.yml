@@ -5,6 +5,11 @@ on:
     - cron: '19 1 * * *' # Every day at 01:19 UTC (03:19 CEST)
   workflow_dispatch: # Allow manual trigger
 
+concurrency:
+  # All builds force-push the same single-commit data branch, so they must not overlap.
+  group: data-branch
+  cancel-in-progress: false
+
 jobs:
   update-data:
     runs-on: ubuntu-latest
@@ -12,28 +17,43 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout scripts
         uses: actions/checkout@v5
+
+      - name: Checkout published data
+        uses: actions/checkout@v5
+        with:
+          ref: data
+          path: data-branch
+          fetch-depth: 1
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Typecheck
+        run: npm run typecheck
+
       - name: Download and Process GTFS
-        run: node scripts/build-brno.mjs
+        run: node scripts/build-brno.ts
         env:
+          OUT_DIR: ${{ github.workspace }}/data-branch/brno
           LISSY_API_TOKEN: ${{ secrets.LISSY_API_TOKEN }}
 
-      # Other data workflows push to the same branch; start from their latest commit.
-      - name: Rebase onto the latest data
-        run: git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com pull --rebase --autostash origin ${{ github.ref_name }}
-
-      - name: Commit and Push changes
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "feat: automated GTFS data update with chunking"
-          file_pattern: "brno/"
+      # The data branch holds exactly one commit: amend it so no history accumulates.
+      - name: Publish data
+        working-directory: data-branch
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@users.noreply.github.com
+          git add -A brno
+          if git diff --cached --quiet; then
+            echo "No data change; nothing to publish."
+            exit 0
+          fi
+          git commit --amend --no-edit
+          git push --force origin data

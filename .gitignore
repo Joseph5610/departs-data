@@ -1,2 +1,8 @@
 node_modules/
 scratch/
+
+# Published data lives on the `data` branch; local builds write here but must not be committed.
+brno/
+duk/
+presov/
+prague/

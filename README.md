@@ -8,19 +8,25 @@ The data generated here is served publicly via `https://data.departs.app`.
 
 ## 🏗 Repository Structure
 
-To maintain a clean and scalable pipeline, the repository is strictly divided into executable scripts and static data outputs:
+Scripts and published data live on separate branches.
 
-- `/scripts` - Contains Node.js scripts used to fetch and process data.
-- `/brno` - Output directory containing chunked JSON files for the Brno network.
-- `/prague` - Output directory containing enrichment JSON files for the Prague network.
-- `/presov` - Output directory containing chunked JSON files for the Prešov network.
-- `/duk` - Output directory containing chunked JSON files for the Ústecký kraj network.
+**`master`** — the pipeline:
+
+- `/scripts` - TypeScript build scripts, run directly by Node (no build step).
+- `/scripts/lib` - Shared pipeline code: chunk contract, service-day calendar, geometry, feed readers, output writers.
 - `/.github/workflows` - CI/CD pipelines that run the scripts on scheduled intervals.
+
+**`data`** — the published output, served at `https://data.departs.app` via GitHub Pages:
+
+- `/brno`, `/prague`, `/presov`, `/duk` - Chunked JSON per network.
+
+The `data` branch holds a single commit, which each workflow amends and force-pushes. Don't commit
+there by hand or branch from it.
 
 ## 🏙 City Data Pipelines
 
 ### 🇨🇿 Brno (IDS JMK)
-*Script:* `scripts/build-brno.mjs` | *Action:* `update-brno.yml` (Runs every 8 hours)
+*Script:* `scripts/build-brno.ts` | *Action:* `update-brno.yml` (Runs every 8 hours)
 
 The Brno transport authority (Kordis) provides a traditional GTFS `.zip` file. Because parsing millions of rows inside a Cloudflare Worker at runtime is impossible, we process it ahead of time:
 1. Downloads the latest `gtfs.zip` (only if the ETag changed).
@@ -31,7 +37,7 @@ The Brno transport authority (Kordis) provides a traditional GTFS `.zip` file. B
 This allows the main app to fetch only the exact bytes it needs for a specific stop instantly.
 
 ### 🇨🇿 Prague (PID)
-*Script:* `scripts/build-prague.mjs` | *Action:* `update-prague.yml` (Runs every 8 hours)
+*Script:* `scripts/build-prague.ts` | *Action:* `update-prague.yml` (Runs every 8 hours)
 
 Unlike Brno, Prague provides excellent real-time APIs (Golemio). However, we need structural "enrichment" data (e.g., mapping platform IDs to specific Metro lines or parent stations) that isn't available in real-time payloads.
 1. Fetches static stops definitions from the PID open data portal.
@@ -39,7 +45,7 @@ Unlike Brno, Prague provides excellent real-time APIs (Golemio). However, we nee
 3. Generates `stops-enrichment.json` which is aggressively cached by the `departs-app` edge workers.
 
 ### 🇸🇰 Prešov (DPMP)
-*Script:* `scripts/build-presov.mjs` | *Action:* `update-presov.yml` (Runs daily)
+*Script:* `scripts/build-presov.ts` | *Action:* `update-presov.yml` (Runs daily)
 
 DPMP publishes a monthly GTFS `.zip` via the Mesto Prešov ArcGIS portal. The output mirrors Brno's file set, with a few feed-specific steps:
 1. Strips the monthly `feed_version` prefix from trip and service ids.
@@ -48,7 +54,7 @@ DPMP publishes a monthly GTFS `.zip` via the Mesto Prešov ArcGIS portal. The ou
 4. Emits `trip_windows.json` (with `direction_id`) for yesterday, today and tomorrow, used to match the realtime CSV to trips.
 
 ### 🇨🇿 Ústecký kraj (DÚK)
-*Script:* `scripts/build-duk.mjs` | *Action:* `update-duk.yml` (Runs daily)
+*Script:* `scripts/build-duk.ts` | *Action:* `update-duk.yml` (Runs daily)
 
 The kraj currently publishes no GTFS, so timetables come from the national CIS JŘ export in JDF: bus lines (`portal.cisjr.cz/pub/JDF/JDF.zip`) and urban rail, i.e. trolleybuses, trams and funiculars (`portal.cisjr.cz/pub/draha/mestske/JDF.zip`). The output mirrors Prešov's file set:
 1. Keeps the kraj's lines: line numbers starting `51`, `52`, `55`–`59` (its licensing offices), tagged with the DÚK system code `30421` in `LinExt.txt`, or calling at any stop in one of its districts (PID and other cross-border lines).
@@ -71,16 +77,16 @@ To run the pipelines locally:
 npm install
 
 # Run Brno GTFS processing
-node scripts/build-brno.mjs
+npm run build:brno
 
 # Run Prešov GTFS processing
-node scripts/build-presov.mjs
+npm run build:presov
 
 # Run Ústecký kraj JDF processing
-node scripts/build-duk.mjs
+npm run build:duk
 
 # Run Prague enrichment sync
-node scripts/build-prague.mjs
+npm run build:prague
 ```
 
 ## 📄 License
