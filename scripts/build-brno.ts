@@ -125,7 +125,7 @@ function generateAliases(dataDir: string, currentTripSignatures: Record<string, 
                     } else if (oldTripId !== newTripId) {
                         newAliasesFromPrev[oldTripId] = newTripId; // rename
                     }
-                } else {
+                } else if (!(oldTripId in currentTripSignatures)) {
                     newAliasesFromPrev[oldTripId] = null; // dropped
                     droppedCount++;
                 }
@@ -135,11 +135,12 @@ function generateAliases(dataDir: string, currentTripSignatures: Record<string, 
             if (fs.existsSync(existingAliasesPath)) {
                 const existingAliases = JSON.parse(fs.readFileSync(existingAliasesPath, 'utf8')) as Record<string, string | null>;
                 for (const [veryOldId, prevId] of Object.entries(existingAliases)) {
+                    // A dropped id that the current export uses again is a live trip, not an alias.
+                    if (veryOldId in currentTripSignatures) continue;
                     if (prevId === null) {
                         tripAliases[veryOldId] = null;
                         continue;
                     }
-                    if (veryOldId in currentTripSignatures) continue;
                     if (prevId in newAliasesFromPrev) tripAliases[veryOldId] = newAliasesFromPrev[prevId]!;
                     else if (prevId in currentTripSignatures) tripAliases[veryOldId] = prevId; // Still valid in current GTFS
                     else tripAliases[veryOldId] = null; // Target no longer exists
@@ -151,8 +152,9 @@ function generateAliases(dataDir: string, currentTripSignatures: Record<string, 
                 if (!(prevId in tripAliases)) tripAliases[prevId] = newId;
             }
 
+            // An alias for a live trip id would make the app discard that trip's vehicles.
             for (const key of Object.keys(tripAliases)) {
-                if (tripAliases[key] === key) delete tripAliases[key];
+                if (tripAliases[key] === key || key in currentTripSignatures) delete tripAliases[key];
             }
 
             console.log(`Generated/Chained ${Object.keys(tripAliases).length} total trip aliases (${collisionCount} collisions fixed, ${droppedCount} dropped).`);
