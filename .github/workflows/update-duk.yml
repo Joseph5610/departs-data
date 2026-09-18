@@ -43,21 +43,42 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # The build reads some of its own previous output back (alias chains) and leaves files it
+      # did not regenerate in place, so stage a copy of what is published rather than an empty dir.
+      - name: Seed staging from published data
+        run: |
+          mkdir -p out
+          cp -a data-branch/duk out/duk
+
       - name: Download and Process JDF
         run: node scripts/build-duk.ts
         env:
-          OUT_DIR: ${{ github.workspace }}/data-branch/duk
+          OUT_DIR: ${{ github.workspace }}/out/duk
 
-      # The data branch holds exactly one commit: amend it so no history accumulates.
+      # The data branch holds exactly one commit, so publishing amends it. --force-with-lease
+      # refuses if the branch moved while we were building; on a lease failure we re-apply this
+      # city's output onto the new tip and retry, so a concurrent run is never overwritten.
       - name: Publish data
         working-directory: data-branch
         run: |
           git config user.name github-actions
           git config user.email github-actions@users.noreply.github.com
-          git add -A duk
-          if git diff --cached --quiet; then
-            echo "No data change; nothing to publish."
-            exit 0
-          fi
-          git commit --amend --no-edit
-          git push --force origin data
+          for attempt in 1 2 3; do
+            git fetch --depth=1 origin data
+            git reset -q --hard origin/data
+            rm -rf duk
+            cp -a "$GITHUB_WORKSPACE/out/duk" duk
+            git add -A duk
+            if git diff --cached --quiet; then
+              echo "No data change; nothing to publish."
+              exit 0
+            fi
+            git commit -q --amend --no-edit
+            if git push --force-with-lease=data:$(git rev-parse origin/data) origin data; then
+              echo "Published on attempt $attempt."
+              exit 0
+            fi
+            echo "Branch moved while building; retrying ($attempt)."
+          done
+          echo "Could not publish after 3 attempts." >&2
+          exit 1
