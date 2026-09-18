@@ -18,7 +18,7 @@ Scripts and published data live on separate branches.
 
 **`data`** — the published output, served at `https://data.departs.app` via GitHub Pages:
 
-- `/brno`, `/prague`, `/presov`, `/duk` - Chunked JSON per network.
+- `/brno`, `/prague`, `/presov`, `/duk` - Chunked JSON per network. Each has a `map-stops.json`: the final map stop list the app loads directly and `/api/<city>/stops` passes through unchanged.
 
 The `data` branch holds a single commit, which each workflow amends and force-pushes. Don't commit
 there by hand or branch from it.
@@ -33,6 +33,7 @@ The Brno transport authority (Kordis) provides a traditional GTFS `.zip` file. B
 2. Parses `routes`, `stops`, `trips`, `calendar`, and `stop_times`.
 3. Pre-calculates a rolling 48-hour window of all scheduled departures.
 4. Chunks the massive datasets into tiny `[stop_id].json` and `[trip_id].json` files.
+5. Writes `map-stops.json`, the final stop list with stations as centroids (every GTFS city does this through `writeCityFiles`).
 
 This allows the main app to fetch only the exact bytes it needs for a specific stop instantly.
 
@@ -41,8 +42,8 @@ This allows the main app to fetch only the exact bytes it needs for a specific s
 
 Unlike Brno, Prague provides excellent real-time APIs (Golemio). However, we need structural "enrichment" data (e.g., mapping platform IDs to specific Metro lines or parent stations) that isn't available in real-time payloads.
 1. Fetches static stops definitions from the PID open data portal.
-2. Formats and shrinks the data into a fast O(1) lookup map.
-3. Generates `stops-enrichment.json` which is aggressively cached by the `departs-app` edge workers.
+2. Formats and shrinks the data into a fast O(1) lookup map, `stops-enrichment.json`, which the `departs-app` Worker reads for departures and vehicle detail.
+3. Fetches every GTFS stop from Golemio (`GOLEMIO_API_KEY` Actions secret), enriches it with PID lines and names, groups platforms into stations and centroids, and writes the final `map-stops.json`.
 
 ### 🇸🇰 Prešov (DPMP)
 *Script:* `scripts/build-presov.ts` | *Action:* `update-presov.yml` (Runs daily)

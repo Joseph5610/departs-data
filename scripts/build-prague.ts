@@ -1,12 +1,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { outputDir } from './lib/emit.ts';
+import { outputDir, writeJson } from './lib/emit.ts';
+import { MAP_STOPS_FILE } from './lib/contract.ts';
+import { buildPragueMapStops, type GolemioStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
 
 /**
- * Prague (PID) stop enrichment.
+ * Prague (PID) stops.
  *
- * Golemio serves excellent realtime data but no structural metadata, so this shrinks the PID open
- * data stop list into an O(1) lookup keyed by GTFS id, which the edge workers cache aggressively.
+ * Writes `stops-enrichment.json`, an O(1) lookup of PID lines and names keyed by GTFS id that the
+ * Worker still reads for departures and vehicle detail, and `map-stops.json`, the final map stop
+ * list built from Golemio's GTFS stops and that enrichment.
  */
 const CONFIG = {
     CITY: 'prague',
@@ -14,6 +17,12 @@ const CONFIG = {
     OUTPUT_FILE: 'stops-enrichment.json',
     /** Abort threshold guarding against an empty or truncated upstream feed. */
     MIN_ENTRIES: 1000,
+    GOLEMIO_STOPS_URL: 'https://api.golemio.cz/v2/gtfs/stops',
+    GOLEMIO_PAGE_SIZE: 10000,
+    /** Pages are requested up to this offset; mirrors departs-app `GOLEMIO_CONFIG.STOPS_MAX_OFFSET`. */
+    GOLEMIO_MAX_OFFSET: 40000,
+    /** Abort threshold for Golemio's stop list, which currently holds about 25,000 stops. */
+    MIN_GOLEMIO_STOPS: 10000,
 } as const;
 
 interface PidLine { name: string; type: string; exitOnly?: boolean }
@@ -35,7 +44,7 @@ async function main(): Promise<void> {
     const data = await res.json() as { stopGroups?: PidGroup[] };
     console.log(`[SYNC] Received ${data.stopGroups?.length ?? 0} stop groups.`);
 
-    const enrichmentMap: Record<string, unknown> = {};
+    const enrichmentMap: Record<string, PidEnrichment & Record<string, unknown>> = {};
     for (const g of data.stopGroups ?? []) {
         for (const s of g.stops ?? []) {
             for (const id of s.gtfsIds ?? []) {
@@ -60,6 +69,44 @@ async function main(): Promise<void> {
     const outputFile = path.join(dataDir, CONFIG.OUTPUT_FILE);
     fs.writeFileSync(outputFile, JSON.stringify(enrichmentMap));
     console.log(`[SYNC] SUCCESS: Saved enrichment data to ${outputFile}`);
+
+    const golemioStops = await fetchGolemioStops();
+    const mapStops = buildPragueMapStops(golemioStops, enrichmentMap);
+    writeJson(dataDir, MAP_STOPS_FILE, mapStops);
+    console.log(`[SYNC] SUCCESS: Saved ${mapStops.features.length} map stops to ${path.join(dataDir, MAP_STOPS_FILE)}`);
+}
+
+/** Every page of Golemio's GTFS stop list, fetched in parallel. */
+async function fetchGolemioStops(): Promise<GolemioStopFeature[]> {
+    const apiKey = process.env.GOLEMIO_API_KEY;
+    if (!apiKey) throw new Error('GOLEMIO_API_KEY is not set.');
+
+    const offsets: number[] = [];
+    for (let offset = 0; offset < CONFIG.GOLEMIO_MAX_OFFSET; offset += CONFIG.GOLEMIO_PAGE_SIZE) offsets.push(offset);
+
+    console.log(`[SYNC] Fetching Golemio stops (${offsets.length} pages)...`);
+    const pages = await Promise.all(offsets.map(async (offset) => {
+        const url = `${CONFIG.GOLEMIO_STOPS_URL}?limit=${CONFIG.GOLEMIO_PAGE_SIZE}&offset=${offset}`;
+        const res = await fetch(url, { headers: { 'X-Access-Token': apiKey, Accept: 'application/json' } });
+        if (!res.ok) throw new Error(`Golemio stops page at offset ${offset} failed: ${res.status} ${res.statusText}`);
+        const body = await res.json() as { features?: unknown };
+        if (!Array.isArray(body.features)) throw new Error(`Golemio stops page at offset ${offset} has no features array.`);
+        return (body.features as unknown[]).filter(isGolemioStop);
+    }));
+
+    const stops = pages.flat();
+    console.log(`[SYNC] Received ${stops.length} Golemio stops.`);
+    if (stops.length < CONFIG.MIN_GOLEMIO_STOPS) {
+        throw new Error(`Suspiciously low number of Golemio stops (${stops.length}). Aborting save to protect existing data.`);
+    }
+    return stops;
+}
+
+function isGolemioStop(f: unknown): f is GolemioStopFeature {
+    if (f === null || typeof f !== 'object' || !('properties' in f) || !('geometry' in f)) return false;
+    const { properties, geometry } = f as { properties: unknown; geometry: unknown };
+    return properties !== null && typeof properties === 'object' && typeof (properties as { stop_id?: unknown }).stop_id === 'string'
+        && geometry !== null && typeof geometry === 'object' && Array.isArray((geometry as { coordinates?: unknown }).coordinates);
 }
 
 main().catch((err: unknown) => {

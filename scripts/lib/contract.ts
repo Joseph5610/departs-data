@@ -81,3 +81,39 @@ export interface StopFeature {
 }
 
 export type ParentChildMap = Record<string, string[]>;
+
+/** Mirrors `AppStopProperties` in departs-app `functions/_core/types.ts`: one stop as the map renders it. */
+export interface MapStopProperties {
+    stop_id: string;
+    stop_name: string;
+    platform_code?: string | null;
+    location_type: number;
+    parent_station: string | null;
+    zone_id: string | null;
+    is_centroid?: boolean;
+    is_drop_off_only?: true | undefined;
+    is_train?: 0 | 1;
+    metro_a?: 0 | 1;
+    metro_b?: 0 | 1;
+    metro_c?: 0 | 1;
+    metro_lines?: Array<{ name: string; route_color: string }> | undefined;
+    metro_color?: string | undefined;
+    metro_color_2?: string | undefined;
+    all_ids?: string[];
+    lines?: RouteInfo[];
+}
+
+export interface MapStopFeature {
+    type: 'Feature';
+    id?: string;
+    geometry: { type: 'Point'; coordinates: [number, number] };
+    properties: MapStopProperties;
+}
+
+/** `<city>/map-stops.json`: the final stop list, served unchanged by departs-app's `/api/<city>/stops`. */
+export interface MapStopCollection {
+    type: 'FeatureCollection';
+    features: MapStopFeature[];
+}
+
+export const MAP_STOPS_FILE = 'map-stops.json';
