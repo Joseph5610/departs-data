@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "typecheck": "tsc --noEmit",
+    "build:brno": "node scripts/build-brno.ts",
+    "build:presov": "node scripts/build-presov.ts",
+    "build:duk": "node scripts/build-duk.ts",
+    "build:prague": "node scripts/build-prague.ts",
+    "build:prague-pos": "node scripts/build-prague-pos.ts"
   },
   "repository": {
     "type": "git",
@@ -18,7 +23,11 @@
   },
   "homepage": "https://github.com/Joseph5610/departs-data#readme",
   "dependencies": {
-    "adm-zip": "^0.5.17",
-    "csv-parse": "^6.2.1"
+    "adm-zip": "^0.6.1",
+    "csv-parse": "^7.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.1",
+    "typescript": "^7.0.2"
   }
 }
