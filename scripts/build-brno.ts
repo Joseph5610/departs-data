@@ -138,11 +138,19 @@ function generateAliases(
         ? stored as Record<string, string>[]
         : (stored ? [stored as Record<string, string>] : []);
 
-    // Newest generation first, so a recent meaning wins over an older one for a recycled id.
-    const previousCourses: Record<string, string> = {};
-    for (const generation of previousGenerations) {
+    // The file also holds the generation this build is reproducing; decoding with it would map every
+    // id onto itself and leave a lagging feed pointing at the wrong trip.
+    const current = Object.fromEntries(courseOf);
+    const currentKey = JSON.stringify(current);
+    const olderGenerations = previousGenerations.filter(g => JSON.stringify(g) !== currentKey);
+
+    // An id may carry a different run in each generation; the newest reading that still redirects wins.
+    const knownCourses = new Map<string, string[]>();
+    for (const generation of olderGenerations) {
         for (const [tripId, course] of Object.entries(generation)) {
-            if (!(tripId in previousCourses)) previousCourses[tripId] = course;
+            let list = knownCourses.get(tripId);
+            if (!list) { list = []; knownCourses.set(tripId, list); }
+            if (!list.includes(course)) list.push(course);
         }
     }
 
@@ -155,15 +163,17 @@ function generateAliases(
         if (runsToday || !currentByCourse.has(course)) currentByCourse.set(course, tripId);
     }
 
+    // Prefer the reading that actually redirects: one resolving to the id itself is the current
+    // export's own meaning and would leave a lagging feed pointing at the wrong trip.
     const tripAliases: Record<string, string> = {};
-    for (const [legacyTripId, course] of Object.entries(previousCourses)) {
-        const current = currentByCourse.get(course);
-        if (current && current !== legacyTripId) tripAliases[legacyTripId] = current;
+    for (const [legacyTripId, courses] of knownCourses) {
+        for (const course of courses) {
+            const current = currentByCourse.get(course);
+            if (current && current !== legacyTripId) { tripAliases[legacyTripId] = current; break; }
+        }
     }
 
-    const current = Object.fromEntries(courseOf);
-    const generations = [current, ...previousGenerations.filter(g => JSON.stringify(g) !== JSON.stringify(current))]
-        .slice(0, CONFIG.COURSE_GENERATIONS);
+    const generations = [current, ...olderGenerations].slice(0, CONFIG.COURSE_GENERATIONS);
 
     fs.writeFileSync(path.join(dataDir, 'trip_aliases.json'), JSON.stringify(tripAliases));
     fs.writeFileSync(coursePath, JSON.stringify(generations));
