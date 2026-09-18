@@ -3,11 +3,11 @@ name: Update DÚK JDF Data
 on:
   schedule:
     - cron: '51 1 * * *' # Every day at 01:51 UTC (03:51 CEST); CIS JŘ republishes the export each evening
-  push: # Rebuild when the pipeline itself changes
+  push: # Rebuild when the build logic changes, but not for CI plumbing edits
     branches: [master]
     paths:
       - 'scripts/build-duk.ts'
-      - '.github/workflows/update-duk.yml'
+      - 'scripts/lib/**'
   workflow_dispatch: # Allow manual trigger
 
 concurrency:
