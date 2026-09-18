@@ -32,6 +32,11 @@ const CONFIG = {
     DEFAULT_ROUTE_COLOR: '#007DA8',
     /** KORDIS run identifier per trip, the only id stable across exports. */
     COURSE_FILE: 'trip_courses.json',
+    /**
+     * Exports kept in that file, so the feed can lag without losing the mapping. Build state only -
+     * the Worker never fetches it, it is read by the next build from the published data.
+     */
+    COURSE_GENERATIONS: 2,
 
     /** Abort thresholds guarding against an empty or truncated upstream feed. */
     MIN_DEPARTURE_STOPS: 1000,
@@ -126,9 +131,19 @@ function generateAliases(
     todayStr: string,
 ): void {
     const coursePath = path.join(dataDir, CONFIG.COURSE_FILE);
-    const previousCourses: Record<string, string> = fs.existsSync(coursePath)
-        ? JSON.parse(fs.readFileSync(coursePath, 'utf8')) as Record<string, string>
-        : {};
+    const stored: unknown = fs.existsSync(coursePath) ? JSON.parse(fs.readFileSync(coursePath, 'utf8')) : null;
+    // Older builds wrote a bare map; treat it as a single generation.
+    const previousGenerations: Record<string, string>[] = Array.isArray(stored)
+        ? stored as Record<string, string>[]
+        : (stored ? [stored as Record<string, string>] : []);
+
+    // Newest generation first, so a recent meaning wins over an older one for a recycled id.
+    const previousCourses: Record<string, string> = {};
+    for (const generation of previousGenerations) {
+        for (const [tripId, course] of Object.entries(generation)) {
+            if (!(tripId in previousCourses)) previousCourses[tripId] = course;
+        }
+    }
 
     // Prefer the trip running today where a run has variants across service days.
     const currentByCourse = new Map<string, string>();
@@ -145,9 +160,13 @@ function generateAliases(
         if (current && current !== legacyTripId) tripAliases[legacyTripId] = current;
     }
 
+    const current = Object.fromEntries(courseOf);
+    const generations = [current, ...previousGenerations.filter(g => JSON.stringify(g) !== JSON.stringify(current))]
+        .slice(0, CONFIG.COURSE_GENERATIONS);
+
     fs.writeFileSync(path.join(dataDir, 'trip_aliases.json'), JSON.stringify(tripAliases));
-    fs.writeFileSync(coursePath, JSON.stringify(Object.fromEntries(courseOf)));
-    console.log(`Mapped ${Object.keys(tripAliases).length} legacy trip ids onto current trips via ${currentByCourse.size} runs.`);
+    fs.writeFileSync(coursePath, JSON.stringify(generations));
+    console.log(`Mapped ${Object.keys(tripAliases).length} legacy trip ids onto current trips via ${currentByCourse.size} runs (${generations.length} export generations retained).`);
 
     // The signature-based state this replaces is no longer read by anything.
     fs.rmSync(path.join(dataDir, 'previous_trips.json'), { force: true });
