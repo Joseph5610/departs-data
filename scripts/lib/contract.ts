@@ -177,3 +177,20 @@ export type LiveOnwardRow = [string, string, string, string, string, number, num
 export type LiveFeederRow = [string, string, string, string, number, number, number];
 /** `[trip_id, line, route_type, headsign, departure_time]` */
 export type LiveContinuationRow = [string, string, string, string, string];
+
+/**
+ * `prague/metro-exits.json`: the metro car nearest to the way out at each platform. `keys` finds the
+ * platform from line, station and a neighbouring station (see `metroKey`), because live trip detail
+ * names stations but not platforms.
+ */
+export interface MetroExitsFile {
+    keys: Record<string, string>;
+    platforms: Record<string, MetroPlatformExits>;
+}
+
+export interface MetroPlatformExits {
+    /** `[exit name, signposted destination | null, cars for which it is the nearest exit]` */
+    exits: Array<[string, string | null, number[]]>;
+    /** `[exit name, cars]` with the shortest way out avoiding stairs and escalators. */
+    stepFree?: [string, number[]];
+}
