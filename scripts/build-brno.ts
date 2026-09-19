@@ -6,7 +6,7 @@ import type { DepartureRow, FeederRow, ParentChildMap, RouteInfo, StopFeature, T
 import { departuresChunkId, shapeChunkId, tripChunkId } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
-import { fanOutColocated } from './lib/geo.ts';
+import { distanceToLinesM, fanOutColocated } from './lib/geo.ts';
 import { readServiceDates } from './lib/calendar.ts';
 import { readHeldConnections, tripStopKey } from './lib/connections.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
@@ -31,6 +31,10 @@ const CONFIG = {
     COLOCATED_OFFSET_DEG: 0.00012,
     /** Trip-id range fetched per Lissy request. */
     SHAPE_BATCH_SIZE: 5000,
+    /** A stop counts as on a shape within this distance. */
+    SHAPE_STOP_RADIUS_M: 150,
+    /** Share of a trip's stops that must lie on a shape before the shape is attached to it. */
+    MIN_SHAPE_FIT: 0.9,
     DEFAULT_ROUTE_COLOR: '#007DA8',
     /** KORDIS run identifier per trip, the only id stable across exports. */
     COURSE_FILE: 'trip_courses.json',
@@ -472,7 +476,20 @@ async function main(): Promise<void> {
     } else {
         try {
             const tripShapes: Record<string, string> = {};
+            const tripShapeFit = new Map<string, number>();
             const allShapes = new Map<string, unknown>();
+            let rejected = 0;
+
+            const shapeFit = (lines: [number, number][][], tripId: string): number => {
+                const stops = tripsData.get(tripId);
+                if (!stops || stops.length === 0) return 0;
+                let on = 0;
+                for (const s of stops) {
+                    const node = stopNodes.get(s.stop_id);
+                    if (node && distanceToLinesM(node, lines) <= CONFIG.SHAPE_STOP_RADIUS_M) on++;
+                }
+                return on / stops.length;
+            };
 
             let maxTripId = 0;
             for (const tripId of activeTrips.keys()) {
@@ -488,13 +505,24 @@ async function main(): Promise<void> {
                 for (const item of res) {
                     const shapeIdStr = String(item.shape_id);
                     allShapes.set(shapeIdStr, item.shape);
-                    // Lissy reports trip ids from its own copy of the GTFS, which lags the current
-                    // export. Those ids get recycled, so trusting them attaches a shape to whatever
-                    // trip inherited the number - the same trap as the realtime feed.
+                    const lines = item.shape as [number, number][][];
+                    // Lissy's trip ids come from its own GTFS copy, which may or may not lag this export,
+                    // and ids are recycled - so the raw and aliased readings are both tried against the geometry.
                     for (const rawTripId of item.gtfs_trips) {
                         const raw = String(rawTripId);
-                        const resolved = tripAliases[raw] ?? raw;
-                        if (activeTrips.has(resolved)) tripShapes[resolved] = shapeIdStr;
+                        const alias = tripAliases[raw];
+                        let bestTrip: string | null = null;
+                        let bestFit = 0;
+                        for (const candidate of alias && alias !== raw ? [raw, alias] : [raw]) {
+                            if (!activeTrips.has(candidate)) continue;
+                            const fit = shapeFit(lines, candidate);
+                            if (fit > bestFit) { bestFit = fit; bestTrip = candidate; }
+                        }
+                        if (!bestTrip || bestFit < CONFIG.MIN_SHAPE_FIT) { rejected++; continue; }
+                        if (bestFit > (tripShapeFit.get(bestTrip) ?? 0)) {
+                            tripShapeFit.set(bestTrip, bestFit);
+                            tripShapes[bestTrip] = shapeIdStr;
+                        }
                     }
                 }
             }
@@ -507,7 +535,7 @@ async function main(): Promise<void> {
             console.log(`Largest shape chunk: ${(largest / 1024).toFixed(0)}KB`);
 
             fs.writeFileSync(path.join(DATA_DIR, 'trip_shapes.json'), JSON.stringify(tripShapes));
-            console.log(`Wrote trip_shapes.json mapping for ${Object.keys(tripShapes).length} trips`);
+            console.log(`Wrote trip_shapes.json mapping for ${Object.keys(tripShapes).length} trips (${rejected} Lissy trip ids matched no trip's stops)`);
         } catch (e) {
             console.error('Failed to fetch or process shapes, skipping shape generation.', e);
         }

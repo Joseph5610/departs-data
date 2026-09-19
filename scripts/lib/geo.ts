@@ -45,3 +45,21 @@ export function fanOutColocated(points: readonly Point[], offsetDeg: number): [n
     }
     return out;
 }
+
+/** Shortest distance in metres from `point` to any segment of `lines` (each a run of `[lon, lat]`). */
+export function distanceToLinesM(point: Point, lines: readonly (readonly [number, number])[][]): number {
+    let best = Infinity;
+    for (const line of lines) {
+        for (let i = 0; i < line.length; i++) {
+            const a = localXY(point, { lon: line[i]![0], lat: line[i]![1] });
+            const next = line[Math.min(i + 1, line.length - 1)]!;
+            const b = localXY(point, { lon: next[0], lat: next[1] });
+            const dx = b.x - a.x, dy = b.y - a.y;
+            const len2 = dx * dx + dy * dy;
+            const u = len2 === 0 ? 0 : Math.max(0, Math.min(1, -(a.x * dx + a.y * dy) / len2));
+            const d = Math.hypot(a.x + u * dx, a.y + u * dy);
+            if (d < best) best = d;
+        }
+    }
+    return best;
+}
