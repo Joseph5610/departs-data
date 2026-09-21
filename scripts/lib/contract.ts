@@ -177,3 +177,27 @@ export type LiveOnwardRow = [string, string, string, string, string, number, num
 export type LiveFeederRow = [string, string, string, string, number, number, number];
 /** `[trip_id, line, route_type, headsign, departure_time]` */
 export type LiveContinuationRow = [string, string, string, string, string];
+
+/** `tracks/<HH>.json`: where each trip running in that hour should be, for matching vehicles by schedule. */
+export const TRACKS_DIR = 'tracks';
+
+/** Coordinates are stored as integers at this scale, so a track file holds no decimal points. */
+export const TRACK_COORD_SCALE = 1_000_000;
+
+export const HOURS_PER_DAY = 24;
+
+/** Trips are written a little either side of the hours they run in, so a reader near an hour boundary still finds them. */
+export const TRACK_HOUR_PADDING_MINS = 15;
+
+/**
+ * One trip: `[arrival at its last stop in seconds, stop ids as indexes into the file's `stops`,
+ * departure seconds, latitudes, longitudes]`. The four arrays run parallel, one entry per located
+ * stop. Times and coordinates hold deltas: the first value is absolute, the rest are differences.
+ */
+export type TripTrack = [number, number[], number[], number[], number[]];
+
+/** Stop ids repeat across trips, so they are listed once and referenced by index. */
+export interface TripTracksFile {
+    stops: string[];
+    trips: Record<string, TripTrack>;
+}

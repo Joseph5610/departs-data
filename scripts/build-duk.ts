@@ -2,11 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import AdmZip from 'adm-zip';
 import type { DepartureRow, ParentChildMap, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { departuresChunkId, tripChunkId } from './lib/contract.ts';
+import { departuresChunkId, TRACKS_DIR, tripChunkId } from './lib/contract.ts';
 import { downloadLargeZip, fetchJson } from './lib/feed.ts';
 import { czechHolidays, formatTime, getServiceDays, type ServiceDay } from './lib/time.ts';
 import { distanceM, fanOutColocated, localXY, round6, type Point } from './lib/geo.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
+import { buildTripTracks } from './lib/tracks.ts';
 import {
     CALENDAR, LAYOUTS, NOT_VIA, PASSES, SYMBOL, TRIP_CODE_FIELDS, WEEKDAY_SYMBOLS,
     decodeJdf, jdfDate, jdfTime, parseRows,
@@ -756,6 +757,10 @@ async function main(): Promise<void> {
     const tripChunks = chunkBy(tripStops, tripChunkId);
     writeChunks(path.join(DATA_DIR, 'trips'), tripChunks);
     console.log(`Wrote ${tripChunks.size} trip chunks for ${activeTrips.size} trips`);
+
+    const tracks = buildTripTracks(tripStops, tripWindows);
+    const largestTrack = writeChunks(path.join(DATA_DIR, TRACKS_DIR), tracks);
+    console.log(`Wrote ${tracks.size} track files, largest ${(largestTrack / 1024).toFixed(0)}KB`);
     console.log('Done!');
 }
 
