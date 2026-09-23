@@ -74,7 +74,7 @@ jobs:
               echo "No data change; nothing to publish."
               exit 0
             fi
-            git commit -q --amend --no-edit
+            git commit -q --amend --no-edit --reset-author
             if git push --force-with-lease=data:$(git rev-parse origin/data) origin data; then
               echo "Published on attempt $attempt."
               exit 0
