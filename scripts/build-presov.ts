@@ -9,6 +9,8 @@ import { clusterByDistance } from './lib/cluster.ts';
 import { readServiceDates } from './lib/calendar.ts';
 import { fanOutColocated, round6 } from './lib/geo.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
+import { readStops } from './lib/stops.ts';
+import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
 
 /**
  * Prešov (DPMP) static GTFS build.
@@ -71,8 +73,6 @@ const TABLES = {
     routes: { required: ['route_id', 'route_type'], optional: ['route_short_name', 'route_long_name', 'route_color'] },
     trips: { required: ['trip_id', 'route_id', 'service_id', 'trip_headsign'], optional: ['direction_id', 'wheelchair_accessible', 'shape_id'] },
     stopTimes: { required: ['trip_id', 'stop_id', 'stop_sequence', 'arrival_time', 'departure_time'], optional: ['pickup_type', 'drop_off_type', 'stop_headsign'] },
-    stops: { required: ['stop_id', 'stop_name'], optional: ['stop_lat', 'stop_lon', 'location_type', 'zone_id'] },
-    shapes: { required: ['shape_id', 'shape_pt_sequence', 'shape_pt_lat', 'shape_pt_lon'], fileOptional: true },
 } as const;
 
 function routeColorFor(name: string): string {
@@ -179,9 +179,9 @@ async function main(): Promise<void> {
     console.log(`Found ${activeTrips.size} active trips across ${days.map(d => d.str).join(', ')}`);
 
     // --- STOPS (request flag lives in the name) ---
-    const stopsCsv = readTable(zip, 'stops.txt', TABLES.stops);
+    const stops = readStops(zip);
     const requestStopIds = new Set<string>();
-    for (const s of stopsCsv) {
+    for (const s of stops) {
         if (REQUEST_STOP_SUFFIX.test(s.stop_name)) requestStopIds.add(s.stop_id);
     }
 
@@ -256,14 +256,14 @@ async function main(): Promise<void> {
 
     // --- STATIONS: synthesise parents, since the feed ships platforms only ---
     const platforms: Platform[] = [];
-    for (const s of stopsCsv) {
-        if (Number(s.location_type || 0) !== 0 || !s.stop_lat || !s.stop_lon) continue;
+    for (const s of stops) {
+        if (s.location_type !== 0 || s.lat === null || s.lon === null) continue;
         platforms.push({
             stop_id: s.stop_id,
             name: cleanStopName(s.stop_name),
-            lat: Number(s.stop_lat),
-            lon: Number(s.stop_lon),
-            zone_id: s.zone_id || null,
+            lat: s.lat,
+            lon: s.lon,
+            zone_id: s.zone_id,
         });
     }
 
@@ -367,7 +367,7 @@ async function main(): Promise<void> {
 
     // --- CONTINUATIONS: the feed has no block_id, so match the named line leaving the same stop ---
     // Services are day types, so a trip on the same service_id runs on exactly the same days.
-    const stopNameById = new Map(stopsCsv.map(s => [s.stop_id, stationKey(cleanStopName(s.stop_name))]));
+    const stopNameById = new Map(stops.map(s => [s.stop_id, stationKey(cleanStopName(s.stop_name))]));
     const routeIdByName = new Map<string, string>();
     for (const [routeId, r] of routes) routeIdByName.set(r.name, routeId);
 
@@ -455,23 +455,11 @@ async function main(): Promise<void> {
     console.log(`Wrote ${tripChunks.size} trip chunks for ${tripsData.size} trips`);
 
     // --- SHAPE GEOMETRY ---
-    const shapePoints = new Map<string, [number, number, number][]>();
-    for (const pt of readTable(zip, 'shapes.txt', TABLES.shapes)) {
-        if (!neededShapes.has(pt.shape_id)) continue;
-        let pts = shapePoints.get(pt.shape_id);
-        if (!pts) { pts = []; shapePoints.set(pt.shape_id, pts); }
-        pts.push([Number(pt.shape_pt_sequence), Number(pt.shape_pt_lon), Number(pt.shape_pt_lat)]);
-    }
-
-    const roundShape = (x: number) => Number(x.toFixed(CONFIG.SHAPE_COORD_DECIMALS));
-    const shapeGeometry = new Map<string, [number, number][][]>();
-    for (const [shapeId, pts] of shapePoints) {
-        pts.sort((a, b) => a[0] - b[0]);
-        shapeGeometry.set(shapeId, [pts.map(([, lon, lat]) => [roundShape(lon), roundShape(lat)])]);
-    }
+    const shapeGeometry = readGtfsShapes(zip, neededShapes, { coordDecimals: CONFIG.SHAPE_COORD_DECIMALS });
     const shapeChunks = chunkBy(shapeGeometry, shapeChunkId);
     writeChunks(path.join(DATA_DIR, 'shape_chunks'), shapeChunks);
-    console.log(`Wrote ${shapePoints.size} shapes into ${shapeChunks.size} chunks`);
+    const largestShapeFile = writeShapeBuckets(DATA_DIR, tripShapes, shapeGeometry);
+    console.log(`Wrote ${shapeGeometry.size} shapes into ${shapeChunks.size} chunks and hashed buckets (largest ${(largestShapeFile / 1024).toFixed(0)}KB)`);
 
     if (modified) fs.writeFileSync(lastModifiedPath, modified);
     console.log('Done!');

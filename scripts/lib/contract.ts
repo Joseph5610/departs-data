@@ -18,10 +18,17 @@ export const CHUNKING = {
     DEPARTURE_BUCKET_COUNT: 1024,
     /** Files a trip's stops are hashed across (`trip_buckets/`); keeps each near 100KB. */
     TRIP_BUCKET_COUNT: 2048,
+    /** Files the trip -> shape_id index is hashed across (`trip_shape_buckets/`); read by the app. */
+    TRIP_SHAPE_BUCKET_COUNT: 512,
+    /** Files shape geometry is hashed across (`shape_buckets/`); read by the app. */
+    SHAPE_BUCKET_COUNT: 1024,
 } as const;
 
 export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
 export const TRIP_BUCKETS_DIR = 'trip_buckets';
+/** Mirrors departs-app `TRIP_SHAPES_CONFIG` in `src/config/constants.ts`. */
+export const TRIP_SHAPE_BUCKETS_DIR = 'trip_shape_buckets';
+export const SHAPE_BUCKETS_DIR = 'shape_buckets';
 
 const utf8 = new TextEncoder();
 
@@ -66,7 +73,23 @@ export function tripChunkId(tripId: string): string {
     return tripId.substring(0, CHUNKING.TRIP_CHUNK_PREFIX).toUpperCase();
 }
 
-/** shape_chunks/<bucket>.json */
+/** trip_shape_buckets/<bucket>.json */
+export function tripShapeBucketId(tripId: string): string {
+    return bucketOf(tripId, CHUNKING.TRIP_SHAPE_BUCKET_COUNT);
+}
+
+/** shape_buckets/<bucket>.json */
+export function shapeBucketId(shapeId: string): string {
+    return bucketOf(shapeId, CHUNKING.SHAPE_BUCKET_COUNT);
+}
+
+/** `[lon, lat]`, or `[lon, lat, shape_dist_traveled]` for networks whose vehicles report progress along the shape (Prague). */
+export type ShapePoint = [number, number] | [number, number, number];
+
+/** A shape as line segments; GTFS shapes have one, Lissy's may have several. */
+export type ShapeGeometry = ShapePoint[][];
+
+/** shape_chunks/<bucket>.json - superseded by `shapeBucketId`, still written until every app reads buckets. */
 export function shapeChunkId(shapeId: string): string {
     const numeric = parseInt(shapeId, 10);
     return String((Number.isNaN(numeric) ? 0 : Math.abs(numeric)) % CHUNKING.SHAPE_CHUNK_COUNT);

@@ -49,7 +49,6 @@ jobs:
         run: node scripts/build-prague.ts
         env:
           OUT_DIR: ${{ github.workspace }}/out/prague
-          GOLEMIO_API_KEY: ${{ secrets.GOLEMIO_API_KEY }}
 
       - name: Build connections from PID GTFS
         run: node scripts/build-prague-connections.ts

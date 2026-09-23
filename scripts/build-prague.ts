@@ -1,15 +1,19 @@
 import fs from 'node:fs';
+import type AdmZip from 'adm-zip';
 import path from 'node:path';
 import { outputDir, writeJson } from './lib/emit.ts';
 import { MAP_STOPS_FILE } from './lib/contract.ts';
-import { buildPragueMapStops, type GolemioStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
+import { fetchZip, readTable } from './lib/feed.ts';
+import { readStops } from './lib/stops.ts';
+import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
+import { buildPragueMapStops, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
 
 /**
  * Prague (PID) stops.
  *
  * Writes `stops-enrichment.json`, an O(1) lookup of PID lines and names keyed by GTFS id that the
- * Worker still reads for departures and vehicle detail, and `map-stops.json`, the final map stop
- * list built from Golemio's GTFS stops and that enrichment.
+ * Worker still reads for departures and vehicle detail, `map-stops.json`, the final map stop list
+ * built from the PID GTFS stops and that enrichment, and the route shapes the app reads directly.
  */
 const CONFIG = {
     CITY: 'prague',
@@ -17,12 +21,15 @@ const CONFIG = {
     OUTPUT_FILE: 'stops-enrichment.json',
     /** Abort threshold guarding against an empty or truncated upstream feed. */
     MIN_ENTRIES: 1000,
-    GOLEMIO_STOPS_URL: 'https://api.golemio.cz/v2/gtfs/stops',
-    GOLEMIO_PAGE_SIZE: 10000,
-    /** Pages are requested up to this offset; mirrors departs-app `GOLEMIO_CONFIG.STOPS_MAX_OFFSET`. */
-    GOLEMIO_MAX_OFFSET: 40000,
-    /** Abort threshold for Golemio's stop list, which currently holds about 25,000 stops. */
-    MIN_GOLEMIO_STOPS: 10000,
+    GTFS_URL: 'https://data.pid.cz/PID_GTFS.zip',
+    /** Abort threshold for the GTFS stop list, which currently holds about 20,000 stops. */
+    MIN_GTFS_STOPS: 10000,
+    /** Abort threshold for trips with a shape, currently about 87,000. */
+    MIN_SHAPED_TRIPS: 10000,
+    /** ~1m; the map line gains nothing finer. */
+    SHAPE_COORD_DECIMALS: 5,
+    /** Kilometres to the metre, the resolution Golemio reports a vehicle's progress in. */
+    SHAPE_DIST_DECIMALS: 3,
 } as const;
 
 interface PidLine { name: string; type: string; exitOnly?: boolean }
@@ -70,43 +77,75 @@ async function main(): Promise<void> {
     fs.writeFileSync(outputFile, JSON.stringify(enrichmentMap));
     console.log(`[SYNC] SUCCESS: Saved enrichment data to ${outputFile}`);
 
-    const golemioStops = await fetchGolemioStops();
-    const mapStops = buildPragueMapStops(golemioStops, enrichmentMap);
+    const zip = await fetchZip(CONFIG.GTFS_URL, 'GTFS_ZIP');
+    const gtfsStops = readGtfsStops(zip);
+    const mapStops = buildPragueMapStops(gtfsStops, enrichmentMap);
     writeJson(dataDir, MAP_STOPS_FILE, mapStops);
     console.log(`[SYNC] SUCCESS: Saved ${mapStops.features.length} map stops to ${path.join(dataDir, MAP_STOPS_FILE)}`);
+
+    writePragueShapes(zip, dataDir);
 }
 
-/** Every page of Golemio's GTFS stop list, fetched in parallel. */
-async function fetchGolemioStops(): Promise<GolemioStopFeature[]> {
-    const apiKey = process.env.GOLEMIO_API_KEY;
-    if (!apiKey) throw new Error('GOLEMIO_API_KEY is not set.');
+const isDigit = (c: string) => c >= '0' && c <= '9';
 
-    const offsets: number[] = [];
-    for (let offset = 0; offset < CONFIG.GOLEMIO_MAX_OFFSET; offset += CONFIG.GOLEMIO_PAGE_SIZE) offsets.push(offset);
+/**
+ * The order Golemio lists stops in (letters before digits, case ignored, then case), which decides
+ * the order of merged stop ids and the member a centroid is named after. Published ids are stored in
+ * users' favorites and links, so this must not change.
+ */
+function compareStopIds(a: string, b: string): number {
+    for (let i = 0; i < Math.min(a.length, b.length); i++) {
+        const ca = a[i]!, cb = b[i]!;
+        if (isDigit(ca) !== isDigit(cb)) return isDigit(ca) ? 1 : -1;
+        const la = ca.toLowerCase(), lb = cb.toLowerCase();
+        if (la !== lb) return la < lb ? -1 : 1;
+    }
+    if (a.length !== b.length) return a.length - b.length;
+    return a < b ? -1 : a > b ? 1 : 0;
+}
 
-    console.log(`[SYNC] Fetching Golemio stops (${offsets.length} pages)...`);
-    const pages = await Promise.all(offsets.map(async (offset) => {
-        const url = `${CONFIG.GOLEMIO_STOPS_URL}?limit=${CONFIG.GOLEMIO_PAGE_SIZE}&offset=${offset}`;
-        const res = await fetch(url, { headers: { 'X-Access-Token': apiKey, Accept: 'application/json' } });
-        if (!res.ok) throw new Error(`Golemio stops page at offset ${offset} failed: ${res.status} ${res.statusText}`);
-        const body = await res.json() as { features?: unknown };
-        if (!Array.isArray(body.features)) throw new Error(`Golemio stops page at offset ${offset} has no features array.`);
-        return (body.features as unknown[]).filter(isGolemioStop);
+/** Every stop in the PID GTFS as a point feature. */
+function readGtfsStops(zip: AdmZip): GtfsStopFeature[] {
+    const rows = readStops(zip).sort((a, b) => compareStopIds(a.stop_id, b.stop_id));
+    const stops = rows.map((s): GtfsStopFeature => ({
+        type: 'Feature',
+        geometry: { coordinates: [s.lon ?? 0, s.lat ?? 0], type: 'Point' },
+        properties: {
+            stop_id: s.stop_id,
+            stop_name: s.stop_name || null,
+            location_type: s.location_type,
+            parent_station: s.parent_station,
+            platform_code: s.platform_code,
+            zone_id: s.zone_id,
+        },
     }));
 
-    const stops = pages.flat();
-    console.log(`[SYNC] Received ${stops.length} Golemio stops.`);
-    if (stops.length < CONFIG.MIN_GOLEMIO_STOPS) {
-        throw new Error(`Suspiciously low number of Golemio stops (${stops.length}). Aborting save to protect existing data.`);
+    console.log(`[SYNC] Read ${stops.length} GTFS stops.`);
+    if (stops.length < CONFIG.MIN_GTFS_STOPS) {
+        throw new Error(`Suspiciously low number of GTFS stops (${stops.length}). Aborting save to protect existing data.`);
     }
     return stops;
 }
 
-function isGolemioStop(f: unknown): f is GolemioStopFeature {
-    if (f === null || typeof f !== 'object' || !('properties' in f) || !('geometry' in f)) return false;
-    const { properties, geometry } = f as { properties: unknown; geometry: unknown };
-    return properties !== null && typeof properties === 'object' && typeof (properties as { stop_id?: unknown }).stop_id === 'string'
-        && geometry !== null && typeof geometry === 'object' && Array.isArray((geometry as { coordinates?: unknown }).coordinates);
+const TRIPS_TABLE = { required: ['trip_id', 'shape_id'] } as const;
+
+/** Every trip's shape, with distances along it so the app can split the line at the vehicle. */
+function writePragueShapes(zip: AdmZip, dataDir: string): void {
+    const tripShapes: Record<string, string> = {};
+    const needed = new Set<string>();
+    for (const t of readTable(zip, 'trips.txt', TRIPS_TABLE)) {
+        if (!t.shape_id) continue;
+        tripShapes[t.trip_id] = t.shape_id;
+        needed.add(t.shape_id);
+    }
+    const tripCount = Object.keys(tripShapes).length;
+    if (tripCount < CONFIG.MIN_SHAPED_TRIPS) {
+        throw new Error(`Suspiciously low number of trips with a shape (${tripCount}). Aborting save to protect existing data.`);
+    }
+
+    const shapes = readGtfsShapes(zip, needed, { coordDecimals: CONFIG.SHAPE_COORD_DECIMALS, distDecimals: CONFIG.SHAPE_DIST_DECIMALS });
+    const largest = writeShapeBuckets(dataDir, tripShapes, shapes);
+    console.log(`[SYNC] SUCCESS: Saved ${shapes.size} shapes for ${tripCount} trips (largest file ${(largest / 1024).toFixed(0)}KB)`);
 }
 
 main().catch((err: unknown) => {

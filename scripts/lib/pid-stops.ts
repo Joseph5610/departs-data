@@ -1,8 +1,8 @@
 import type { MapStopCollection, MapStopFeature, MapStopProperties } from './contract.ts';
 import { getVehicleColor } from './pid-colors.ts';
 
-/** One Golemio `/v2/gtfs/stops` feature, as far as the build reads it. */
-export interface GolemioStopFeature {
+/** One PID GTFS `stops.txt` row as a point feature, as far as the build reads it. */
+export interface GtfsStopFeature {
     type: 'Feature';
     geometry: { type: 'Point'; coordinates: [number, number] };
     properties: {
@@ -22,18 +22,18 @@ export interface PidEnrichment {
 }
 
 /**
- * Builds Prague's final map stop list from Golemio's GTFS stops and the PID enrichment.
+ * Builds Prague's final map stop list from the PID GTFS stops and the PID enrichment.
  *
  * Ported from departs-app `functions/_adapters/golemio/services/stops/` (`StopsMapper.map` and
  * `grouping.ts`), which did this per request; the output must stay identical to what
  * `/api/prague/stops` returned.
  */
-export function buildPragueMapStops(rawStops: readonly GolemioStopFeature[], enrichmentMap: Readonly<Record<string, PidEnrichment>>): MapStopCollection {
+export function buildPragueMapStops(rawStops: readonly GtfsStopFeature[], enrichmentMap: Readonly<Record<string, PidEnrichment>>): MapStopCollection {
     return { type: 'FeatureCollection', features: processStops(enrichStops(rawStops, enrichmentMap)) };
 }
 
 /** Drops exit-only stops and attaches PID lines and names. */
-function enrichStops(rawStops: readonly GolemioStopFeature[], enrichmentMap: Readonly<Record<string, PidEnrichment>>): MapStopFeature[] {
+function enrichStops(rawStops: readonly GtfsStopFeature[], enrichmentMap: Readonly<Record<string, PidEnrichment>>): MapStopFeature[] {
     return rawStops
         .filter(f => {
             const enrichment = enrichmentMap[f.properties.stop_id];

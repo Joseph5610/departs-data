@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import https from 'node:https';
 import type AdmZip from 'adm-zip';
-import type { DepartureRow, FeederRow, ParentChildMap, RouteInfo, StopFeature, TripConnection, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
+import type { DepartureRow, FeederRow, ParentChildMap, RouteInfo, ShapeGeometry, StopFeature, TripConnection, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
 import { DEPARTURE_BUCKETS_DIR, departuresBucketId, departuresChunkId, parentIndex, shapeChunkId, TRIP_BUCKETS_DIR, tripBucketId, tripChunkId } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
@@ -10,6 +10,8 @@ import { distanceToLinesM, fanOutColocated } from './lib/geo.ts';
 import { readServiceDates } from './lib/calendar.ts';
 import { readHeldConnections, tripStopKey } from './lib/connections.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
+import { readStops } from './lib/stops.ts';
+import { writeShapeBuckets } from './lib/shapes.ts';
 
 /**
  * Brno (IDS JMK / KORDIS) static GTFS build.
@@ -59,7 +61,6 @@ const TABLES = {
     routes: { required: ['route_id', 'route_type', 'route_short_name'], optional: ['route_color'] },
     trips: { required: ['trip_id', 'route_id', 'service_id', 'trip_headsign'], optional: ['direction_id', 'wheelchair_accessible'] },
     stopTimes: { required: ['trip_id', 'stop_id', 'stop_sequence', 'arrival_time', 'departure_time'], optional: ['pickup_type', 'drop_off_type'] },
-    stops: { required: ['stop_id', 'stop_name'], optional: ['stop_lat', 'stop_lon', 'location_type', 'parent_station', 'platform_code', 'zone_id'] },
 } as const;
 
 interface Trip { route_id: string; headsign: string; service_id: string; wheelchair_accessible: number; direction_id: string }
@@ -310,36 +311,36 @@ async function main(): Promise<void> {
     }
 
     // --- STOPS ---
-    const stopsCsv = readTable(zip, 'stops.txt', TABLES.stops);
+    const stops = readStops(zip);
 
     // Physical stops where passengers can actually board; the rest are drop-off only.
     const validPhysicalStopIds = new Set<string>();
-    for (const s of stopsCsv) {
-        if (Number(s.location_type || 0) !== 0) continue;
+    for (const s of stops) {
+        if (s.location_type !== 0) continue;
         if ((stopRoutes.get(s.stop_id)?.size ?? 0) > 0) validPhysicalStopIds.add(s.stop_id);
     }
 
     const features: StopFeature[] = [];
     const validStopIds = new Set<string>();
 
-    for (const s of stopsCsv) {
-        if (!s.stop_lat || !s.stop_lon) continue;
+    for (const s of stops) {
+        if (s.lat === null || s.lon === null) continue;
 
         // Physical stops (0), stations (1) and entrances (2).
-        const type = Number(s.location_type || 0);
+        const type = s.location_type;
         if (type !== 0 && type !== 1 && type !== 2) continue;
 
         const isDropOffOnly = type === 0 && !validPhysicalStopIds.has(s.stop_id);
         features.push({
             type: 'Feature',
-            geometry: { type: 'Point', coordinates: [Number(s.stop_lon), Number(s.stop_lat)] },
+            geometry: { type: 'Point', coordinates: [s.lon, s.lat] },
             properties: {
                 stop_id: s.stop_id,
                 stop_name: s.stop_name,
-                platform_code: s.platform_code || null,
+                platform_code: s.platform_code,
                 location_type: type as 0 | 1 | 2,
-                parent_station: s.parent_station || null,
-                zone_id: s.zone_id || null,
+                parent_station: s.parent_station,
+                zone_id: s.zone_id,
                 is_drop_off_only: isDropOffOnly || undefined,
                 lines: linesOf(stopRoutes.get(s.stop_id), routes),
             },
@@ -357,7 +358,7 @@ async function main(): Promise<void> {
     console.log(`Applied radial micro-offsets to ${offsetCount} co-located platform stops.`);
 
     const parentChildMap: ParentChildMap = {};
-    for (const s of stopsCsv) {
+    for (const s of stops) {
         if (s.parent_station && validStopIds.has(s.stop_id) && validStopIds.has(s.parent_station)) {
             (parentChildMap[s.parent_station] ??= []).push(s.stop_id);
         }
@@ -480,7 +481,7 @@ async function main(): Promise<void> {
         try {
             const tripShapes: Record<string, string> = {};
             const tripShapeFit = new Map<string, number>();
-            const allShapes = new Map<string, unknown>();
+            const allShapes = new Map<string, ShapeGeometry>();
             let rejected = 0;
 
             const shapeFit = (lines: [number, number][][], tripId: string): number => {
@@ -507,7 +508,7 @@ async function main(): Promise<void> {
 
                 for (const item of res) {
                     const shapeIdStr = String(item.shape_id);
-                    allShapes.set(shapeIdStr, item.shape);
+                    allShapes.set(shapeIdStr, item.shape as ShapeGeometry);
                     const lines = item.shape as [number, number][][];
                     // Lissy's trip ids come from its own GTFS copy, which may or may not lag this export,
                     // and ids are recycled - so the raw and aliased readings are both tried against the geometry.
@@ -538,6 +539,8 @@ async function main(): Promise<void> {
             console.log(`Largest shape chunk: ${(largest / 1024).toFixed(0)}KB`);
 
             fs.writeFileSync(path.join(DATA_DIR, 'trip_shapes.json'), JSON.stringify(tripShapes));
+            const largestBucket = writeShapeBuckets(DATA_DIR, tripShapes, allShapes, 'stale');
+            console.log(`Largest shape bucket: ${(largestBucket / 1024).toFixed(0)}KB`);
             console.log(`Wrote trip_shapes.json mapping for ${Object.keys(tripShapes).length} trips (${rejected} Lissy trip ids matched no trip's stops)`);
         } catch (e) {
             console.error('Failed to fetch or process shapes, skipping shape generation.', e);
