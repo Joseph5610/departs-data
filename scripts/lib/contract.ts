@@ -14,14 +14,54 @@ export const CHUNKING = {
     DEPARTURES_CHUNK_PREFIX: 4,
     /** Leading characters of a trip_id that name its trips chunk. */
     TRIP_CHUNK_PREFIX: 3,
+    /** Files a stop's departures are hashed across (`departure_buckets/`); keeps each near 100KB. */
+    DEPARTURE_BUCKET_COUNT: 1024,
+    /** Files a trip's stops are hashed across (`trip_buckets/`); keeps each near 100KB. */
+    TRIP_BUCKET_COUNT: 2048,
 } as const;
 
-/** departures/<prefix>.json */
+export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
+export const TRIP_BUCKETS_DIR = 'trip_buckets';
+
+const utf8 = new TextEncoder();
+
+/** FNV-1a (32-bit) of the id's UTF-8 bytes, modulo `count`. The Worker computes the same to find a file. */
+export function bucketOf(id: string, count: number): string {
+    let hash = 0x811c9dc5;
+    for (const byte of utf8.encode(id)) {
+        hash = Math.imul(hash ^ byte, 0x01000193) >>> 0;
+    }
+    return String(hash % count);
+}
+
+/** Each platform's parent station, from `parent_child_map.json`; the Worker builds the same index. */
+export function parentIndex(parentChildMap: ParentChildMap): Map<string, string> {
+    const parentOf = new Map<string, string>();
+    for (const parent in parentChildMap) {
+        for (const child of parentChildMap[parent]!) parentOf.set(child, parent);
+    }
+    return parentOf;
+}
+
+/**
+ * departure_buckets/<bucket>.json, hashed by the stop's parent station (the stop itself when it has
+ * none), so a station's platforms - which one board reads together - share a single file.
+ */
+export function departuresBucketId(stopId: string, parentOf: ReadonlyMap<string, string>): string {
+    return bucketOf(parentOf.get(stopId) ?? stopId, CHUNKING.DEPARTURE_BUCKET_COUNT);
+}
+
+/** trip_buckets/<bucket>.json */
+export function tripBucketId(tripId: string): string {
+    return bucketOf(tripId, CHUNKING.TRIP_BUCKET_COUNT);
+}
+
+/** departures/<prefix>.json - superseded by `departuresBucketId`, still written until every Worker reads buckets. */
 export function departuresChunkId(stopId: string): string {
     return stopId.substring(0, CHUNKING.DEPARTURES_CHUNK_PREFIX).toUpperCase();
 }
 
-/** trips/<prefix>.json */
+/** trips/<prefix>.json - superseded by `tripBucketId`, still written until every Worker reads buckets. */
 export function tripChunkId(tripId: string): string {
     return tripId.substring(0, CHUNKING.TRIP_CHUNK_PREFIX).toUpperCase();
 }

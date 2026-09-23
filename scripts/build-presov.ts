@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type AdmZip from 'adm-zip';
 import type { ContinuationRow, DepartureRow, ParentChildMap, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { departuresChunkId, shapeChunkId, tripChunkId } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, departuresChunkId, parentIndex, shapeChunkId, TRIP_BUCKETS_DIR, tripBucketId, tripChunkId } from './lib/contract.ts';
 import { fetchJson, fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { clusterByDistance } from './lib/cluster.ts';
@@ -421,8 +421,10 @@ async function main(): Promise<void> {
 
     // --- DEPARTURES ---
     sortDepartures(departuresByStop);
+    const parentOf = parentIndex(parentChildMap);
     const departuresChunks = chunkBy(departuresByStop, departuresChunkId);
     writeChunks(path.join(DATA_DIR, 'departures'), departuresChunks);
+    writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf)));
     console.log(`Wrote ${departuresChunks.size} departure chunks for ${departuresByStop.size} stops`);
 
     // --- TRIPS ---
@@ -449,6 +451,7 @@ async function main(): Promise<void> {
     }
     const tripChunks = chunkBy(tripStops, tripChunkId);
     writeChunks(path.join(DATA_DIR, 'trips'), tripChunks);
+    writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), chunkBy(tripStops, tripBucketId));
     console.log(`Wrote ${tripChunks.size} trip chunks for ${tripsData.size} trips`);
 
     // --- SHAPE GEOMETRY ---
