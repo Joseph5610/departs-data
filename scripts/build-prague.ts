@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import type AdmZip from 'adm-zip';
 import path from 'node:path';
 import { outputDir, writeJson } from './lib/emit.ts';
-import { MAP_STOPS_FILE } from './lib/contract.ts';
+import { MAP_STOPS_FILE, type RouteInfo } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { readStops } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
@@ -26,10 +26,14 @@ const CONFIG = {
     MIN_GTFS_STOPS: 10000,
     /** Abort threshold for trips with a shape, currently about 87,000. */
     MIN_SHAPED_TRIPS: 10000,
+    /** Abort threshold for routes, currently about 900. */
+    MIN_ROUTES: 500,
     /** ~1m; the map line gains nothing finer. */
     SHAPE_COORD_DECIMALS: 5,
     /** Kilometres to the metre, the resolution Golemio reports a vehicle's progress in. */
     SHAPE_DIST_DECIMALS: 3,
+    /** PID's static feed populates `route_color` for every route (verified); this only guards a future gap. */
+    DEFAULT_ROUTE_COLOR: '#888888',
 } as const;
 
 interface PidLine { name: string; type: string; exitOnly?: boolean }
@@ -78,6 +82,8 @@ async function main(): Promise<void> {
     console.log(`[SYNC] SUCCESS: Saved enrichment data to ${outputFile}`);
 
     const zip = await fetchZip(CONFIG.GTFS_URL, 'GTFS_ZIP');
+    writePragueRoutes(zip, dataDir);
+
     const gtfsStops = readGtfsStops(zip);
     const mapStops = buildPragueMapStops(gtfsStops, enrichmentMap);
     writeJson(dataDir, MAP_STOPS_FILE, mapStops);
@@ -125,6 +131,31 @@ function readGtfsStops(zip: AdmZip): GtfsStopFeature[] {
         throw new Error(`Suspiciously low number of GTFS stops (${stops.length}). Aborting save to protect existing data.`);
     }
     return stops;
+}
+
+const ROUTES_TABLE = { required: ['route_id', 'route_type', 'route_short_name'], optional: ['route_color'] } as const;
+
+/**
+ * Every route's display branding (name, type, color) - the same `RouteInfo` shape Brno/Prešov/DÚK
+ * already publish, so the frontend can join a vehicle's `route_short_name` to a color for any of the
+ * four cities the same way. PID's static feed carries a real hex per route (verified: all ~900 rows
+ * populated), unlike the Worker's own per-type-bucketed color heuristic.
+ */
+function writePragueRoutes(zip: AdmZip, dataDir: string): void {
+    const routes: Record<string, RouteInfo> = {};
+    for (const r of readTable(zip, 'routes.txt', ROUTES_TABLE)) {
+        routes[r.route_id] = {
+            name: r.route_short_name,
+            type: r.route_type,
+            route_color: r.route_color ? `#${r.route_color}` : CONFIG.DEFAULT_ROUTE_COLOR,
+        };
+    }
+    const count = Object.keys(routes).length;
+    if (count < CONFIG.MIN_ROUTES) {
+        throw new Error(`Suspiciously low number of routes (${count}). Aborting save to protect existing data.`);
+    }
+    writeJson(dataDir, 'routes.json', routes);
+    console.log(`[SYNC] SUCCESS: Saved ${count} routes to ${path.join(dataDir, 'routes.json')}`);
 }
 
 const TRIPS_TABLE = { required: ['trip_id', 'shape_id'] } as const;
