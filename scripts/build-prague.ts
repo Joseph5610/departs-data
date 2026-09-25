@@ -133,21 +133,39 @@ function readGtfsStops(zip: AdmZip): GtfsStopFeature[] {
     return stops;
 }
 
-const ROUTES_TABLE = { required: ['route_id', 'route_type', 'route_short_name'], optional: ['route_color'] } as const;
+const ROUTES_TABLE = { required: ['route_id', 'route_type', 'route_short_name'], optional: ['route_color', 'is_substitute_transport'] } as const;
+
+/** PID's own bright highlight for substitute (replacement) service and night lines - the static feed's `route_color` column never carries these, it colors every bus/tram plainly by type regardless. Matches `functions/_domain/golemio/vehicles/colors.ts`'s `SUBSTITUTE`/`NIGHT` constants exactly, so this migration doesn't silently drop them. */
+const SUBSTITUTE_COLOR = '#FF4500';
+const NIGHT_COLOR = '#262050';
+
+/** Night trams are numbered 90-99, night buses 900-999 - Prague's numbering never reuses those ranges for a day route. */
+function isNightRoute(name: string): boolean {
+    const n = Number(name);
+    if (!Number.isInteger(n)) return false;
+    if (name.length === 2 && n >= 90 && n <= 99) return true;
+    if (name.length === 3 && n >= 900 && n <= 999) return true;
+    return false;
+}
 
 /**
  * Every route's display branding (name, type, color) - the same `RouteInfo` shape Brno/Prešov/DÚK
  * already publish, so the frontend can join a vehicle's `route_short_name` to a color for any of the
  * four cities the same way. PID's static feed carries a real hex per route (verified: all ~900 rows
- * populated), unlike the Worker's own per-type-bucketed color heuristic.
+ * populated) for everything except substitute/night lines, which need the same override the Worker's
+ * heuristic already applied.
  */
 function writePragueRoutes(zip: AdmZip, dataDir: string): void {
     const routes: Record<string, RouteInfo> = {};
     for (const r of readTable(zip, 'routes.txt', ROUTES_TABLE)) {
+        const isSubstitute = r.is_substitute_transport === '1' || r.route_short_name.toUpperCase().startsWith('X');
+        const routeColor = isSubstitute ? SUBSTITUTE_COLOR
+            : isNightRoute(r.route_short_name) ? NIGHT_COLOR
+            : r.route_color ? `#${r.route_color}` : CONFIG.DEFAULT_ROUTE_COLOR;
         routes[r.route_id] = {
             name: r.route_short_name,
             type: r.route_type,
-            route_color: r.route_color ? `#${r.route_color}` : CONFIG.DEFAULT_ROUTE_COLOR,
+            route_color: routeColor,
         };
     }
     const count = Object.keys(routes).length;
