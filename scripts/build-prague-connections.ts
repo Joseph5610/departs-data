@@ -100,12 +100,18 @@ async function main(): Promise<void> {
             if (!arrival) continue;
             const { line, type } = lineOf(c.fromTrip);
             const byStop = (entry(c.toTrip).in ??= {});
-            (byStop[c.toStop] ??= []).push([c.fromTrip, line, type, arrival, c.minTransferS, c.maxWaitS, flagsOf(c.fromTrip)]);
+            const flags = flagsOf(c.fromTrip);
+            // One row per day the feeder actually runs, timestamp already resolved to that day - so
+            // the Worker never has to work out which day a plain clock time belongs to.
+            for (let i = 0; i < days.length; i++) {
+                if (!(flags & (1 << i))) continue;
+                (byStop[c.toStop] ??= []).push([c.fromTrip, line, type, days[i]!.midnight + timeToOffsetMs(arrival), c.minTransferS, c.maxWaitS]);
+            }
         }
     }
     for (const trip of Object.values(out)) {
         for (const rows of Object.values(trip.out ?? {})) rows.sort((a, b) => timeToOffsetMs(a[4]) - timeToOffsetMs(b[4]));
-        for (const rows of Object.values(trip.in ?? {})) rows.sort((a, b) => timeToOffsetMs(a[3]) - timeToOffsetMs(b[3]));
+        for (const rows of Object.values(trip.in ?? {})) rows.sort((a, b) => a[3] - b[3]);
     }
 
     // --- THROUGH-RUNNING: PID sets block_id only where the vehicle continues with its passengers ---
