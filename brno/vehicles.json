@@ -1,0 +1,556 @@
+{
+  "DPMB": [
+    {
+      "min": 1000,
+      "max": 1017,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1018,
+      "max": 1122,
+      "vehicle_type": "Pragoimex VarioLF2R.E"
+    },
+    {
+      "min": 1123,
+      "max": 1123,
+      "vehicle_type": "ČKD Tatra K2"
+    },
+    {
+      "min": 1124,
+      "max": 1132,
+      "vehicle_type": "Pragoimex VarioLF2R.E"
+    },
+    {
+      "min": 1133,
+      "max": 1200,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1201,
+      "max": 1246,
+      "vehicle_type": "ČKD Tatra T6A5"
+    },
+    {
+      "min": 1247,
+      "max": 1496,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1497,
+      "max": 1666,
+      "vehicle_type": "ČKD Tatra T3 / Pragoimex T3"
+    },
+    {
+      "min": 1667,
+      "max": 1700,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1701,
+      "max": 1738,
+      "vehicle_type": "ČKD Tatra KT8D5"
+    },
+    {
+      "min": 1739,
+      "max": 1750,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1751,
+      "max": 1754,
+      "vehicle_type": "Pars Nova K3R-N"
+    },
+    {
+      "min": 1755,
+      "max": 1759,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1760,
+      "max": 1799,
+      "vehicle_type": "Škoda 45T",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 1800,
+      "max": 1806,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1807,
+      "max": 1817,
+      "vehicle_type": "Škoda 03T Anitra"
+    },
+    {
+      "min": 1818,
+      "max": 1821,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1822,
+      "max": 1862,
+      "vehicle_type": "Pragoimex EVO2",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 1863,
+      "max": 1899,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1900,
+      "max": 1929,
+      "vehicle_type": "Škoda 13T",
+      "is_air_conditioned": false
+    },
+    {
+      "min": 1930,
+      "max": 1949,
+      "vehicle_type": "Škoda 13T",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 1950,
+      "max": 1999,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 2000,
+      "max": 2000,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 2001,
+      "max": 2044,
+      "vehicle_type": "Iveco Urbanway 18M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 2045,
+      "max": 2622,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 2623,
+      "max": 2646,
+      "vehicle_type": "Solaris Urbino 18",
+      "is_air_conditioned": false
+    },
+    {
+      "min": 2647,
+      "max": 2691,
+      "vehicle_type": "Solaris Urbino 18",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 2692,
+      "max": 2910,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 2911,
+      "max": 2914,
+      "vehicle_type": "Iveco Crossway LE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 2915,
+      "max": 2999,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 3000,
+      "max": 3064,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 3065,
+      "max": 3076,
+      "vehicle_type": "SOR TNS 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 3077,
+      "max": 3300,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 3301,
+      "max": 3310,
+      "vehicle_type": "Škoda 26Tr"
+    },
+    {
+      "min": 3311,
+      "max": 3350,
+      "vehicle_type": "Škoda 32Tr",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 3351,
+      "max": 3489,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 3490,
+      "max": 3515,
+      "vehicle_type": "Škoda 15Tr"
+    },
+    {
+      "min": 3516,
+      "max": 3617,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 3618,
+      "max": 3647,
+      "vehicle_type": "Škoda 31Tr"
+    },
+    {
+      "min": 3648,
+      "max": 3687,
+      "vehicle_type": "Škoda 27Tr",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 3688,
+      "max": 3999,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 4800,
+      "max": 4800,
+      "vehicle_type": "Loď"
+    },
+    {
+      "min": 4801,
+      "max": 4801,
+      "vehicle_type": "Loď - Brno"
+    },
+    {
+      "min": 4802,
+      "max": 4804,
+      "vehicle_type": "Loď"
+    },
+    {
+      "min": 4805,
+      "max": 4805,
+      "vehicle_type": "Loď - Morava"
+    },
+    {
+      "min": 4806,
+      "max": 4822,
+      "vehicle_type": "Loď"
+    },
+    {
+      "min": 4823,
+      "max": 4823,
+      "vehicle_type": "Loď - Lipsko"
+    },
+    {
+      "min": 4824,
+      "max": 4824,
+      "vehicle_type": "Loď - Utrecht"
+    },
+    {
+      "min": 4825,
+      "max": 4825,
+      "vehicle_type": "Loď - Vídeň"
+    },
+    {
+      "min": 4826,
+      "max": 4826,
+      "vehicle_type": "Loď - Stuttgart"
+    },
+    {
+      "min": 4827,
+      "max": 4827,
+      "vehicle_type": "Loď - Dallas"
+    },
+    {
+      "min": 4828,
+      "max": 4899,
+      "vehicle_type": "Loď"
+    },
+    {
+      "min": 7000,
+      "max": 7000,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 7001,
+      "max": 7006,
+      "vehicle_type": "SOR NBG 12"
+    },
+    {
+      "min": 7007,
+      "max": 7012,
+      "vehicle_type": "Irisbus Citelis 12M CNG"
+    },
+    {
+      "min": 7013,
+      "max": 7044,
+      "vehicle_type": "SOR NBG 12"
+    },
+    {
+      "min": 7045,
+      "max": 7100,
+      "vehicle_type": "Iveco Urbanway 12M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7101,
+      "max": 7101,
+      "vehicle_type": "SOR NBG 12",
+      "is_air_conditioned": false
+    },
+    {
+      "min": 7102,
+      "max": 7116,
+      "vehicle_type": "SOR NBG 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7117,
+      "max": 7525,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 7526,
+      "max": 7526,
+      "vehicle_type": "Isuzu Novo Citi Life",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7527,
+      "max": 7570,
+      "vehicle_type": "Iveco Urbanway 12M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7571,
+      "max": 7671,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 7672,
+      "max": 7686,
+      "vehicle_type": "Iveco Urbanway 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7687,
+      "max": 7737,
+      "vehicle_type": "SOR NS 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7738,
+      "max": 7825,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 7826,
+      "max": 7830,
+      "vehicle_type": "Iveco Crossway LE City",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7831,
+      "max": 7848,
+      "vehicle_type": "SOR ICN 9,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7849,
+      "max": 7999,
+      "vehicle_type": "Autobus"
+    }
+  ],
+  "České dráhy": [
+    {
+      "min": 31001,
+      "max": 31001,
+      "vehicle_type": "Škoda Moravia Erilon"
+    },
+    {
+      "min": 31002,
+      "max": 31002,
+      "vehicle_type": "Škoda Moravia Aurelius"
+    },
+    {
+      "min": 31003,
+      "max": 31003,
+      "vehicle_type": "Škoda Moravia Pálava"
+    },
+    {
+      "min": 31004,
+      "max": 31004,
+      "vehicle_type": "Škoda Moravia Florianka"
+    },
+    {
+      "min": 31005,
+      "max": 31005,
+      "vehicle_type": "Škoda Moravia Hibernal"
+    },
+    {
+      "min": 31006,
+      "max": 31006,
+      "vehicle_type": "Škoda Moravia Chardonnay"
+    },
+    {
+      "min": 31007,
+      "max": 31007,
+      "vehicle_type": "Škoda Moravia Irsai Oliver"
+    },
+    {
+      "min": 31008,
+      "max": 31008,
+      "vehicle_type": "Škoda Moravia Malverina"
+    },
+    {
+      "min": 31009,
+      "max": 31009,
+      "vehicle_type": "Škoda Moravia Müller Thurgau"
+    },
+    {
+      "min": 31010,
+      "max": 31010,
+      "vehicle_type": "Škoda Moravia Muškát moravský"
+    },
+    {
+      "min": 31011,
+      "max": 31011,
+      "vehicle_type": "Škoda Moravia Muškát Ottonel"
+    },
+    {
+      "min": 31012,
+      "max": 31012,
+      "vehicle_type": "Škoda Moravia Neuburské"
+    },
+    {
+      "min": 31013,
+      "max": 31013,
+      "vehicle_type": "Škoda Moravia Rulandské bílé"
+    },
+    {
+      "min": 31014,
+      "max": 31014,
+      "vehicle_type": "Škoda Moravia Rulandské šedé"
+    },
+    {
+      "min": 31015,
+      "max": 31015,
+      "vehicle_type": "Škoda Moravia Ryzlink rýnský"
+    },
+    {
+      "min": 31016,
+      "max": 31016,
+      "vehicle_type": "Škoda Moravia Ryzlink vlašský"
+    },
+    {
+      "min": 31017,
+      "max": 31017,
+      "vehicle_type": "Škoda Moravia Sauvignon"
+    },
+    {
+      "min": 31018,
+      "max": 31018,
+      "vehicle_type": "Škoda Moravia Sylvánské zelené"
+    },
+    {
+      "min": 31019,
+      "max": 31019,
+      "vehicle_type": "Škoda Moravia Tramín červený"
+    },
+    {
+      "min": 31020,
+      "max": 31020,
+      "vehicle_type": "Škoda Moravia Veltlínské červené rané"
+    },
+    {
+      "min": 31021,
+      "max": 31021,
+      "vehicle_type": "Škoda Moravia Veltlínské zelené"
+    },
+    {
+      "min": 31022,
+      "max": 31022,
+      "vehicle_type": "Škoda Moravia André"
+    },
+    {
+      "min": 31023,
+      "max": 31023,
+      "vehicle_type": "Škoda Moravia Cabernet Moravia"
+    },
+    {
+      "min": 31024,
+      "max": 31024,
+      "vehicle_type": "Škoda Moravia Cabernet Sauvignon"
+    },
+    {
+      "min": 31025,
+      "max": 31025,
+      "vehicle_type": "Škoda Moravia Dornfelder"
+    },
+    {
+      "min": 31026,
+      "max": 31026,
+      "vehicle_type": "Škoda Moravia Frankovka"
+    },
+    {
+      "min": 31027,
+      "max": 31027,
+      "vehicle_type": "Škoda Moravia Merlot"
+    },
+    {
+      "min": 31028,
+      "max": 31028,
+      "vehicle_type": "Škoda Moravia Modrý Portugal"
+    },
+    {
+      "min": 31029,
+      "max": 31029,
+      "vehicle_type": "Škoda Moravia Rulandské modré"
+    },
+    {
+      "min": 31030,
+      "max": 31030,
+      "vehicle_type": "Škoda Moravia Svatovavřinecké"
+    },
+    {
+      "min": 31031,
+      "max": 31031,
+      "vehicle_type": "Škoda Moravia Zweigeltrebe"
+    },
+    {
+      "min": 31051,
+      "max": 31051,
+      "vehicle_type": "Škoda Moravia Neronet"
+    },
+    {
+      "min": 31052,
+      "max": 31052,
+      "vehicle_type": "Škoda Moravia Savilon"
+    },
+    {
+      "min": 31053,
+      "max": 31053,
+      "vehicle_type": "Škoda Moravia Veritas"
+    },
+    {
+      "min": 31054,
+      "max": 31054,
+      "vehicle_type": "Škoda Moravia Lena"
+    },
+    {
+      "min": 31055,
+      "max": 31055,
+      "vehicle_type": "Škoda Moravia Rubinet"
+    },
+    {
+      "min": 31056,
+      "max": 31056,
+      "vehicle_type": "Škoda Moravia Fratava"
+    }
+  ]
+}

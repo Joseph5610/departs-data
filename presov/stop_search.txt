@@ -1,0 +1,769 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+trojica	1
+trojica	215
+trojica	449
+na hlavnej	2
+na hlavnej	216
+cierny most	4
+cierny most	218
+cierny most	457
+cierny most	458
+novy solivar	7
+novy solivar	242
+kosicka	8
+kosicka	243
+zvl	9
+zvl	244
+cisticka	10
+cisticka	303
+priecestie	11
+priecestie	304
+lemesianska	12
+lemesianska	305
+haniska	13
+haniska	306
+petrovianska	14
+petrovianska	245
+logisticke centrum	16
+logisticke centrum	247
+razc. zaborske	17
+razc. zaborske	248
+zaborske-stred	18
+zaborske-stred	249
+zaborske	19
+zaborske	250
+jilemnickeho	20
+jilemnickeho	289
+budovatelska	21
+budovatelska	387
+budovatelska	604
+pekarne	22
+pekarne	290
+priemyselne centrum	23
+priemyselne centrum	291
+sturova	24
+sturova	292
+skultetyho	25
+skultetyho	219
+pod kamennou banou	27
+pod kamennou banou	286
+vajanskeho	28
+horarska	29
+horarska	288
+horka	30
+horka	314
+za kalvariou	31
+za kalvariou	313
+zimny stadion	32
+zimny stadion	316
+pod kalvariou	33
+zahradkarska osada	34
+zahradkarska osada	315
+zeleznicna stanica	35
+zeleznicna stanica	241
+zeleznicna stanica	450
+zeleznicna stanica	467
+sibirska	36
+sibirska	205
+lesnicka	37
+lesnicka	273
+pavla horova	38
+pavla horova	274
+martina benku	39
+martina benku	276
+jurkovicova	40
+jurkovicova	207
+karpatska	41
+karpatska	206
+nizne luky	42
+nizne luky	208
+pod taborom	43
+pod taborom	209
+laca novomeskeho	44
+laca novomeskeho	275
+vansovej	45
+vansovej	324
+pod salgovikom	46
+pod salgovikom	325
+pod salgovikom	432
+hruny	48
+hruny	326
+sordok	49
+sordok	328
+salgovik	50
+salgovik	329
+salgovik	552
+kysucka	51
+kysucka	277
+kukucinova	52
+kukucinova	278
+solivarska	53
+solivarska	380
+bohunova	54
+bohunova	379
+muzeum solivar	55
+muzeum solivar	378
+solivar	56
+solivar	279
+solivar	628
+solivar	629
+solnobanska	57
+razc. teriakovce	58
+razc. teriakovce	391
+ocu teriakovce	59
+ocu teriakovce	390
+teriakovce	60
+teriakovce	389
+lomnicka	61
+lomnicka	272
+lomnicka	565
+svabska	62
+svabska	271
+svabska	454
+pionierska	64
+pionierska	354
+jesenna	65
+jesenna	355
+jelsova	66
+jelsova	356
+delna	67
+delna	357
+pri zamocku	68
+pri zamocku	375
+na zahumni	69
+na zahumni	374
+hulica	70
+hulica	373
+ruska nova ves	71
+ruska nova ves	423
+zahradky	72
+zahradky	376
+cintorin solivar	73
+cintorin solivar	395
+na brehu	74
+na brehu	394
+zlatobanska	76
+nizna sebastova	77
+nizna sebastova	388
+nizna sebastova	506
+duklianska	78
+duklianska	214
+razcestie kuty	79
+razcestie kuty	342
+dopravny podnik	80
+dopravny podnik	341
+dopravny podnik	452
+sarisske luky	81
+sarisske luky	340
+vranovska	82
+vranovska	339
+pazica	83
+pazica	348
+nova	84
+nova	372
+finticka	85
+finticka	371
+isla	86
+isla	370
+griblovec	87
+griblovec	369
+cerveny mostik	89
+cerveny mostik	367
+nam. j.kolarcika	90
+nam. j.kolarcika	366
+v kopci	91
+v kopci	365
+fintice	92
+fintice	364
+sebastovska	93
+sebastovska	338
+domasska	94
+kalinciakova	95
+kalinciakova	427
+lubotice	99
+lubotice	334
+lubochnianska	100
+lubochnianska	346
+strojnicka	101
+strojnicka	345
+druzstevna	102
+druzstevna	344
+sirpo	103
+sirpo	343
+k surdoku	104
+k surdoku	255
+pod sibenou	105
+pod sibenou	254
+koryto	106
+koryto	253
+rybnicky	107
+rybnicky	252
+kuty	108
+kuty	251
+slanska	110
+pod nadjazdom	112
+kpt. nalepku	113
+kpt. nalepku	269
+safarikova, cintorin	115
+detska nemocnica	116
+detska nemocnica	212
+detska nemocnica	444
+fakultna nemocnica	117
+fakultna nemocnica	211
+fakultna nemocnica	446
+dilongova	118
+sladkovicova	119
+moyzesova	120
+lesik delostrelcov	121
+lesik delostrelcov	210
+plachty	122
+plachty	311
+za kutami	123
+za kutami	312
+surdok	124
+surdok	310
+sabinovska, futbal arena	126
+sabinovska, futbal arena	240
+micurinova	127
+micurinova	239
+pod skalkou	128
+pod skalkou	238
+razc. sidlovec	129
+razc. sidlovec	237
+dubrava	130
+dubrava	236
+dubrava	425
+pivovar	133
+pivovar	353
+stanicna	134
+stanicna	352
+medulienka	135
+medulienka	351
+varos	136
+varos	308
+velky saris	137
+velky saris	307
+tulcicka	138
+tulcicka	309
+razcestie kanas	139
+razcestie kanas	233
+kozi rozok	140
+kozi rozok	232
+husi hrb	141
+husi hrb	231
+pri kostole	142
+pri kostole	230
+medzi jarkami	143
+medzi jarkami	229
+stara skola	144
+stara skola	228
+kanas-straze	145
+kanas-straze	227
+janosikova	146
+janosikova	284
+severna	147
+severna	283
+jahodova	149
+sidlovec	150
+sidlovec	281
+futbal tatran arena	151
+jazdecka	152
+jazdecka	363
+mukacevska	153
+mukacevska	362
+nam.sv.jakuba	155
+nam.sv.jakuba	350
+poliklinika	156
+poliklinika	302
+poliklinika	602
+levocska	157
+levocska	301
+myto	158
+myto	300
+razc.cemjata	159
+razc.cemjata	299
+razc. cemjata	358
+razc. cemjata	509
+telekca	160
+telekca	298
+razc. maly saris	161
+razc. maly saris	297
+ocu maly saris	162
+ocu maly saris	296
+nakupne stredisko	163
+nakupne stredisko	295
+slachtitelska stanica	164
+slachtitelska stanica	294
+maly saris	165
+maly saris	293
+maly saris	429
+vydumanec	167
+vydumanec	404
+kvasna voda	168
+kvasna voda	403
+zabijana	169
+zabijana	402
+skolske lesy	170
+skolske lesy	401
+cemjata	171
+cemjata	400
+cemjata	433
+ocu bzenov	172
+ocu bzenov	398
+razcestie janov	173
+razcestie janov	397
+bzenov	174
+bzenov	396
+plzenska	175
+oktobrova	176
+oktobrova	462
+central	177
+central	319
+marka culena	178
+marka culena	265
+odborarska	179
+odborarska	264
+sazavskeho	180
+sazavskeho	263
+kollarova	181
+kollarova	262
+sos lesnicka	182
+sos lesnicka	261
+ostrovcek	183
+ostrovcek	260
+gym.sv.moniky	184
+kupelna	185
+kupelna	258
+pavlovicovo nam.	186
+pavlovicovo nam.	257
+clementisova	187
+clementisova	224
+volgogradska	188
+volgogradska	225
+nam.kral.pokoja	189
+nam.kral.pokoja	226
+vukov	190
+vukov	361
+centrum	191
+centrum	385
+prostejovska	192
+prostejovska	360
+bajkalska	194
+bajkalska	422
+obrancov mieru	195
+obrancov mieru	442
+obrancov mieru	482
+obrancov mieru	596
+herlianska	196
+herlianska	223
+duchnovicovo nam.	198
+duchnovicovo nam.	221
+presovska univerzita	199
+presovska univerzita	220
+razcestie rurky	200
+razcestie rurky	323
+jana beresa	201
+jana beresa	322
+na rurkach	202
+na rurkach	321
+chatky	203
+chatky	399
+rusinska	204
+rusinska	484
+velka posta	217
+velka posta	474
+namestie mladeze	222
+pri lipe	256
+pri lipe	603
+chalupkova	270
+chalupkova	567
+stavbarska	282
+gresova	320
+sekcovska	327
+divadlo j. zaborskeho	330
+divadlo j. zaborskeho	601
+za tratou	331
+za tratou	383
+zs prostejovska	332
+salgovicka	333
+korabinskeho	335
+jana kostru	336
+zs v.saris	359
+sidlisko iii	384
+sidlisko iii	430
+sidlisko iii	441
+certov kamen	406
+certov kamen	407
+garaz	408
+hinrichs	410
+zs lubotice	414
+pod hradkom	415
+pod hradkom	416
+hobby park	417
+straznicka	418
+niznianska	419
+niznianska	497
+spinea-zaturecka	420
+spinea-zaturecka	611
+gemor	438
+gemor	440
+suvorovova	468
+suvorovova	469
+eperia	470
+solnobanska.	478
+solnobanska.	479
+bardejovska	480
+kamenna	493
+vysne luky	503
+vysne luky	598
+slavicia	504
+slavicia	505
+slavik	507
+veterinarna nemocnica	511
+veterinarna nemocnica	512
+terchovska	515
+terchovska	568
+sulovska	516
+sulovska	569
+priecne	519
+borkut	521
+borkut	522
+pod wilec.horkou	523
+pod wilec.horkou	524
+wilecova horka	525
+wilecova horka	526
+dubravska	527
+pri kaplnke	528
+kamenna bana	532
+kamenna bana	533
+dubrava.	534
+skara	535
+skara	536
+saris park	538
+saris park	539
+okruzna	540
+okruzna	541
+okruzna	542
+florianova	543
+florianova	544
+labutia	550
+labutia	551
+na kruhu	553
+na kruhu	554
+pred surdokom	556
+pred surdokom	557
+garrett	559
+garrett	560
+garrett	566
+hviezdna	562
+hviezdna	570
+vodarenska	563
+vodarenska	571
+ku brezinam	572
+ku brezinam	573
+sidlovska	574
+sidlovska	575
+sidlovska	576
+vysna sebastova	577
+vysna sebastova	578
+pod maglovcom	579
+pod maglovcom	580
+ocu vysna sebastova	581
+ocu vysna sebastova	582
+razc. v. sebastova	583
+razc. v. sebastova	584
+kamence	585
+kamence	586
+kapanos	587
+kapanos	588
+severna - kostol	589
+severna - kostol	590
+limbova	594
+andreja sladkovica	605
+gener. ambrusa	608
+gener. ambrusa	609
+gbolovky	610
+gbolovky	643
+vodna	614
+potocna	615
+valkovska	617
+valkovska	618
+salgovia	626
+salgovia	636
+mala stanica	627
+vlcie doly	630
+vlcie doly	631
+dulova ves - kostol	632
+dulova ves - kostol	633
+dulova ves	634
+dulova ves	635
+sportovy areal	644
+sportovy areal	645
+briezky	646
+briezky	647
+nizny koniec	654
+nizny koniec	655
+podhradik	656
+podhradik	658
+petofiho pamatnik	661

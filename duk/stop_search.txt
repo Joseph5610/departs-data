@@ -1,0 +1,8917 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+decin,hl.nadr.	215-1
+decin,hl.nadr.	215-1
+decin,hl.nadr.	215-2
+decin,hl.nadr.	215-2
+decin,hl.nadr.	215-3
+decin,hl.nadr.	215-4
+decin,hl.nadr.	215-9
+decin,hl.nadr.	215-92
+decin,hl.nadr.	215-93
+decin,hl.nadr.	215-101
+decin,tyrsova	233-1
+decin,tyrsova	233-2
+decin,tyrsova	233-201
+decin,myslbekova	223-1
+decin,myslbekova	223-2
+decin,skola	231-1
+decin,skola	231-2
+huntirov	451-1
+huntirov	451-2
+huntirov	451-3
+huntirov	451-4
+huntirov,dol.ves	449-1
+huntirov,dol.ves	449-2
+huntirov,stara oleska,skola	448-1
+huntirov,stara oleska,skola	448-2
+huntirov,stara oleska,koupaliste	447-1
+huntirov,stara oleska,koupaliste	447-2
+huntirov,nova oleska,skola	446-1
+huntirov,nova oleska,skola	446-2
+huntirov,nova oleska,rybnik	2471-1
+huntirov,nova oleska,rybnik	2471-2
+huntirov,nova oleska,rozc.	445-1
+huntirov,nova oleska,rozc.	445-2
+srbska kamenice,kriz.	1454-1
+srbska kamenice,kriz.	1454-2
+srbska kamenice,posta	1455-1
+srbska kamenice,posta	1455-2
+srbska kamenice,ferd.sout.	1453-1
+srbska kamenice,ferd.sout.	1453-2
+jetrichovice,vsemily,rozc.	570-1
+jetrichovice,vsemily,rozc.	570-2
+jetrichovice,vsemily	571-1
+jetrichovice,vsemily	571-2
+jetrichovice,vsemily,konirna	569-1
+jetrichovice,vsemily,konirna	569-2
+jetrichovice,koup.	577-1
+jetrichovice,koup.	577-2
+jetrichovice,host.	576-1
+jetrichovice,host.	576-2
+jetrichovice,host.	576-3
+jetrichovice,rynartice,pod zameckem	567-1
+jetrichovice,rynartice,pod zameckem	567-2
+jetrichovice,rynartice	568-1
+jetrichovice,rynartice	568-2
+jetrichovice,obu	578-1
+jetrichovice,obu	578-2
+jetrichovice,stary mlyn	579-1
+jetrichovice,stary mlyn	579-2
+jetrichovice,vysoka lipa,hotel lipa	573-1
+jetrichovice,vysoka lipa,hotel lipa	573-2
+jetrichovice,vysoka lipa,rozc.	575-1
+jetrichovice,vysoka lipa,rozc.	575-2
+jetrichovice,vysoka lipa,rest.	574-1
+jetrichovice,vysoka lipa,rest.	574-2
+decin,aut.nadr.	212-1
+decin,aut.nadr.	212-2
+decin,aut.nadr.	212-3
+decin,aut.nadr.	212-4
+decin,aut.nadr.	212-5
+decin,aut.nadr.	212-6
+decin,aut.nadr.	212-7
+decin,aut.nadr.	212-8
+decin,aut.nadr.	212-55
+decin,naradi	225-1
+decin,slovanka	10550-1
+decin,slovanka	10550-2
+decin,slovanka	10550-3
+decin,breziny,libverda	196-1
+decin,breziny,libverda	196-2
+decin,breziny,libverda	196-3
+decin,breziny,libverda	196-4
+decin,breziny,skola	197-1
+decin,breziny,skola	197-2
+dobrna,kovarna	245-1
+dobrna,kovarna	245-2
+dobrna,skola	247-1
+dobrna,skola	247-2
+dobrna,hor.ves	244-1
+dobrna,hor.ves	244-2
+dobrna,rozc.brlozec	246-1
+dobrna,rozc.brlozec	246-2
+dobrna,brlozec	2365-1
+dobrna,brlozec	2365-2
+decin,narex	224-1
+decin,narex	224-2
+decin,masarykovo nam.	221-1
+decin,masarykovo nam.	221-2
+decin,labske nabr.	10528-1
+decin,ryko	2446-1
+decin,ryko	2446-2
+decin,slovanska	10551-1
+decin,slovanska	10551-2
+decin,u prumyslovky	10559-1
+decin,u prumyslovky	10559-2
+decin,bukurestska	10508-1
+decin,letna	10532-1
+decin,letna	10532-2
+decin,tyrsuv most	234-1
+decin,breziny	10505-1
+decin,breziny	10505-2
+decin,u pivovaru	10557-2
+decin,vychodni nadrazi	10565-1
+decin,vychodni nadrazi	10565-2
+decin,karned	10520-1
+decin,karned	10520-2
+decin,kolonie	10522-1
+decin,kolonie	10522-2
+decin,breziny,sidliste	10506-1
+decin,breziny,sidliste	10506-2
+blatno	55-1
+blatno	55-2
+pastuchovice	2215-101
+plasy	2219-92
+tis u blatna,kracin	3094-1
+tis u blatna,kracin	3094-2
+tis u blatna,haj.	3095-1
+tis u blatna,haj.	3095-2
+tis u blatna	3096-1
+lubenec,vitkovice,rozc.	3092-1
+lubenec,vitkovice,rozc.	3092-2
+chyse,zdarek	3093-1
+chyse,zdarek	3093-2
+lubenec,prazska	993-1
+lubenec,prazska	993-2
+lubenec,karlovarska	2289-1
+lubenec,karlovarska	2289-2
+blatno,zel.st.	53-1
+blatno,zel.st.	53-92
+blatno,zel.st.	53-101
+litvinov,nadrazi	915-1
+litvinov,nadrazi	915-2
+litvinov,nadrazi	915-3
+litvinov,nadrazi	915-4
+litvinov,nadrazi	915-5
+litvinov,nadrazi	915-6
+litvinov,nadrazi	915-92
+litvinov,nadrazi	915-101
+litvinov,nam.miru	916-1
+litvinov,nam.miru	916-2
+litvinov,maj vez.domy	914-1
+litvinov,maj vez.domy	914-2
+litvinov,pilarsky rybnik	913-1
+litvinov,pilarsky rybnik	913-2
+litvinov,hamr,skola	347-1
+litvinov,hamr,skola	347-2
+litvinov,hamr,sklarska	348-1
+litvinov,hamr,sklarska	348-2
+litvinov,janov,janovska	555-1
+litvinov,janov,janovska	555-2
+horni jiretin,rozc.0.2	385-1
+horni jiretin,rozc.0.2	385-2
+horni jiretin,triola	386-1
+horni jiretin,triola	386-2
+nova ves v horach,mikulovice	1077-1
+nova ves v horach,mikulovice	1077-2
+nova ves v horach,mikulovice,u domku	1151-1
+nova ves v horach,mikulovice,u domku	1151-2
+nova ves v horach	1154-1
+nova ves v horach	1154-2
+nova ves v horach,obu	1150-1
+nova ves v horach,obu	1150-2
+nova ves v horach,u hrbitova	1152-1
+nova ves v horach,u hrbitova	1152-2
+nova ves v horach,u rybnicku	1153-1
+nova ves v horach,u rybnicku	1153-2
+nova ves v horach,hranice	1148-1
+nova ves v horach,hranice	1148-2
+nova ves v horach,kriz.	1149-1
+nova ves v horach,kriz.	1149-2
+nova ves v horach,mikulovice,rozc.	1147-1
+nova ves v horach,mikulovice,rozc.	1147-2
+hora sv.kateriny,predavaci stanice	378-1
+hora sv.kateriny,predavaci stanice	378-2
+hora sv.kateriny,poz.zbroj.	377-1
+hora sv.kateriny,poz.zbroj.	377-2
+hora sv.kateriny,nam.	374-1
+hora sv.kateriny,nam.	374-2
+hora sv.kateriny,pachenkov	376-1
+hora sv.kateriny,pachenkov	376-2
+hora sv.kateriny,rozc.maly haj	1034-1
+hora sv.kateriny,rozc.maly haj	1034-2
+hora sv.kateriny,sus	375-1
+hora sv.kateriny,sus	375-2
+hora sv.kateriny,dolni	379-1
+hora sv.kateriny,dolni	379-2
+hora sv.kateriny,u hranicniho prechodu	373-1
+hora sv.kateriny,u hranicniho prechodu	373-2
+hora sv.kateriny,na pile	86-1
+hora sv.kateriny,na pile	86-2
+brandov	84-1
+brandov	84-2
+brandov,u kostela	82-1
+brandov,u kostela	82-2
+brandov,obu	87-1
+brandov,obu	87-2
+brandov,odb.kolonie	85-1
+brandov,odb.kolonie	85-2
+brandov,u hriste	83-1
+brandov,u hriste	83-2
+brandov,na care	2434-1
+brandov,na care	2434-2
+olbernhau,grunthal,bahnhof	2373-1
+olbernhau,grunthal,bahnhof	2373-2
+olbernhau,grunthal,loser	2374-1
+olbernhau,grunthal,loser	2374-2
+olbernhau,krankenhaus	2375-1
+olbernhau,krankenhaus	2375-2
+olbernhau,busbahnhof	2376-1
+olbernhau,busbahnhof	2376-2
+olbernhau,bahnhof	2377-1
+olbernhau,bahnhof	2377-2
+bilina,aut.nadr.	32-1
+bilina,aut.nadr.	32-2
+bilina,aut.nadr.	32-3
+bilina,aut.nadr.	32-4
+bilina,aut.nadr.	32-5
+bilina,aut.nadr.	32-6
+bilina,aut.nadr.	32-92
+bilina,aut.nadr.	32-101
+bilina,poz.zbroj.	36-1
+bilina,poz.zbroj.	36-2
+bilina,sidliste	40-1
+bilina,sidliste	40-2
+bilina,sidl.zch sberna	39-1
+bilina,sidl.zch sberna	39-2
+bilina,sidl.zch litomericka	38-1
+bilina,sidl.zch litomericka	38-2
+chuderice,nam.	545-1
+chuderice,nam.	545-2
+chuderice,zav.	546-1
+chuderice,zav.	546-2
+ledvice,upravna uhli	800-1
+svetec,chotejovice	511-1
+svetec,chotejovice	511-2
+svetec,chotejovice	511-3
+svetec,chotejovice	511-4
+ledvice,kino	799-1
+hostomice,sklarna	398-1
+hostomice,sklarna	398-2
+hostomice,nam.	397-1
+hostomice,nam.	397-2
+ohnic,mlyn	2345-1
+ohnic,mlyn	2345-2
+ohnic	2203-92
+ohnic	2203-101
+ohnic,karola	1183-1
+ohnic,karola	1183-2
+ohnic,kremyz	765-1
+ohnic,kremyz	765-2
+ohnic,pnovicky	1247-1
+ohnic,pnovicky	1247-2
+hostomice,tuchlov rozc.	399-1
+hostomice,tuchlov rozc.	399-2
+hostomice,tuchlov rozc.	399-3
+kladruby,naves	635-1
+kladruby,naves	635-2
+teplice zamecka zahrada	2269-92
+teplice zamecka zahrada	2269-101
+teplice,benesovo namesti	1578-1
+teplice,benesovo namesti	1578-2
+teplice,benesovo namesti	1578-3
+teplice,hlavni nadrazi	1591-1
+teplice,hlavni nadrazi	1591-2
+teplice,hlavni nadrazi	1591-92
+teplice,hlavni nadrazi	1591-101
+bzany,hradiste,rozc.	131-1
+bzany,hradiste,rozc.	131-2
+bzany,hradiste,rozc.	131-3
+bzany,hradiste	132-1
+bzany,hradiste	132-2
+bzany,lysec	135-1
+bzany,lysec	135-2
+bzany,lbin	133-1
+bzany,lbin	133-2
+bzany,lbin	133-92
+bzany,lbin	133-101
+bystrany,uporiny	125-1
+bystrany,uporiny	125-2
+bystrany,uporiny	125-3
+rtyne n.bilinou,velvety,zav.	1391-1
+rtyne n.bilinou,velvety,zav.	1391-2
+teplice,bilinska	1580-1
+teplice,bilinska	1580-2
+bilina,vmg i	41-1
+bilina,vmg i	41-2
+svetec,upor	1715-1
+praha,ladvi	2838-1
+praha,ladvi	2838-2
+praha,sidliste dablice	2916-1
+praha,sidliste dablice	2916-2
+praha,dablicky hrbitov	2915-1
+praha,dablicky hrbitov	2915-2
+praha,k letnanum	2914-1
+praha,k letnanum	2914-2
+praha,dablice	2913-1
+praha,dablice	2913-2
+praha,na fabiance	2912-1
+praha,na fabiance	2912-2
+praha,brezineves	2911-1
+praha,brezineves	2911-2
+praha,na boleslavce	2910-1
+praha,na boleslavce	2910-2
+boranovice	2909-1
+boranovice	2909-2
+libeznice,i	2908-1
+libeznice,i	2908-2
+libeznice,ii	2907-1
+libeznice,ii	2907-2
+zlonin,rozc.	2906-1
+zlonin,rozc.	2906-2
+predboj,rozc.	2905-1
+predboj,rozc.	2905-2
+kojetice,tumovka	2904-1
+kojetice,tumovka	2904-2
+kojetice,rozc.	2903-1
+kojetice,rozc.	2903-2
+neratovice,byskovice	2902-1
+neratovice,byskovice	2902-2
+libis,na stare staci	2901-1
+libis,na stare staci	2901-2
+libis	2900-1
+libis	2900-2
+obristvi,stepansky most	2899-1
+obristvi,stepansky most	2899-2
+kly,vetrusice	2898-1
+kly,vetrusice	2898-2
+kly,krauzovna	2897-1
+kly,krauzovna	2897-2
+kly,lom	2896-1
+kly,lom	2896-2
+kly,vinice	2895-1
+kly,vinice	2895-2
+melnik,u novaku	2894-1
+melnik,u novaku	2894-2
+melnik,cukrovar	2888-1
+melnik,cukrovar	2888-2
+melnik,u hriste	2889-1
+melnik,u hriste	2889-2
+melnik,poliklinika	2819-1
+melnik,poliklinika	2819-2
+melnik,fibichova	2820-1
+melnik,fibichova	2820-2
+melnik,aut.nadr.	2821-1
+melnik,aut.nadr.	2821-3
+melnik,aut.nadr.	2821-4
+melnik,aut.nadr.	2821-5
+melnik,aut.nadr.	2821-7
+melnik,aut.nadr.	2821-11
+melnik,aut.nadr.	2821-12
+melnik,pivovar	2822-1
+melnik,pivovar	2822-2
+melnik,podoli	2823-1
+melnik,podoli	2823-2
+melnik,psovka	2824-1
+melnik,psovka	2824-2
+melnik,lodenicka	2825-1
+melnik,lodenicka	2825-2
+melnik,mlazice	2826-1
+melnik,mlazice	2826-2
+melnik,kamenny srank	2857-1
+melnik,kamenny srank	2857-2
+melnik,ceskolipska	2858-1
+melnik,ceskolipska	2858-2
+melnik,vehlovice	2827-1
+melnik,vehlovice	2827-2
+libechov,maly libechov	2828-1
+libechov,maly libechov	2828-2
+libechov	2829-1
+libechov	2829-2
+libechov,zel.st.	2837-1
+libechov,zel.st.	2837-2
+libechov,jesovice,rozc.	2832-1
+libechov,jesovice,rozc.	2832-2
+steti,poceplice	1530-1
+steti,sidliste	1533-1
+steti,sidliste	1533-2
+steti,hotelovy dum	1529-1
+steti,hotelovy dum	1529-2
+steti,cihelna	1527-1
+steti,cihelna	1527-2
+steti,cihelna	1527-201
+steti,zav.	1532-1
+steti,zav.	1532-2
+steti,zav.	1532-9
+libechov,jesovice	2830-1
+libechov,jesovice	2830-2
+libechov,jesovice,u lipy	2831-1
+litvinov,pisecna	1233-1
+litvinov,pisecna	1233-2
+litvinov,horni ves	393-1
+litvinov,horni ves	393-2
+kliny,rasov	1357-1
+kliny,rasov	1357-2
+kliny,sedlo	1426-1
+kliny,sedlo	1426-2
+kliny,host.	649-1
+kliny,host.	649-2
+kliny,obu	651-1
+kliny,obu	651-2
+kliny,rozc.mnisek	652-1
+kliny,rozc.mnisek	652-2
+kliny,obora	650-1
+kliny,obora	650-2
+kliny,sumenske udoli	653-1
+kliny,sumenske udoli	653-2
+cesky jiretin,flaje,zamecek rozc.	176-1
+cesky jiretin,flaje,zamecek rozc.	176-2
+cesky jiretin,flaje,prehrada	175-1
+cesky jiretin,flaje,prehrada	175-2
+cesky jiretin,u pily	179-1
+cesky jiretin,u pily	179-2
+cesky jiretin,poz.zbroj.	178-1
+cesky jiretin,poz.zbroj.	178-2
+cesky jiretin	180-1
+most,obchodni dum prior	2601-1
+most,obchodni dum prior	2601-2
+most,obchodni dum prior	2601-3
+most,obchodni dum prior	2601-4
+most,1.nam.	1104-1
+most,1.nam.	1104-2
+most,1.nam.	1104-3
+most,kahan	1108-1
+most,kahan	1108-2
+most,14.zs	1105-1
+most,14.zs	1105-2
+krupa	2928-1
+krupa	2928-2
+hredle	2662-1
+hredle	2662-2
+hredle,pod dzbanem	2663-1
+hredle,pod dzbanem	2663-2
+treboc,dzban	2758-1
+treboc,dzban	2758-2
+kroucova	2645-1
+kroucova	2645-2
+kroucova,obu	2807-1
+kroucova,obu	2807-2
+pochvalov	2809-1
+pochvalov	2809-2
+smilovice	2808-1
+smilovice	2808-2
+kozojedy	692-1
+kozojedy	692-2
+vinarice	1909-1
+vinarice	1909-2
+krupa,sustna	2650-1
+krupa,sustna	2650-2
+krupa,sustna	2650-3
+krupa,sustna	2650-4
+krupa,sustna	2650-5
+lisany,u rybnika	2651-1
+lisany,u rybnika	2651-2
+lisany,u ovcina	2652-1
+lisany,u ovcina	2652-2
+lisany,rozvodna	2653-1
+lisany,rozvodna	2653-2
+rakovnik,rozc.cikanka	2654-1
+rakovnik,rozc.cikanka	2654-2
+rakovnik,lisanska	2655-1
+rakovnik,lisanska	2655-2
+rakovnik,v jamce	2656-1
+rakovnik,v jamce	2656-2
+rakovnik,cs.legii	2657-1
+rakovnik,cs.legii	2657-2
+rakovnik,na sekyre	2658-1
+rakovnik,na sekyre	2658-2
+rakovnik,aut.st.	2237-1
+rakovnik,aut.st.	2237-4
+rakovnik,aut.st.	2237-15
+rakovnik,aut.st.	2237-18
+rakovnik,aut.st.	2237-19
+rakovnik,aut.st.	2237-24
+rakovnik,aut.st.	2237-30
+rakovnik,aut.st.	2237-92
+nesuchyne	2816-1
+nesuchyne	2816-2
+mutejovice	2664-1
+mutejovice,na prici	2665-1
+mutejovice,na prici	2665-2
+mutejovice,k nadrazi	1130-1
+mutejovice,k nadrazi	1130-2
+mutejovice,k nadrazi	1130-3
+mutejovice,k nadrazi	1130-4
+mutejovice,lhota p.dzbanem	1129-1
+chomutov,aut.nadr.	482-1
+chomutov,aut.nadr.	482-2
+chomutov,aut.nadr.	482-3
+chomutov,aut.nadr.	482-4
+chomutov,aut.nadr.	482-5
+chomutov,aut.nadr.	482-6
+chomutov,aut.nadr.	482-7
+chomutov,aut.nadr.	482-8
+chomutov,aut.nadr.	482-9
+chomutov,aut.nadr.	482-10
+chomutov,aut.nadr.	482-11
+chomutov,aut.nadr.	482-12
+chomutov,mostecka	496-1
+chomutov,mostecka	496-2
+chomutov,gymnazium	487-1
+chomutov,gymnazium	487-2
+otvice	1198-1
+otvice	1198-2
+jirkov,zel.st.	604-1
+jirkov,zel.st.	604-2
+jirkov,zel.st.	604-3
+jirkov,zel.st.	604-92
+jirkov,zel.st.	604-101
+jirkov,hrdinu	11014-1
+jirkov,hrdinu	11014-2
+nove ervenice	1157-1
+nove ervenice	1157-2
+jirkov,dvorakova	595-1
+jirkov,dvorakova	595-2
+jirkov,aut.nadr.	593-1
+jirkov,aut.nadr.	593-2
+jirkov,aut.nadr.	593-3
+jirkov,cervenohradecka	594-1
+jirkov,cervenohradecka	594-2
+jirkov,osada	601-1
+jirkov,osada	601-2
+jirkov,cerveny hradek	161-1
+jirkov,cerveny hradek	161-2
+vysoka pec,drmaly	282-1
+vysoka pec,drmaly	282-2
+vysoka pec	1948-1
+vysoka pec	1948-2
+vysoka pec,rozc.1.0	1947-1
+vysoka pec,rozc.1.0	1947-2
+komorany	662-1
+komorany	662-2
+komorany	662-3
+komorany,duk	658-1
+trebusice,mus-dts vrbensky	2038-1
+trebusice,mus-dts vrbensky	2038-2
+most,pod resslem	1112-1
+most,pod resslem	1112-2
+most,nemocnice	1111-1
+most,nemocnice	1111-2
+most,sever	1114-1
+most,sever	1114-2
+most,rudolicka mus a.s.	1113-1
+most,rudolicka mus a.s.	1113-2
+chomutov,aquasvet	2626-1
+chomutov,aquasvet	2626-2
+chomutov,palackeho	497-1
+chomutov,palackeho	497-2
+chomutov,palackeho	497-3
+chomutov,u pekarny	505-1
+chomutov,u pekarny	505-2
+chomutov,prazska cerp.st.	2679-1
+chomutov,prazska cerp.st.	2679-2
+brezno,zdrav.str.	100-1
+brezno,zdrav.str.	100-2
+brezno,strezov,rozc.0.2	96-1
+brezno,strezov,rozc.0.2	96-2
+brezno,vicice,rozc.2.0	97-1
+brezno,vicice,rozc.2.0	97-2
+tusimice,ii.stavba	1702-1
+tusimice,ii.stavba	1702-2
+tusimice,sempra	1703-1
+tusimice,sempra	1703-2
+tusimice,sempra	1703-3
+tusimice,sempra	1703-4
+tusimice,ii.elna	1701-1
+tusimice,ii.elna	1701-2
+tusimice,i.elna	1700-1
+tusimice,i.elna	1700-2
+tusimice,dul merkur	1699-1
+tusimice,dul merkur	1699-2
+chbany	469-1
+chbany	469-2
+chbany,sobesuky,rozc.	1450-1
+chbany,sobesuky,rozc.	1450-2
+chbany,vikletice,prehrada	1898-1
+chbany,vikletice,prehrada	1898-2
+brezno,nechranice	1134-1
+chomutov,rozcesti	507-1
+chomutov,rozcesti	507-2
+chomutov,prazska	2542-1
+chomutov,prazska	2542-2
+drouzkovice,letna	2680-1
+drouzkovice,letna	2680-2
+drouzkovice,hriste	2681-1
+drouzkovice,hriste	2681-2
+drouzkovice,obu	283-1
+drouzkovice,obu	283-2
+drouzkovice	2682-1
+drouzkovice	2682-2
+brezno,nechranice,na moste	1133-1
+brezno,nechranice,na moste	1133-2
+chbany,preskaky,rozc.	1342-1
+chbany,preskaky,rozc.	1342-2
+chbany,vadkovice,rozc.	1786-1
+chbany,vadkovice,rozc.	1786-2
+libedice	824-1
+libedice	824-2
+libedice	824-3
+libedice	824-4
+racetice	1347-1
+racetice	1347-2
+racetice	1347-3
+racetice	1347-4
+racetice	1347-5
+racetice	1347-6
+vilemov,topolansky dvur	1903-1
+vilemov,topolansky dvur	1903-2
+vilemov,rozc.	1902-1
+vilemov,rozc.	1902-2
+vilemov	1904-1
+vilemov	1904-2
+brezno,vicice	98-1
+brezno,vicice	98-2
+brezno,stranna	95-1
+jirkov,skolky	602-1
+jirkov,skolky	602-2
+litvinov,zaluzi,chempark	1967-1
+litvinov,zaluzi,chempark	1967-2
+brezno,strezov	2683-1
+komorany,tabor 7	661-1
+komorany,tabor 7	661-2
+komorany,ksk	659-1
+komorany,ksk	659-2
+komorany,obrancu miru	660-1
+radonice	1354-1
+radonice	1354-2
+chomutov,sporicka	11047-1
+chomutov,sporicka	11047-2
+chomutov,staviva	11048-1
+chomutov,staviva	11048-2
+chomutov,ferona	11009-1
+chomutov,ferona	11009-2
+litomerice,aut.nadr.	889-1
+litomerice,aut.nadr.	889-2
+litomerice,aut.nadr.	889-3
+litomerice,aut.nadr.	889-4
+litomerice,aut.nadr.	889-5
+litomerice,aut.nadr.	889-6
+litomerice,aut.nadr.	889-7
+litomerice,aut.nadr.	889-8
+litomerice,aut.nadr.	889-9
+litomerice,aut.nadr.	889-10
+litomerice,aut.nadr.	889-11
+litomerice,aut.nadr.	889-12
+litomerice,aut.nadr.	889-92
+litomerice,aut.nadr.	889-101
+terezin,kriz.	1636-1
+terezin,kriz.	1636-2
+terezin,kriz.	1636-3
+terezin,aut.nadr.	1635-1
+terezin,aut.nadr.	1635-2
+terezin,aut.nadr.	1635-3
+terezin,aut.nadr.	1635-4
+terezin,skola	1637-1
+terezin,skola	1637-2
+terezin,nove kopisty	1632-1
+terezin,nove kopisty	1632-2
+terezin,nove kopisty	1632-3
+keblice	632-1
+keblice	632-2
+keblice	632-3
+keblice	632-4
+keblice,cihelna	631-1
+keblice,cihelna	631-2
+lovosice,zav.2	986-1
+lovosice,zav.2	986-2
+lovosice,zav.2	986-92
+lovosice,zav.2	986-93
+lovosice,zav.2	986-101
+lovosice,zav.1	985-1
+lovosice,zav.1	985-2
+lukavec,prodejna	1001-1
+lukavec,prodejna	1001-2
+lukavec,prodejna	1001-3
+lukavec,prodejna	1001-4
+lovosice,prumyslova	983-1
+lovosice,radnice	984-1
+lovosice,radnice	984-2
+lovosice,radnice	984-3
+lovosice,radnice	984-4
+lovosice,radnice	984-5
+lovosice,radnice	984-6
+lovosice,centrum kultury lovos	979-1
+lovosice,aut.nadr.	978-1
+lovosice,aut.nadr.	978-2
+lovosice,aut.nadr.	978-3
+lovosice,aut.nadr.	978-4
+lovosice,aut.nadr.	978-5
+lovosice,aut.nadr.	978-6
+lovosice,aut.nadr.	978-92
+lovosice,aut.nadr.	978-93
+lovosice,aut.nadr.	978-101
+lovosice,kostel	981-1
+sulejovice	1488-1
+sulejovice	1488-2
+sulejovice	1488-92
+sulejovice	1488-96
+sulejovice	1488-101
+cizkovice,hl.sil.	184-1
+cizkovice,hl.sil.	184-2
+jencice	561-1
+jencice	561-2
+trebenice,vaha	1668-1
+trebenice,vaha	1668-2
+trebenice,vaha	1668-3
+trebenice,vaha	1668-4
+trebenice,nam.	1667-1
+trebenice,nam.	1667-2
+trebenice,nam.	1667-3
+trebenice,nam.	1667-4
+trebenice,kololec,rozc.	1660-1
+trebenice,kololec,rozc.	1660-2
+podsedice,rozc.1.0	1276-1
+podsedice,rozc.1.0	1276-2
+podsedice,rozc.1.0	1276-3
+podsedice,rozc.1.0	1276-4
+podsedice,chrastany,rozc.1.0	1275-1
+podsedice,chrastany,rozc.1.0	1275-2
+trebivlice,dremcice,rozc.0.5	1669-1
+trebivlice,dremcice,rozc.0.5	1669-2
+trebivlice,nam.	1677-1
+trebivlice,nam.	1677-2
+trebivlice,sepetely,rozc.0.5	1676-1
+trebivlice,sepetely,rozc.0.5	1676-2
+zelkovice	2020-1
+zelkovice	2020-2
+libceves,lahovice,rozc.	818-1
+libceves,lahovice,rozc.	818-2
+libceves	822-1
+libceves	822-2
+podsedice	1277-1
+podsedice	1277-2
+trebivlice,dremcice	1670-1
+litomerice,obchodni centrum	893-1
+libouchec,obu	866-1
+libouchec,obu	866-2
+libouchec,kino	864-1
+libouchec,kino	864-2
+libouchec,u hajku	869-1
+libouchec,u hajku	869-2
+libouchec,rozc.	867-1
+libouchec,rozc.	867-2
+libouchec,rozc.cermna	3145-1
+libouchec,rozc.cermna	3145-2
+libouchec,cermna	861-1
+novy bor,aut.nadr.	2200-1
+novy bor,aut.nadr.	2200-2
+novy bor,aut.nadr.	2200-92
+novy bor,aut.nadr.	2200-101
+chribska,nam.	533-1
+chribska,nam.	533-2
+chribska,nam.	533-3
+rybniste,posta	1416-1
+rybniste,posta	1416-2
+rybniste,posta	1416-3
+jiretin p.jedlovou,nam.	605-1
+jiretin p.jedlovou,nam.	605-2
+dolni podluzi,kriz.	262-1
+dolni podluzi,kriz.	262-2
+dolni podluzi,kriz.	262-3
+dolni podluzi,kriz.	262-4
+dolni podluzi,skola	263-1
+dolni podluzi,skola	263-2
+dolni podluzi,velveta 06	264-1
+dolni podluzi,velveta 06	264-2
+varnsdorf,jatky	1807-1
+varnsdorf,jatky	1807-2
+varnsdorf,jatky	1807-3
+varnsdorf,jatky	1807-4
+varnsdorf,severni draha	1811-1
+varnsdorf,severni draha	1811-2
+varnsdorf,sportovni hala	1812-1
+varnsdorf,sportovni hala	1812-2
+varnsdorf,aut.nadr.	1801-1
+varnsdorf,aut.nadr.	1801-2
+varnsdorf,aut.nadr.	1801-3
+varnsdorf,aut.nadr.	1801-4
+varnsdorf,aut.nadr.	1801-9
+praha,strizkov	2992-1
+ceska lipa,aut.nadr.	3142-3
+duba,aut.nadr.	285-1
+duba,aut.nadr.	285-3
+duba,aut.nadr.	285-5
+rumburk,zel.st.	1408-1
+rumburk,zel.st.	1408-2
+rumburk,zel.st.	1408-3
+rumburk,zel.st.	1408-11
+rumburk,zel.st.	1408-92
+rumburk,zel.st.	1408-93
+rumburk,zel.st.	1408-101
+rumburk,bytex 01	1399-1
+rumburk,bytex 01	1399-2
+rumburk,krasnolipska	1402-1
+rumburk,krasnolipska	1402-2
+varnsdorf,studanka	1799-1
+varnsdorf,studanka	1799-2
+usti n.l.,vozovna dp	12145-1
+usti n.l.,vozovna dp	12145-2
+usti n.l.,klise,lazne	12045-1
+usti n.l.,klise,lazne	12045-2
+usti n.l.,klise,lazne	12045-4
+usti n.l.,na popluzi	12062-1
+usti n.l.,klise,hvezda	12044-1
+usti n.l.,klise,hvezda	12044-2
+usti n.l.,kampus	12036-1
+usti n.l.,kampus	12036-2
+usti n.l.,poliklinika	1753-1
+usti n.l.,poliklinika	1753-2
+usti n.l.,poliklinika	1753-3
+usti n.l.,hilarova	1736-1
+usti n.l.,hilarova	1736-2
+usti n.l.,belehradska	1730-1
+usti n.l.,belehradska	1730-2
+usti n.l.,malatova	12055-1
+usti n.l.,malatova	12055-2
+usti n.l.,malatova	12055-3
+usti n.l.,malatova	12055-4
+usti n.l.,elba	1735-1
+usti n.l.,elba	1735-2
+usti n.l.,stavbaru	12110-1
+usti n.l.,stavbaru	12110-2
+usti n.l.,mirova	12057-1
+usti n.l.,mirova	12057-2
+usti n.l.,mirova	12057-3
+usti n.l.,mirova	12057-4
+usti n.l.,severni terasa	1725-1
+usti n.l.,severni terasa	1725-2
+usti n.l.,severni terasa	1725-3
+usti n.l.,gagarinova	12023-1
+usti n.l.,gagarinova	12023-2
+usti n.l.,vetrna	12139-1
+usti n.l.,vetrna	12139-2
+usti n.l.,bezrucova	12004-1
+usti n.l.,bezrucova	12004-2
+usti n.l.,nove predlice	1748-1
+usti n.l.,nove predlice	1748-2
+usti n.l.,nove predlice	1748-3
+usti n.l.,nove predlice	1748-4
+trmice,globus	1650-1
+trmice,globus	1650-2
+trmice,belsky mustek	1649-1
+trmice,belsky mustek	1649-2
+trmice,za humny	1657-1
+trmice,za humny	1657-2
+trmice,stara skola	1654-1
+trmice,stara skola	1654-2
+trmice,gogolova	12024-1
+trmice,gogolova	12024-2
+usti n.l.,zamecka	12150-1
+usti n.l.,zamecka	12150-2
+trmice,metal	12056-1
+trmice,metal	12056-2
+trmice,nad zamkem	12066-1
+trmice,nad zamkem	12066-2
+trmice,vaclavske nam.	1656-1
+trmice,vaclavske nam.	1656-2
+chomutov,zborovska	11060-1
+chomutov,zborovska	11060-2
+chomutov,moravska	495-1
+chomutov,moravska	495-2
+chomutov,zoopark	509-1
+chomutov,zoopark	509-2
+chomutov,pisecna zdrav.str.	11032-1
+chomutov,pisecna zdrav.str.	11032-2
+jirkov,na borku	11016-1
+jirkov,na borku	11016-2
+jirkov,mladeznicka	11015-1
+jirkov,mladeznicka	11015-2
+jirkov,vodarna	11021-1
+jirkov,vodarna	11021-2
+jirkov,stare vinarice	11019-1
+jirkov,stare vinarice	11019-2
+jirkov,u chaty	11020-1
+jirkov,u chaty	11020-2
+jirkov,jiraskova	600-1
+jirkov,jiraskova	600-2
+kamenicky senov,u krizku	2223-1
+kamenicky senov,u krizku	2223-2
+ceska kamenice,luzicka	3171-1
+ceska kamenice,luzicka	3171-2
+ceska kamenice,horni kamenice	165-1
+ceska kamenice,horni kamenice	165-2
+ceska kamenice,prazska	173-1
+ceska kamenice,dolni kamenice,decinska	164-1
+ceska kamenice,dolni kamenice,decinska	164-2
+ceska kamenice,kamenicka nova viska	166-1
+ceska kamenice,kamenicka nova viska	166-2
+markvartice	1041-1
+markvartice	1041-2
+ludvikovice	1000-1
+ludvikovice	1000-2
+ceska kamenice,zel.st.	174-1
+ceska kamenice,zel.st.	174-2
+ceska kamenice,zel.st.	174-92
+ceska kamenice,zel.st.	174-101
+mastov,statek	1046-1
+mastov,statek	1046-2
+mastov,nam.	1045-1
+krasny dvur,nemcany	719-1
+krasny dvur,nemcany	719-2
+krasny dvur,brody,rozc.	716-1
+krasny dvur,brody,rozc.	716-2
+krasny dvur	2424-92
+krasny dvur	2424-101
+krasny dvur,vysoke trebusice	721-1
+krasny dvur,vysoke trebusice	721-2
+krasny dvur,vysoke trebusice	721-3
+krasny dvur,vysoke trebusice	721-4
+podborany,zatecka	1271-1
+podborany,zatecka	1271-2
+podborany,nam.	1268-1
+podborany,nadrazni	1267-1
+podborany,nadrazni	1267-2
+podborany,aut.nadr.	1263-1
+podborany,aut.nadr.	1263-2
+podborany,aut.nadr.	1263-3
+podborany,aut.nadr.	1263-4
+podborany,aut.nadr.	1263-5
+podborany,aut.nadr.	1263-6
+podborany,aut.nadr.	1263-7
+podborany,aut.nadr.	1263-92
+podborany,aut.nadr.	1263-101
+kadan,aut.nadr.	617-1
+kadan,aut.nadr.	617-2
+kadan,aut.nadr.	617-3
+kadan,aut.nadr.	617-4
+kadan,aut.nadr.	617-5
+kadan,aut.nadr.	617-6
+kadan,aut.nadr.	617-7
+kadan,aut.nadr.	617-8
+kadan,aut.nadr.	617-9
+kadan,aut.nadr.	617-92
+kadan,aut.nadr.	617-101
+kadan,koupaliste	621-1
+kadan,koupaliste	621-2
+kadan,chomutovska sidl.b	618-1
+kadan,chomutovska sidl.b	618-2
+prunerov,csad	1331-1
+prunerov,csad	1331-2
+prunerov,sts	1337-1
+prunerov,sts	1337-2
+prunerov,dul nastup	1332-1
+prunerov,dul nastup	1332-2
+prunerov,ssaz	1336-1
+prunerov,ssaz	1336-2
+prunerov,epru i	1333-1
+prunerov,epru i	1333-2
+prunerov,kkz	1335-1
+prunerov,kkz	1335-2
+prunerov,epru ii	1334-1
+prunerov,epru ii	1334-2
+prunerov	1339-1
+prunerov	1339-2
+prunerov,usak	1338-1
+prunerov,usak	1338-2
+blahunov,rozc.1.0	49-1
+blahunov,rozc.1.0	49-2
+blahunov,rozc.1.0	49-3
+zelena	1975-1
+zelena	1975-2
+malkov	1024-1
+malkov	1024-2
+cernovice,hlavni silnice	158-1
+cernovice,hlavni silnice	158-2
+chomutov,u hacky	503-1
+chomutov,u hacky	503-2
+chomutov,cernovicka	484-1
+chomutov,cernovicka	484-2
+chomutov,v alejich	506-1
+chomutov,v alejich	506-2
+chomutov,lipska i	2627-1
+chomutov,lipska i	2627-2
+kadan,u mostu	624-1
+kadan,u mostu	624-2
+rokle,zelina,rozc.	2019-1
+rokle,zelina,rozc.	2019-2
+rokle	1367-1
+rokle	1367-2
+vinare	1906-1
+vinare	1906-2
+vilemov,zahorany	1900-1
+vilemov,zahorany	1900-2
+krasny dvur,chrastany	718-1
+krasny dvur,chrastany	718-2
+rokle,hradec,rozvodna	408-1
+rokle,hradec,rozvodna	408-2
+tuhan,pavlicky,rozc.zatyni	284-1
+tuhan,pavlicky,rozc.zatyni	284-2
+tuhan,pavlicky	1688-1
+tuhan,pavlicky	1688-2
+tuhan	1689-1
+tuhan	1689-2
+tuhan	1689-3
+tuhan	1689-4
+tuhan,rozcesti mosnice	286-1
+tuhan,rozcesti mosnice	286-2
+snedovice,sukorady	1446-1
+snedovice,sukorady	1446-2
+usti n.l.,dobetice tocna	12015-1
+usti n.l.,dobetice	12014-1
+usti n.l.,dobetice	12014-2
+usti n.l.,polackova	12085-1
+usti n.l.,polackova	12085-2
+usti n.l.,stribrniky	12119-1
+usti n.l.,stribrniky	12119-2
+usti n.l.,stribrniky	12119-3
+usti n.l.,stribrniky	12119-4
+usti n.l.,stribrnicka	12117-1
+usti n.l.,stribrnicka	12117-2
+usti n.l.,orlicka	12077-1
+usti n.l.,orlicka	12077-2
+usti n.l.,stredni skoly	12113-1
+usti n.l.,stredni skoly	12113-2
+usti n.l.,hornicka	12030-1
+usti n.l.,hornicka	12030-2
+rtyne n.bilinou,velvety	1392-1
+rtyne n.bilinou,velvety	1392-2
+rtyne n.bilinou,velvety	1392-3
+rtyne n.bilinou,velvety	1392-4
+rtyne n.bilinou	1394-1
+rtyne n.bilinou	1394-2
+rtyne n.bilinou	1394-92
+rtyne n.bilinou	1394-101
+zalany,skola	1979-1
+zalany,skola	1979-2
+zalany	1980-1
+zalany	1980-2
+zalany	1980-3
+zalany	1980-4
+borislav	76-1
+borislav	76-2
+zim	2024-1
+zim,zel.zast.	2023-1
+zim,zel.zast.	2023-2
+zim,zel.zast.	2023-92
+zim,zel.zast.	2023-101
+borislav,skolka	75-1
+borislav,skolka	75-2
+borislav,obchod	74-1
+borislav,obchod	74-2
+borislav,obchod	74-3
+borislav,obchod	74-4
+zalany,lelov	1978-1
+zalany,lelov	1978-2
+rtyne n.bilinou,sezemice	1388-1
+rtyne n.bilinou,velvety,kozliky	1389-1
+rtyne n.bilinou,velvety,kozliky	1389-2
+rtyne n.bilinou,velvety,kozliky	1389-3
+rtyne n.bilinou,velvety,kozliky host.	1390-1
+rtyne n.bilinou,velvety,kozliky host.	1390-2
+bystrany,nove dvory	121-1
+bystrany,nove dvory	121-2
+bystrany,machovy sady	128-1
+bystrany,hrbitov	127-1
+teplice,prosetice,plynarny	1555-1
+teplice,prosetice,plynarny	1555-2
+teplice,prazska	1618-1
+teplice,prazska	1618-2
+teplice,prazska	1618-3
+teplice,prazska	1618-4
+teplice,prazska	1618-5
+teplice,divadlo	1584-1
+teplice,divadlo	1584-2
+teplice,dopravni podnik	1585-1
+teplice,dopravni podnik	1585-2
+teplice,dopravni podnik	1585-11
+novosedlice,lipa	1167-1
+novosedlice,lipa	1167-2
+novosedlice,posta	1169-1
+novosedlice,posta	1169-2
+novosedlice,skola	1171-1
+novosedlice,skola	1171-2
+probostov,teplarna	1329-1
+probostov,teplarna	1329-2
+probostov,teplarna	1329-3
+probostov,teplarna	1329-4
+probostov,skola	1328-1
+probostov,skola	1328-2
+probostov,nam.	1326-1
+probostov,nam.	1326-2
+probostov,pritkovska	1327-1
+probostov,pritkovska	1327-2
+probostov	1330-1
+probostov	1330-2
+probostov,pritkov	1325-1
+probostov,pritkov	1325-2
+krupka,vrchoslav,hor.nam.	739-1
+krupka,vrchoslav,hor.nam.	739-2
+krupka,skola	751-1
+krupka,skola	751-2
+krupka,u plovarny	752-1
+krupka,u plovarny	752-2
+krupka,bohosudov,nam.	727-1
+krupka,bohosudov,nam.	727-2
+rtyne n.bilinou,malhostice	1387-1
+rehlovice	1423-1
+rehlovice	1423-2
+rehlovice	1423-3
+rehlovice	1423-4
+rehlovice,brozanky,rozc.	1419-1
+rehlovice,brozanky,rozc.	1419-2
+usti n.l.,divadlo	1734-1
+usti n.l.,divadlo	1734-2
+usti n.l.,divadlo	1734-3
+usti n.l.,divadlo	1734-4
+usti n.l.,divadlo	1734-5
+usti n.l.,divadlo	1734-6
+usti n.l.,divadlo	1734-7
+usti n.l.,divadlo	1734-8
+usti n.l.,mala hradebni	1744-1
+usti n.l.,mala hradebni	1744-2
+usti n.l.,hl.nadr.	1737-1
+usti n.l.,hl.nadr.	1737-2
+usti n.l.,hl.nadr.	1737-4
+usti n.l.,hl.nadr.	1737-92
+usti n.l.,hl.nadr.	1737-101
+usti n.l.,hl.nadr.	1737-201
+usti n.l.,cajkovskeho	12010-1
+usti n.l.,cajkovskeho	12010-2
+usti n.l.,cukrovar	12009-1
+usti n.l.,cukrovar	12009-2
+usti n.l.,vodarna	12142-1
+usti n.l.,vodarna	12142-2
+usti n.l.,zdymadla	12151-1
+usti n.l.,zdymadla	12151-2
+usti n.l.,u vodopadu	12131-1
+usti n.l.,u vodopadu	12131-2
+usti n.l.,kotva	12050-1
+usti n.l.,kotva	12050-2
+usti n.l.,prazska	12087-1
+usti n.l.,prazska	12087-2
+usti n.l.,hrbitov	12033-1
+usti n.l.,hrbitov	12033-2
+usti n.l.,vanov	12137-1
+usti n.l.,vanov	12137-2
+usti n.l.,mirove nam.	1746-1
+usti n.l.,mirove nam.	1746-3
+usti n.l.,mirove nam.	1746-4
+usti n.l.,mirove nam.	1746-5
+usti n.l.,mirove nam.	1746-7
+usti n.l.,mirove nam.	1746-8
+usti n.l.,revolucni	12096-1
+usti n.l.,revolucni	12096-2
+usti n.l.,revolucni	12096-3
+usti n.l.,hranicar	1738-1
+usti n.l.,hranicar	1738-2
+usti n.l.,hranicar	1738-3
+usti n.l.,hranicar	1738-4
+usti n.l.,hranicar	1738-5
+usti n.l.,socialni pece	2678-1
+usti n.l.,socialni pece	2678-2
+usti n.l.,masarykova nem.	1745-1
+usti n.l.,masarykova nem.	1745-2
+usti n.l.,bukov,sanat.	1718-1
+usti n.l.,bukov,sanat.	1718-2
+usti n.l.,boztesicka	1731-1
+usti n.l.,boztesicka	1731-2
+usti n.l.,boztesice,obec	12005-1
+usti n.l.,boztesice,obec	12005-2
+usti n.l.,boztesice	1716-1
+usti n.l.,boztesice	1716-2
+usti n.l.,boztesice	1716-3
+usti n.l.,boztesice	1716-4
+usti n.l.,skorotice,skola	12108-1
+usti n.l.,skorotice,skola	12108-2
+usti n.l.,skorotice	12107-1
+usti n.l.,skorotice	12107-2
+usti n.l.,habrovicka	12029-1
+usti n.l.,habrovicka	12029-2
+usti n.l.,habrovice,koupaliste	12026-1
+usti n.l.,habrovice,koupaliste	12026-2
+usti n.l.,habrovice,vily	12028-1
+usti n.l.,habrovice,vily	12028-2
+usti n.l.,habrovice	12025-1
+usti n.l.,habrovice	12025-2
+usti n.l.,habrovice,skola	12027-1
+usti n.l.,habrovice,skola	12027-2
+usti n.l.,strazky,obec	1726-1
+usti n.l.,strazky,obec	1726-2
+usti n.l.,strazky	12112-1
+usti n.l.,strazky	12112-2
+dolni zalezly	2077-93
+dolni zalezly	2077-96
+dolni zalezly	2077-101
+dolni zalezly	2077-201
+louny,aut.nadr.	952-1
+louny,aut.nadr.	952-2
+louny,aut.nadr.	952-3
+louny,aut.nadr.	952-4
+louny,aut.nadr.	952-5
+louny,aut.nadr.	952-6
+louny,aut.nadr.	952-7
+louny,aut.nadr.	952-8
+louny,aut.nadr.	952-9
+louny,aut.nadr.	952-10
+louny,aut.nadr.	952-11
+louny,aut.nadr.	952-12
+louny,aut.nadr.	952-13
+louny,aut.nadr.	952-14
+louny,aut.nadr.	952-15
+louny,aut.nadr.	952-16
+louny,aut.nadr.	952-17
+louny,aut.nadr.	952-21
+louny,aut.nadr.	952-92
+louny,aut.nadr.	952-101
+chomutov,zadni vinohrady	11056-1
+chomutov,zadni vinohrady	11056-2
+chomutov,v.nezvala ii	11053-1
+chomutov,v.nezvala ii	11053-2
+chomutov,letni kino	2575-1
+chomutov,letni kino	2575-2
+chomutov,jezero	11013-1
+chomutov,tomase ze stitneho	11050-1
+chomutov,manesova	11027-1
+chomutov,vodni	11055-1
+chomutov,vodni	11055-2
+chomutov,kriva	11025-1
+chomutov,kriva	11025-2
+chomutov,u hrbitova	504-1
+chomutov,u hrbitova	504-2
+chomutov,u hrbitova	504-3
+chomutov,poliklinika	500-1
+chomutov,poliklinika	500-2
+chomutov,v.nezvala i	11052-1
+chomutov,v.nezvala i	11052-2
+klasterec n.ohri,zdrav.str.	2993-1
+klasterec n.ohri,zdrav.str.	2993-2
+klasterec n.ohri,olsova	2994-1
+klasterec n.ohri,olsova	2994-2
+klasterec n.ohri,okruzni	2995-1
+klasterec n.ohri,okruzni	2995-2
+klasterec n.ohri,petlerska	640-1
+klasterec n.ohri,petlerska	640-2
+klasterec n.ohri,stadion	639-1
+klasterec n.ohri,stadion	639-2
+klasterec n.ohri,aut.nadr.	638-1
+klasterec n.ohri,aut.nadr.	638-2
+klasterec n.ohri,aut.nadr.	638-3
+klasterec n.ohri,aut.nadr.	638-4
+klasterec n.ohri,aut.nadr.	638-5
+klasterec n.ohri,aut.nadr.	638-6
+klasterec n.ohri,aut.nadr.	638-8
+klasterec n.ohri,vernerov,ip verne ii	642-1
+klasterec n.ohri,vernerov,ip verne iii	165011-1
+klasterec n.ohri,vernerov,ip verne iii	165011-2
+klasterec n.ohri,prazska	2996-1
+klasterec n.ohri,prazska	2996-2
+klasterec n.ohri,porcelanka	644-1
+klasterec n.ohri,porcelanka	644-2
+klasterec n.ohri,porcelanka	644-3
+klasterec n.ohri,koupaliste	2997-1
+klasterec n.ohri,koupaliste	2997-2
+klasterec n.ohri,kulturni centrum	645-1
+klasterec n.ohri,kulturni centrum	645-2
+klasterec n.ohri,zamek	2436-1
+klasterec n.ohri,zamek	2436-2
+klasterec n.ohri,nam.	643-1
+klasterec n.ohri,nam.	643-2
+litomerice,mlekojedska	886-1
+litomerice,mlekojedska	886-2
+mlekojedy,u hriste	1087-1
+mlekojedy,u hriste	1087-2
+mlekojedy	1088-1
+mlekojedy	1088-2
+lovosice,prosmyky	982-1
+lovosice,prosmyky	982-2
+lovosice,zel.zast.	987-1
+lovosice,zel.zast.	987-2
+lovosice,zel.zast.	987-92
+lovosice,zel.zast.	987-96
+lovosice,zel.zast.	987-101
+lhotka n.l.	814-1
+lhotka n.l.	814-2
+male zernoseky,ustecka	1012-1
+male zernoseky,ustecka	1012-2
+male zernoseky	1013-1
+karlovy vary,terminal	3000-1
+karlovy vary,terminal	3000-2
+karlovy vary,terminal	3000-7
+novy bor,aut.nadr.	3141-1
+novy bor,aut.nadr.	3141-2
+kytlice	2147-92
+kytlice	2147-101
+usti n.l.,strekov,cov	12011-1
+usti n.l.,strekov,cov	12011-2
+usti n.l.,strekov,k lodenici	1743-1
+usti n.l.,strekov,k lodenici	1743-2
+usti n.l.,olsinky	1749-1
+usti n.l.,olsinky	1749-2
+svadov,osada	1491-1
+svadov,osada	1491-2
+svadov,zel.st.	1492-1
+svadov,zel.st.	1492-2
+svadov,zel.st.	1492-92
+svadov,zel.st.	1492-101
+velke brezno,valtirov,zel.st.	1796-1
+velke brezno,valtirov,zel.st.	1796-2
+velke brezno,valtirov,zel.st.	1796-92
+velke brezno,valtirov,zel.st.	1796-101
+velke brezno,valtirov,osada	138229-1
+velke brezno,valtirov,osada	138229-2
+velke brezno	1864-1
+velke brezno	1864-2
+velke brezno,zel.st.	1863-1
+velke brezno,zel.st.	1863-2
+velke brezno,zel.st.	1863-92
+velke brezno,zel.st.	1863-101
+male brezno	1009-1
+male brezno	1009-2
+male brezno	1009-3
+male brezno	1009-4
+male brezno	1009-92
+male brezno	1009-101
+techlovice,prerov	1539-1
+techlovice,prerov	1539-2
+techlovice,zadni lhota	1541-1
+techlovice,zadni lhota	1541-2
+techlovice	1542-1
+techlovice	1542-2
+techlovice,rozc.	1540-1
+techlovice,rozc.	1540-2
+decin,jakuby	200-1
+decin,jakuby	200-2
+decin,nebocady	206-1
+decin,nebocady	206-2
+decin,boletice n.l.,lidovy dum	193-1
+decin,boletice n.l.,lidovy dum	193-2
+decin,boletice n.l.,koruna	192-1
+decin,boletice n.l.,koruna	192-2
+decin,kresice skola	219-1
+decin,kresice skola	219-2
+decin,kresice fruta	218-1
+decin,kresice fruta	218-2
+decin,kresice fruta	218-92
+decin,kresice fruta	218-101
+decin,kresice cspl uciliste	217-1
+decin,kresice cspl uciliste	217-2
+decin,zerotinova	238-1
+decin,zerotinova	238-2
+decin,zamecky rybnik	228-1
+decin,zamecky rybnik	228-2
+usti n.l.,zapadni nadr.	1757-1
+usti n.l.,zapadni nadr.	1757-2
+usti n.l.,zapadni nadr.	1757-92
+usti n.l.,zapadni nadr.	1757-101
+usti n.l.,petidomi	1754-1
+usti n.l.,petidomi	1754-2
+usti n.l.,u vozovny	2640-1
+usti n.l.,u vozovny	2640-2
+usti n.l.,stare predlice	1755-1
+usti n.l.,stare predlice	1755-2
+chabarovice,hrbovice	452-1
+chabarovice,hrbovice	452-2
+chabarovice,chabarovicka	457-1
+chabarovice,chabarovicka	457-2
+chabarovice,ravel	462-1
+chabarovice,ravel	462-2
+chabarovice,petri	460-1
+chabarovice,petri	460-2
+chabarovice,radnice	461-1
+chabarovice,radnice	461-2
+chabarovice,kostel	458-1
+chabarovice,kostel	458-2
+chabarovice,teplicka	464-1
+chabarovice,teplicka	464-2
+chlumec	478-1
+chlumec	478-2
+chabarovice,koupaliste	459-1
+chabarovice,koupaliste	459-2
+decin,nam.5.kvetna	2464-1
+ceska lipa hlavni nadrazi	2060-92
+ceska lipa hlavni nadrazi	2060-93
+usti n.l.,trmicka	12127-1
+usti n.l.,trmicka	12127-2
+usti n.l.,stavebni stroje	12111-1
+usti n.l.,stavebni stroje	12111-2
+usti n.l.,pekarska	12080-1
+usti n.l.,pekarska	12080-2
+usti n.l.,karoliny svetle	12041-1
+usti n.l.,karoliny svetle	12041-2
+usti n.l.,svadovsky privoz	12121-1
+usti n.l.,svadovsky privoz	12121-2
+usti n.l.,opletalova	12076-1
+usti n.l.,opletalova	12076-2
+usti n.l.,nestemice,kvet	1724-1
+usti n.l.,nestemice,kvet	1724-2
+usti n.l.,sibirska sidliste	12105-1
+usti n.l.,sibirska sidliste	12105-2
+usti n.l.,sibirska	12104-1
+usti n.l.,sibirska	12104-2
+ryjice,sanatorium	12098-1
+ryjice,sanatorium	12098-2
+ryjice	12097-1
+ryjice	12097-2
+usti n.l.,ryjicka	12099-1
+usti n.l.,ryjicka	12099-2
+usti n.l.,zpa	12154-1
+usti n.l.,zpa	12154-2
+usti n.l.,podlesi	12084-1
+usti n.l.,podlesi	12084-2
+svadov,obec	12120-1
+svadov,obec	12120-2
+usti n.l.,klisska	12046-1
+usti n.l.,klisska	12046-2
+usti n.l.,klise,kaufland	12042-1
+usti n.l.,klise,kaufland	12042-2
+usti n.l.,prumyslova	12089-1
+usti n.l.,prumyslova	12089-2
+usti n.l.,u vlecky	12130-1
+usti n.l.,u vlecky	12130-2
+usti n.l.,olesnice	12075-1
+usti n.l.,olesnice	12075-2
+usti n.l.,predlice,kolonie	12092-1
+usti n.l.,predlice,kolonie	12092-2
+decin,bynov	10509-1
+decin,bynov	10509-2
+decin,bynov,skola	198-1
+decin,bynov,skola	198-2
+decin,u zamecku	236-1
+decin,u zamecku	236-2
+decin,u zamecku	236-3
+decin,u zamecku	236-4
+decin,u zamecku	236-5
+decin,netex	226-1
+decin,netex	226-2
+decin,kovocas	216-1
+decin,kovocas	216-2
+decin,ruzek	230-1
+decin,ruzek	230-2
+decin,zlibek	10571-1
+decin,zlibek	10571-2
+decin,u divadla	10554-1
+decin,u divadla	10554-2
+decin,teplicka	232-1
+decin,teplicka	232-2
+decin,prokopa holeho	229-1
+decin,brezova	10507-1
+decin,brezova	10507-2
+decin,obloukova	10543-1
+decin,obloukova	10543-2
+decin,stare mesto	10552-1
+decin,stare mesto	10552-2
+decin,horni oldrichov	10514-1
+decin,horni oldrichov	10514-2
+decin,kaufland	10521-1
+decin,kaufland	10521-2
+rehlovice,stadice,pelikanuv mlyn	338-1
+rehlovice,stadice,pelikanuv mlyn	338-2
+habrovany	339-1
+habrovany	339-2
+rehlovice,radejcin	1421-1
+rehlovice,radejcin	1421-2
+rehlovice,dubice	318-1
+rehlovice,dubice	318-2
+rehlovice,dubice,dubicky	317-1
+rehlovice,lany dolni	1422-1
+rehlovice,lany dolni	1422-2
+rehlovice,lany dolni	1422-4
+rehlovice,stadice	1457-1
+rehlovice,stadice	1457-2
+rehlovice,stadice	1457-3
+rehlovice,stadice	1457-92
+rehlovice,stadice	1457-101
+rehlovice,stadice,osada	1456-1
+rehlovice,stadice,osada	1456-2
+kostov,osada	682-1
+kostov,osada	682-2
+kostov,obec	681-1
+kostov,obec	681-2
+kostov	683-1
+kostov	683-2
+trmice,nova skola	1652-1
+rehlovice,hlinany	363-1
+rehlovice,hlinany	363-2
+rehlovice,habri	340-1
+rehlovice,brozanky	1420-1
+rehlovice,brozanky	1420-92
+rehlovice,brozanky	1420-101
+decin,husitska	10515-1
+decin,husitska	10515-2
+decin,bazantnice	2554-1
+decin,bazantnice	2554-2
+decin,zelenicka	10570-1
+decin,zelenicka	10570-2
+decin,zelenicka	10570-3
+decin,posta	10548-1
+decin,posta	10548-2
+decin,kosova	10523-1
+decin,chrochvice	10516-1
+decin,chrochvice	10516-2
+decin,liliova	10533-1
+decin,liliova	10533-2
+decin,kamenicka	10518-1
+decin,kamenicka	10518-2
+chomutov,zel.st.	510-1
+chomutov,zel.st.	510-92
+chomutov,zel.st.	510-101
+chomutov,bezrucova	483-1
+chomutov,bezrucova	483-2
+chomutov,lipska ii	494-1
+chomutov,lipska ii	494-2
+krimov,krasna lipa	776-1
+krimov,krasna lipa	776-2
+krimov,domina,zel.st.	774-1
+krimov,domina,zel.st.	774-2
+krimov,domina	775-1
+krimov,domina	775-2
+krimov,strazky	777-1
+krimov,strazky	777-2
+krimov,suchdol,rozc.	778-1
+krimov,suchdol,rozc.	778-2
+krimov	781-1
+krimov	781-2
+krimov,nadr.rozc.	780-1
+krimov,nadr.rozc.	780-2
+krimov,nadr.	779-1
+krimov,nadr.	779-2
+krimov,nadr.	779-92
+krimov,nadr.	779-101
+hora sv.sebestiana,nova ves	380-1
+hora sv.sebestiana,nova ves	380-2
+hora sv.sebestiana	381-1
+hora sv.sebestiana	381-2
+reitzenhain,wendeschleife	2494-1
+reitzenhain,wendeschleife	2494-2
+reitzenhain,kfz-werkstatt	2496-1
+reitzenhain,kfz-werkstatt	2496-2
+marienberg,neues haus	2574-1
+marienberg,neues haus	2574-2
+marienberg,reitzenhainer str.	2497-1
+marienberg,reitzenhainer str.	2497-2
+marienberg,markt	2498-1
+chomutov,jitrenka	488-1
+chomutov,jitrenka	488-2
+marienberg,erzgebirgskasarne	3155-1
+marienberg,erzgebirgskasarne	3155-2
+marienberg,gewerbegebiet	3154-1
+roudnice n.l.,aut.nadr.	1371-1
+roudnice n.l.,aut.nadr.	1371-2
+roudnice n.l.,aut.nadr.	1371-3
+roudnice n.l.,aut.nadr.	1371-4
+roudnice n.l.,aut.nadr.	1371-5
+roudnice n.l.,aut.nadr.	1371-7
+roudnice n.l.,aut.nadr.	1371-8
+roudnice n.l.,purkynovo nam.	1377-1
+roudnice n.l.,purkynovo nam.	1377-2
+roudnice n.l.,spindlerova tr.	1385-1
+roudnice n.l.,spindlerova tr.	1385-2
+roudnice n.l.,letiste	1378-1
+roudnice n.l.,letiste	1378-2
+racineves,motorest rozc.	1349-1
+racineves,motorest rozc.	1349-2
+racineves,motorest rozc.	1349-3
+racineves,motorest rozc.	1349-4
+racineves	1350-1
+racineves	1350-2
+racineves,otocka	2473-1
+racineves,otocka	2473-2
+racineves,otocka	2473-3
+martineves	1044-1
+martineves	1044-2
+martineves,charvatce	1042-1
+martineves,charvatce	1042-2
+martineves,charvatce	1042-3
+msene-lazne,lazne	1125-1
+msene-lazne,lazne	1125-2
+msene-lazne,u kaplicky	1127-1
+msene-lazne,u kaplicky	1127-2
+msene-lazne,u kaplicky	1127-3
+msene-lazne,u kaplicky	1127-4
+msene-lazne,vrbice,podoli	1123-1
+msene-lazne,vrbice,podoli	1123-2
+msene-lazne,redhost	1122-1
+msene-lazne,redhost	1122-2
+msene-lazne,redhost	1122-3
+msene-lazne,redhost	1122-4
+msene-lazne,jecovice	1120-1
+msene-lazne,jecovice	1120-2
+peruc,cernochov	1206-1
+peruc,cernochov	1206-2
+peruc	1214-1
+peruc	1214-2
+peruc,hrivcice	1207-1
+peruc,hrivcice	1207-2
+vrbno n.lesy	1923-1
+vrbno n.lesy	1923-2
+touzetin,donin	1644-1
+touzetin,donin	1644-2
+touzetin	1646-1
+touzetin	1646-2
+touzetin,sulec	1645-1
+touzetin,sulec	1645-2
+touzetin,sulec	1645-3
+touzetin,sulec	1645-4
+chlumcany,motorest	471-1
+chlumcany,motorest	471-2
+louny,u cihelny	965-1
+louny,u cihelny	965-2
+louny,poliklinika	959-1
+louny,poliklinika	959-2
+louny,praga	960-1
+louny,praga	960-2
+louny,zel.st.	968-1
+louny,zel.st.	968-2
+louny,zel.st.	968-3
+louny,zel.st.	968-11
+louny,zel.st.	968-92
+louny,zel.st.	968-101
+citoliby	139-1
+citoliby	139-2
+louny,u spravedlnosti	966-1
+louny,u spravedlnosti	966-2
+decany,rozc.0.5	190-1
+decany,rozc.0.5	190-2
+decany,rozc.0.5	190-3
+decany,rozc.0.5	190-4
+decany	191-1
+decany	191-2
+libceves,hnojnice	815-1
+libceves,hnojnice	815-2
+libceves,zidovice	821-1
+libceves,horenec,rozc.	816-1
+libceves,horenec,rozc.	816-2
+kozly	691-1
+kozly	691-2
+skrsin,chramce	3031-1
+skrsin,chramce	3031-2
+skrsin,dobrcice	3030-1
+skrsin	3029-1
+skrsin	3029-2
+korozluky,obecni urad	3028-1
+korozluky,obecni urad	3028-2
+korozluky,sedlec,obec	3027-1
+korozluky,sedlec,obec	3027-2
+korozluky,sedlec,pivovar	3026-1
+korozluky,sedlec,pivovar	3026-2
+patokryje,lavka	1201-1
+patokryje,lavka	1201-2
+obrnice,sidliste	1175-1
+obrnice,sidliste	1175-2
+obrnice,skola	1176-1
+obrnice,skola	1176-2
+most,nadrazi	1110-1
+most,nadrazi	1110-2
+most,nadrazi	1110-3
+most,nadrazi	1110-92
+most,nadrazi	1110-101
+trebivlice,rozc.0.5	1678-1
+trebivlice,rozc.0.5	1678-2
+podsedice	2397-92
+podsedice	2397-101
+dlazkovice	2396-92
+dlazkovice	2396-101
+trebenice,dlazkovicka	1666-1
+trebenice,dlazkovicka	1666-2
+belusice,rozc.1.0	22-1
+belusice,rozc.1.0	22-2
+belusice,bedrichuv svetec,rozc.	16-1
+belusice,bedrichuv svetec,rozc.	16-2
+skrsin,odb.	1435-1
+skrsin,odb.	1435-2
+podborany,osp	1270-1
+podborany,osp	1270-2
+podborany,csad	1264-1
+podborany,csad	1264-2
+vroutek	1935-1
+vroutek	1935-2
+vroutek,kryrska	1932-1
+vroutek,kryrska	1932-2
+kryry,sklarna	759-1
+kryry,sklarna	759-2
+kryry	761-1
+kryry	761-2
+kryry,zeleznicni	760-1
+kryry,zeleznicni	760-2
+kryry,zeleznicni	760-92
+kryry,zeleznicni	760-101
+petrohrad,cerncice,skola	1219-1
+petrohrad,cerncice,skola	1219-2
+petrohrad,cerncice	1220-1
+petrohrad,cerncice	1220-2
+blatno,malmerice	50-1
+blatno,malmerice	50-2
+petrohrad	1222-1
+petrohrad	1222-2
+jesenice,chotesov	2466-1
+jesenice,chotesov	2466-2
+kryry,stebno	755-1
+podborany,kafilerie	1265-1
+podborany,kafilerie	1265-2
+podborany,psov	1261-1
+podborany,psov	1261-2
+podborany,syrovice	1262-1
+podborany,syrovice	1262-2
+zatec,radiceves	1988-1
+zatec,radiceves	1988-2
+zatec,cerveny hradek	1996-1
+zatec,cerveny hradek	1996-2
+zatec,sokolovna	2007-1
+zatec,aut.nadr.	1993-1
+zatec,aut.nadr.	1993-2
+zatec,aut.nadr.	1993-3
+zatec,aut.nadr.	1993-4
+zatec,aut.nadr.	1993-5
+zatec,kovarska	2001-1
+zatec,milceves	1986-1
+zatec,milceves	1986-2
+zatec,milceves	1986-3
+zatec,milceves	1986-4
+zatec,u plynarny	2012-1
+zatec,u plynarny	2012-2
+zatec,zel.st.	2015-1
+zatec,zel.st.	2015-2
+zatec,zel.st.	2015-3
+zatec,zel.st.	2015-92
+zatec,zel.st.	2015-101
+petrohrad,bilenec	1218-1
+jesenice,nam.	2467-1
+jesenice,nam.	2467-2
+varnsdorf,u vorlicku	1814-1
+varnsdorf,u vorlicku	1814-2
+dolni podluzi,zel.st.	265-1
+dolni podluzi,zel.st.	265-2
+dolni podluzi,zel.st.	265-92
+dolni podluzi,zel.st.	265-101
+dolni podluzi,drubezarna	260-1
+dolni podluzi,drubezarna	260-2
+dolni podluzi,kino	261-1
+dolni podluzi,kino	261-2
+horni podluzi,u vleku	389-1
+horni podluzi,u vleku	389-2
+horni podluzi,kriz.	391-1
+horni podluzi,kriz.	391-2
+horni podluzi,kriz.	391-3
+rybniste,odb.doubice	1415-1
+rybniste,odb.doubice	1415-2
+rybniste,odb.doubice	1415-3
+rybniste,odb.doubice	1415-4
+rybniste,nova chribska	1413-1
+rybniste,nova chribska	1413-2
+chribska,ozdravovna	534-1
+chribska,ozdravovna	534-2
+ceska kamenice,liska,krizovy buk	168-1
+ceska kamenice,liska,krizovy buk	168-2
+ceska kamenice,liska,hor.	167-1
+ceska kamenice,liska,hor.	167-2
+ceska kamenice,liska	169-1
+ceska kamenice,liska	169-2
+ceska kamenice,fibichova	171-1
+ceska kamenice,fibichova	171-2
+zatec,lucanska	2003-1
+zatec,lucanska	2003-2
+zatec,lucanska	2003-3
+zatec,lucanska	2003-4
+zatec,havlickovo nam.	1997-1
+zatec,havlickovo nam.	1997-2
+zatec,bonex	1994-1
+zatec,bonex	1994-2
+zatec,prefa	2006-1
+zatec,prefa	2006-2
+zatec,velichov	1990-1
+zatec,velichov	1990-2
+zizelice,u mostu	169344-1
+zizelice,u mostu	169344-2
+velemysleves	1851-1
+velemysleves	1851-2
+havran,skola	351-1
+havran,skola	351-2
+havran	352-1
+havran	352-2
+cepirohy,hrabak	143-1
+cepirohy,hrabak	143-2
+cepirohy,zk	144-1
+cepirohy,zk	144-2
+velebudice,rozc.0.5	2566-1
+velebudice,rozc.0.5	2566-2
+most,cs.mladeze	1106-1
+most,cs.mladeze	1106-2
+zizelice	2643-91
+zatec,koito	2000-1
+zatec,koito	2000-2
+velemysleves,triangle-sever ii	1850-1
+velemysleves,triangle-sever ii	1850-2
+velemysleves,triangle-sever ii	1850-3
+velemysleves,minice,samota	1845-1
+velemysleves,minice,samota	1845-2
+velemysleves,minice	1846-1
+velemysleves,minice	1846-2
+velemysleves,truzenice	1847-1
+velemysleves,truzenice	1847-2
+decin,pod nemocnici	10547-1
+decin,pod nemocnici	10547-2
+decin,nemocnice	10542-1
+decin,nemocnice	10542-2
+decin,kozinova	10525-1
+decin,kozinova	10525-2
+decin,zelenice	10569-1
+decin,zelenice	10569-2
+decin,zatecka	10568-1
+decin,zatecka	10568-2
+krasna lipa,nam.	708-1
+krasna lipa,nadrazi	715-1
+krasna lipa,nadrazi	715-2
+krasna lipa,tyrsova	713-1
+krasna lipa,tyrsova	713-2
+rumburk,rest.zatisi	1405-1
+rumburk,rest.zatisi	1405-2
+rumburk,sluknovska	1406-1
+rumburk,sluknovska	1406-2
+rumburk,dolni krecany	1396-1
+rumburk,dolni krecany	1396-2
+rumburk,dolni krecany,host.	1395-1
+rumburk,dolni krecany,host.	1395-2
+stare krecany,u statku	1474-1
+stare krecany,u statku	1474-2
+stare krecany	1475-1
+stare krecany	1475-2
+stare krecany,obu	1472-1
+stare krecany,obu	1472-2
+stare krecany,u slov.lipy	1473-1
+stare krecany,u slov.lipy	1473-2
+stare krecany,pansky	1469-1
+stare krecany,pansky	1469-2
+stare krecany,brtniky,rozc.	1468-1
+stare krecany,brtniky,rozc.	1468-2
+stare krecany,brtniky,nam.	1467-1
+stare krecany,brtniky,nam.	1467-2
+stare krecany,brtniky,na ruzku	1466-1
+stare krecany,brtniky,na ruzku	1466-2
+mikulasovice,hor.	1067-1
+mikulasovice,hor.	1067-2
+mikulasovice,hor.-sv.hubert	1068-1
+mikulasovice,hor.-sv.hubert	1068-2
+mikulasovice,stredni-skola	1070-1
+mikulasovice,stredni-skola	1070-2
+mikulasovice,stredni-skola	1070-3
+mikulasovice,stredni-skola	1070-4
+mikulasovice,u rybnicku	1071-1
+mikulasovice,u rybnicku	1071-2
+velky senov,nam.	1880-1
+velky senov,nam.	1880-2
+velky senov,nam.	1880-92
+velky senov,nam.	1880-101
+velky senov,stap	1881-1
+velky senov,stap	1881-2
+vilemov	1905-1
+vilemov	1905-2
+vilemov,klub	1901-1
+vilemov,klub	1901-2
+dolni poustevna,karlin	268-1
+dolni poustevna,karlin	268-2
+dolni poustevna,karlin,rozc.	267-1
+dolni poustevna,karlin,rozc.	267-2
+dolni poustevna,stred	270-1
+dolni poustevna,stred	270-2
+dolni poustevna,stred	270-3
+dolni poustevna,stred	270-4
+dolni poustevna,stred	270-94
+dolni poustevna,zel.st.	271-1
+dolni poustevna,zel.st.	271-92
+dolni poustevna,zel.st.	271-101
+krasna lipa,zel.zast.mesto	710-1
+krasna lipa,zel.zast.mesto	710-2
+krasna lipa,zel.zast.mesto	710-92
+krasna lipa,zel.zast.mesto	710-93
+krasna lipa,zel.zast.mesto	710-101
+krasna lipa,prazska	711-1
+krasna lipa,prazska	711-2
+rybniste,nova ves	1414-1
+rybniste,nova ves	1414-2
+rybniste,u hrbitova	1417-1
+rybniste,u hrbitova	1417-2
+rybniste,zel.st.	1418-1
+rybniste,zel.st.	1418-92
+rybniste,zel.st.	1418-93
+rybniste,zel.st.	1418-101
+horni podluzi,zel.zast.	2414-1
+horni podluzi,zel.zast.	2414-2
+mikulasovice,zel.st.dolni nadrazi	1072-1
+mikulasovice,zel.st.dolni nadrazi	1072-2
+mikulasovice,dol.-sas	1066-1
+mikulasovice,dol.-sas	1066-2
+mikulasovice,mikov	1069-1
+mikulasovice,mikov	1069-2
+ceska lipa strelnice	2061-92
+novy oldrichov,posta	2225-1
+novy oldrichov,posta	2225-2
+bozi dar,u kostela	79-1
+bozi dar,u kostela	79-2
+bozi dar,klinovec,rozc.	77-1
+bozi dar,klinovec,rozc.	77-2
+loucna,lesni zamecek	937-1
+loucna,lesni zamecek	937-2
+loucna,haj.park.	935-1
+loucna,haj.park.	935-2
+usti n.l.,decinska	12012-1
+usti n.l.,decinska	12012-2
+usti n.l.,trebizskeho	12128-1
+usti n.l.,trebizskeho	12128-2
+usti n.l.,strekov,zel.st.	2641-1
+usti n.l.,ovcacka stezka	12079-1
+usti n.l.,ovcacka stezka	12079-2
+usti n.l.,pod hradem	12081-1
+usti n.l.,pod hradem	12081-2
+usti n.l.,strekov,osada	12115-1
+usti n.l.,strekov,osada	12115-2
+usti n.l.,zahradnictvi	12149-1
+usti n.l.,zahradnictvi	12149-2
+usti n.l.,lazne	12054-1
+usti n.l.,lazne	12054-2
+usti n.l.,strekov,rodinova	12116-1
+usti n.l.,strekov,rodinova	12116-2
+usti n.l.,na rybarne	12063-1
+usti n.l.,na rybarne	12063-2
+usti n.l.,brna,osada	12007-1
+usti n.l.,brna,osada	12007-2
+usti n.l.,brna	12006-1
+usti n.l.,brna	12006-2
+usti n.l.,na spalence	12065-1
+usti n.l.,na spalence	12065-2
+usti n.l.,stefanikova	12125-1
+usti n.l.,stefanikova	12125-2
+usti n.l.,bukov,mestsky stadion	1717-1
+usti n.l.,bukov,mestsky stadion	1717-2
+usti n.l.,bukov	1732-1
+usti n.l.,bukov	1732-2
+usti n.l.,bukov rondel	1733-1
+usti n.l.,bukov rondel	1733-2
+usti n.l.,vseboricka	1756-1
+usti n.l.,vseboricka	1756-2
+usti n.l.,lipova	1742-1
+usti n.l.,lipova	1742-2
+usti n.l.,vseborice,obchodni centrum	1728-1
+usti n.l.,vseborice,obchodni centrum	1728-2
+usti n.l.,podhori	2363-1
+usti n.l.,podhori	2363-2
+usti n.l.,vseborice,havirska	1750-1
+usti n.l.,vseborice,havirska	1750-2
+usti n.l.,vseborice,u ceskeho ujezdu	1727-1
+usti n.l.,vseborice,u ceskeho ujezdu	1727-2
+chlumec,zaluzanska	476-1
+chlumec,zaluzanska	476-2
+chlumec,stradov	475-1
+chlumec,stradov	475-2
+prestanov,u pomniku	1343-1
+prestanov,u pomniku	1343-2
+prestanov,u pomniku	1343-3
+prestanov,u pomniku	1343-4
+prestanov	1344-1
+prestanov	1344-2
+prestanov	1344-3
+prestanov	1344-4
+usti n.l.,karla maye	12040-1
+usti n.l.,karla maye	12040-2
+usti n.l.,sebuzin,rozc.	12103-1
+usti n.l.,sebuzin,rozc.	12103-2
+sebuzin	2246-92
+sebuzin	2246-101
+usti n.l.,sebuzin,zel.st.	12101-1
+usti n.l.,sebuzin,zel.st.	12101-2
+usti n.l.,sebuzin,privoz	12102-1
+usti n.l.,sebuzin,privoz	12102-2
+usti n.l.,cirkvice	12008-1
+usti n.l.,cirkvice	12008-2
+usti n.l.,ve stromkach	12138-1
+usti n.l.,ve stromkach	12138-2
+usti n.l.,pod holomeri	1752-1
+usti n.l.,pod holomeri	1752-2
+usti n.l.,pod holomeri	1752-3
+usti n.l.,pod holomeri	1752-4
+usti n.l.,kmochova	12047-1
+usti n.l.,kmochova	12047-2
+usti n.l.,zoologicka zahrada	12153-1
+usti n.l.,zoologicka zahrada	12153-2
+usti n.l.,osamela	12078-1
+usti n.l.,osamela	12078-2
+usti n.l.,dvojdomi	12020-1
+usti n.l.,dvojdomi	12020-2
+usti n.l.,vystupni	12147-1
+usti n.l.,vystupni	12147-2
+usti n.l.,autoskola	12002-1
+usti n.l.,autoskola	12002-2
+usti n.l.,jungmannova	12035-1
+usti n.l.,jungmannova	12035-2
+usti n.l.,pivovar	1751-1
+usti n.l.,pivovar	1751-2
+usti n.l.,krasne brezno	12051-1
+usti n.l.,krasne brezno	12051-2
+usti n.l.,krasne brezno	12051-4
+usti n.l.,u studanky	12129-1
+usti n.l.,u studanky	12129-2
+usti n.l.,nestemicka	12069-1
+usti n.l.,nestemicka	12069-2
+usti n.l.,kanon	12037-1
+usti n.l.,kanon	12037-2
+usti n.l.,svatopluka cecha	12122-1
+usti n.l.,svatopluka cecha	12122-2
+usti n.l.,pod vyhlidkou	12083-1
+usti n.l.,pod vyhlidkou	12083-2
+usti n.l.,prior	12088-1
+usti n.l.,prior	12088-2
+usti n.l.,prior	12088-4
+usti n.l.,krcinova	12052-1
+usti n.l.,krcinova	12052-2
+usti n.l.,skalka	12106-1
+usti n.l.,skalka	12106-2
+zatec,sv.cecha	2009-1
+zatec,sv.cecha	2009-2
+zatec,volyn.cechu osp	2812-1
+zatec,volyn.cechu osp	2812-2
+holedec,holedecek	367-1
+holedec,holedecek	367-2
+holedec,holedecek	367-3
+holedec,holedecek	367-4
+holedec,holedecek	367-5
+holedec,holedecek	367-6
+mecholupy,skola	1054-1
+mecholupy,skola	1054-2
+mecholupy	1056-1
+mecholupy	1056-2
+mecholupy	1056-3
+mecholupy,zelec,rozc.	1052-1
+mecholupy,zelec,rozc.	1052-2
+destnice,rozc.sadek	241-1
+destnice,rozc.sadek	241-2
+destnice,rozc.1.0	240-1
+destnice,rozc.1.0	240-2
+destnice,nova hospoda rozc.	239-1
+destnice,nova hospoda rozc.	239-2
+mecholupy,velka cernoc	1051-1
+svojetin,obu	2988-1
+svojetin,obu	2988-2
+svojetin	2813-1
+svojetin	2813-2
+svojetin	2813-3
+milostin,povlcin	2814-1
+milostin,povlcin	2814-2
+milostin,povlcin	2814-3
+milostin	2815-1
+milostin	2815-2
+krusovice	2649-1
+krusovice	2649-2
+revnicov	2784-1
+revnicov	2784-2
+nove straseci,karlovarska	2783-1
+nove straseci,karlovarska	2783-2
+nove straseci,palackeho	2782-1
+nove straseci,palackeho	2782-2
+nove straseci,poliklinika	2781-1
+nove straseci,poliklinika	2781-2
+rynholec	2780-1
+rynholec	2780-2
+rynholec,zav.	2779-1
+rynholec,zav.	2779-2
+lany,vasirov	2778-1
+lany,vasirov	2778-2
+lany,u hrbitova	2777-1
+lany,u hrbitova	2777-2
+stochov,slovanka i	2631-1
+stochov,slovanka i	2631-2
+praha,zlicin	2766-1
+praha,zlicin	2766-4
+praha,zlicin	2766-6
+praha,zlicin	2766-10
+destnice	2070-92
+destnice	2070-101
+mecholupy,zelec	1053-1
+zatec,vuch	2014-1
+zatec,vuch	2014-2
+zatec,kadanska	1999-1
+zatec,kadanska	1999-2
+libocany	847-1
+libocany	847-2
+nove sedlo	1163-1
+nove sedlo	1163-2
+chbany,rozc.chuderin	468-1
+chbany,rozc.chuderin	468-2
+chbany,male krhovice,rozc.	1010-1
+chbany,male krhovice,rozc.	1010-2
+chbany,polaky	467-1
+chbany,polaky	467-2
+chbany,horenice,rozc.	394-1
+chbany,horenice,rozc.	394-2
+chbany,vikletice	1899-1
+chbany,vikletice	1899-2
+chbany,vadkovice	1787-1
+chbany,vadkovice	1787-2
+chbany,male krhovice	1011-1
+chbany,male krhovice	1011-2
+chbany,polaky,tocna	466-1
+chbany,polaky,tocna	466-2
+lipno,lipenec,skola	872-1
+lipno,lipenec	873-1
+lipno,lipenec	873-2
+lipno,lipenec	873-3
+lipno,lipenec	873-4
+jimlin	592-1
+jimlin	592-2
+opocno,host.	1188-1
+opocno,host.	1188-2
+opocno,zel.prejezd	1189-1
+opocno,zel.prejezd	1189-2
+opocno,zel.prejezd	1189-92
+opocno,zel.prejezd	1189-101
+hrivice,touchovice	439-1
+hrivice,touchovice	439-2
+hrivice,touchovice	439-92
+hrivice,touchovice	439-101
+hrivice,nova ulice	440-1
+hrivice,nova ulice	440-2
+hrivice	442-1
+hrivice,zel.st.	441-1
+hrivice,zel.st.	441-2
+hrivice,zel.st.	441-92
+hrivice,zel.st.	441-101
+hrivice,markvarec	438-1
+hrivice,markvarec	438-2
+pnetluky,konetopy	1242-1
+pnetluky,konetopy	1242-2
+pnetluky,konetopy	1242-92
+pnetluky,konetopy	1242-101
+tuchorice,haj.	1695-1
+tuchorice,haj.	1695-2
+tuchorice	1698-1
+tuchorice	1698-2
+tuchorice,treskonice	1694-1
+tuchorice,treskonice	1694-2
+usti n.l.,nove krematorium	12071-1
+usti n.l.,nove krematorium	12071-2
+usti n.l.,strekov,ii	12114-1
+usti n.l.,strekov,ii	12114-2
+usti n.l.,strekov,ii	12114-3
+usti n.l.,kamenny vrch	1739-1
+usti n.l.,kamenny vrch	1739-2
+usti n.l.,posledni cesta	12086-2
+usti n.l.,posledni cesta	12086-3
+usti n.l.,novosedlicke nam.	12073-1
+usti n.l.,novosedlicke nam.	12073-2
+usti n.l.,v zeleni	12136-1
+usti n.l.,v zeleni	12136-2
+usti n.l.,safarikovo nam.	12123-1
+usti n.l.,safarikovo nam.	12123-2
+usti n.l.,karla iv.	12039-1
+usti n.l.,karla iv.	12039-2
+usti n.l.,pristav	12094-1
+usti n.l.,pristav	12094-2
+usti n.l.,vojanova zoo	12143-1
+usti n.l.,vojanova zoo	12143-2
+slany,aut.nadr.	2666-1
+slany,aut.nadr.	2666-4
+slany,aut.nadr.	2666-6
+slany,aut.nadr.	2666-9
+slany,aut.nadr.	2666-10
+slany,aut.nadr.	2666-11
+slany,aut.nadr.	2666-15
+slany,aut.nadr.	2666-17
+slany,sultysova	2667-1
+slany,sultysova	2667-2
+slany,sokolovna	2868-1
+slany,sokolovna	2868-2
+slany,u sloupu	2867-1
+slany,u sloupu	2867-2
+slany,trpomechy	2866-1
+slany,trpomechy	2866-2
+kralovice	2865-1
+kralovice	2865-2
+neprobylice	122981-999
+kutrovice	2863-1
+kutrovice	2863-2
+kvilice,ii	2862-1
+kvilice,ii	2862-2
+trebiz	2861-1
+trebiz	2861-2
+horesovice	2860-1
+horesovice	2860-2
+horesovicky	2859-1
+horesovicky	2859-2
+panensky tynec	1200-1
+panensky tynec	1200-2
+louny,sokolovna	964-1
+louny,sokolovna	964-2
+louny,luna	956-1
+louny,luna	956-2
+louny,csad	953-1
+louny,csad	953-2
+postoloprty,brezno,rozc.	1289-1
+postoloprty,brezno,rozc.	1289-2
+postoloprty,brezno,rozc.	1289-3
+postoloprty,brezno	1291-1
+postoloprty,brezno	1291-2
+postoloprty	1309-1
+postoloprty	1309-2
+postoloprty	1309-9
+postoloprty,nakup.str.	1305-1
+postoloprty,nakup.str.	1305-2
+udlice,rozc.prazska	3098-1
+udlice,rozc.prazska	3098-2
+slany,prazska	2869-1
+slany,prazska	2869-2
+slany,zel.zast.predmesti	2870-1
+slany,zel.zast.predmesti	2870-2
+slany,odb.drnov	2871-1
+slany,odb.drnov	2871-2
+jemniky,kriz.knoviz	2872-1
+jemniky,kriz.knoviz	2872-2
+praha,navigatoru	3046-1
+praha,navigatoru	3046-2
+praha,divoka sarka	2874-1
+praha,divoka sarka	2874-2
+praha,nadrazi veleslavin	2875-4
+praha,nadrazi veleslavin	2875-9
+krasna lipa,vlci hora	704-1
+krasna lipa,vlci hora	704-2
+krasna lipa,vlci hora,zebracka kaple	703-1
+krasna lipa,vlci hora,zebracka kaple	703-2
+krasna lipa,zahrady,rozc.	705-1
+krasna lipa,zahrady,rozc.	705-2
+krasna lipa,zahrady,rozc.	705-3
+krasna lipa,zahrady,rozc.	705-4
+krasna lipa,snezna	702-1
+krasna lipa,snezna	702-2
+krasna lipa,krasny buk	697-1
+krasna lipa,krasny buk	697-2
+krasna lipa,kyjovska	709-1
+krasna lipa,kyjovska	709-2
+krasna lipa,u samoobsluhy	714-1
+krasna lipa,u samoobsluhy	714-2
+krasna lipa,varnsdorfska	707-1
+krasna lipa,varnsdorfska	707-2
+krasna lipa,haj.	712-1
+krasna lipa,haj.	712-2
+varnsdorf,studanka,sts	1798-1
+varnsdorf,studanka,sts	1798-2
+varnsdorf,studanka,posta	1797-1
+varnsdorf,studanka,posta	1797-2
+varnsdorf,kaufland	1815-1
+varnsdorf,kaufland	1815-2
+varnsdorf,kaufland	1815-3
+varnsdorf,posta	2439-1
+varnsdorf,posta	2439-2
+varnsdorf,elite	1804-1
+varnsdorf,elite	1804-2
+varnsdorf,zel.st.	1816-1
+varnsdorf,zel.st.	1816-2
+varnsdorf,zel.st.	1816-3
+varnsdorf,zel.st.	1816-92
+varnsdorf,zel.st.	1816-101
+varnsdorf,tos	1813-1
+chomutov,zel.zast.	2104-1
+chomutov,zel.zast.	2104-2
+chomutov,zel.zast.	2104-92
+chomutov,zel.zast.	2104-101
+chomutov,lesopark u lavky	493-1
+chomutov,lesopark u lavky	493-2
+chomutov,pisecna i-13	499-1
+chomutov,pisecna i-13	499-2
+chomutov,dukelska i	485-1
+chomutov,dukelska i	485-2
+chomutov,dukelska ii	2598-1
+chomutov,dukelska ii	2598-2
+chomutov,dul j.zizky	486-1
+chomutov,dul j.zizky	486-2
+udlice,zahradky	2599-1
+udlice,zahradky	2599-2
+udlice,cisticka	2600-1
+udlice,cisticka	2600-2
+udlice,pila	1707-1
+udlice,pila	1707-2
+udlice,uciliste	1708-1
+udlice,uciliste	1708-2
+udlice,uciliste	1708-3
+udlice,nam.	1706-1
+udlice,nam.	1706-2
+precaply,stary cukrovar	1340-1
+precaply,stary cukrovar	1340-2
+precaply	1341-1
+precaply	1341-2
+nezabylice,na seniku	1143-1
+nezabylice,na seniku	1143-2
+nezabylice,na seniku	1143-3
+nezabylice,na seniku	1143-4
+nezabylice,na seniku	1143-5
+nezabylice,na seniku	1143-6
+hrusovany,lazany	796-1
+hrusovany,lazany	796-2
+hrusovany,na jezerech	423-1
+hrusovany,na jezerech	423-2
+hrusovany	424-1
+hrusovany	424-2
+hrusovany	424-3
+hrusovany	424-4
+zizelice,horetice,tocna	2032-1
+zizelice,horetice,tocna	2032-2
+zizelice,horetice,zel.prejezd	2033-1
+zizelice,horetice,zel.prejezd	2033-2
+zatec,mostecka	2004-1
+zatec,mostecka	2004-2
+decin,28.rijna	210-1
+decin,28.rijna	210-2
+decin,loubi,prekladiste	204-1
+decin,loubi,prekladiste	204-2
+decin,loubi,i	203-1
+decin,loubi,i	203-2
+decin,loubi,ii	2366-1
+decin,loubi,ii	2366-2
+decin,loubi,iv	10535-1
+decin,podskali	227-1
+decin,podskali	227-2
+decin,dolni zleb,hranice	199-1
+decin,dolni zleb,hranice	199-2
+hrensko,na vysluni	430-1
+hrensko,na vysluni	430-2
+hrensko,nabr.	431-1
+hrensko,nabr.	431-2
+hrensko,nabr.	431-201
+hrensko,stred	433-1
+hrensko,stred	433-2
+hrensko,k souteskam	429-1
+hrensko,k souteskam	429-2
+hrensko,upravna vody	434-1
+hrensko,upravna vody	434-2
+hrensko,pravcicka brana	432-1
+hrensko,pravcicka brana	432-2
+hrensko,mezni louka,pred hotelem	426-3
+hrensko,mezni louka,pred hotelem	426-4
+jetrichovice,vysoka lipa,divoka souteska	572-1
+jetrichovice,vysoka lipa,divoka souteska	572-2
+chribska,na potocich	532-1
+chribska,na potocich	532-2
+chribska,na potocich	532-3
+chribska,dolni chribska,rozc.	527-1
+chribska,dolni chribska,rozc.	527-2
+chribska,dolni chribska	528-1
+chribska,dolni chribska	528-2
+doubice	279-1
+doubice	279-2
+doubice,obu	277-1
+doubice,obu	277-2
+doubice,u haj.	278-1
+doubice,u haj.	278-2
+krasna lipa,kyjov,prehrada	699-1
+krasna lipa,kyjov,prehrada	699-2
+krasna lipa,kyjov,kyjovske udoli	698-1
+krasna lipa,kyjov,kyjovske udoli	698-2
+krasna lipa,kyjov,dlouhy dul	700-1
+krasna lipa,kyjov,dlouhy dul	700-2
+krasna lipa,kyjov	701-1
+krasna lipa,kyjov	701-2
+olesna,kokrdy	2798-1
+olesna,kokrdy	2798-2
+olesna	2797-1
+olesna	2797-2
+chrastany	2795-1
+chrastany	2795-2
+chrastany,kult.dum	2796-1
+chrastany,kult.dum	2796-2
+knezeves,u mlyna	2794-1
+knezeves,u mlyna	2794-2
+knezeves,obu	2793-1
+knezeves,obu	2793-2
+kolesovice	2792-1
+kolesovice	2792-2
+horesedly,u skoly	2791-1
+horesedly,u skoly	2791-2
+dekov,nova ves,rozc.	2785-1
+dekov,nova ves,rozc.	2785-2
+dekov,nova ves,rozc.	2785-3
+dekov,nova ves,rozc.	2785-4
+horovicky,hokov,rozc.	2786-1
+horovicky,hokov,rozc.	2786-2
+horovicky	2787-1
+horovicky	2787-2
+kolesov	657-1
+kolesov	657-2
+horovicky,vrbice	3169-1
+horovicky,vrbice	3169-2
+kryry,besno	754-1
+kryry,besno	754-2
+kryry,strojetice	757-1
+kryry,strojetice	757-2
+kryry,nam.	758-1
+kryry,nam.	758-2
+ocihov,ocihovec	1179-1
+ocihov,ocihovec	1179-2
+ocihov	1180-1
+ocihov	1180-2
+podborany,nem.	1269-1
+podborany,nem.	1269-2
+varnsdorf,nem.	2438-1
+varnsdorf,karla iv.	1808-1
+varnsdorf,karla iv.	1808-2
+varnsdorf,horska	1805-1
+varnsdorf,horska	1805-2
+varnsdorf,stare nadrazi	2447-1
+varnsdorf,stare nadrazi	2447-2
+varnsdorf,vychodni skola	12502-1
+varnsdorf,vychodni skola	12502-2
+varnsdorf,budysinska	2442-1
+varnsdorf,budysinska	2442-2
+varnsdorf,policie	2443-1
+varnsdorf,bezrucova	2444-1
+varnsdorf,bezrucova	2444-2
+varnsdorf,kamenicka	2445-1
+varnsdorf,kamenicka	2445-2
+varnsdorf,5.kvetna	1800-1
+varnsdorf,5.kvetna	1800-2
+snedovice,velky hubenov	1447-1
+snedovice,velky hubenov	1447-2
+snedovice,strizovice,rozc.	1776-1
+snedovice,strizovice,rozc.	1776-2
+snedovice,strizovice	1444-1
+snedovice,strizovice	1444-2
+snedovice	1449-1
+snedovice	1449-2
+snedovice,kresov	1442-1
+snedovice,kresov	1442-2
+snedovice,kresov	1442-3
+steti,radoun	1524-1
+steti,radoun	1524-2
+steti,radoun	1524-3
+steti,radoun	1524-4
+steti,radoun	1524-5
+steti,radoun	1524-6
+steti,zel.prejezd	1535-1
+steti,zel.prejezd	1535-2
+steti,pradelna	1531-1
+steti,pradelna	1531-2
+steti,centrum	1528-1
+steti,centrum	1528-2
+steti,centrum	1528-3
+steti,centrum	1528-4
+steti,hnevice,predmosti	1520-1
+steti,hnevice,predmosti	1520-2
+racice	1348-1
+racice	1348-2
+racice,labe arena	2546-1
+steti,hnevice,benzina rozc.	1517-1
+steti,hnevice,benzina rozc.	1517-2
+bechlin,predonin	18-1
+bechlin,predonin	18-2
+bechlin,predonin,kosikarna	2577-1
+bechlin,predonin,kosikarna	2577-2
+dobrin,rozc.	253-1
+dobrin,rozc.	253-2
+dobrin,rozc.	253-3
+dobrin,rozc.	253-4
+roudnice n.l.,masny prumysl	1379-1
+roudnice n.l.,masny prumysl	1379-2
+roudnice n.l.,chelcickeho	1373-1
+roudnice n.l.,chelcickeho	1373-2
+roudnice n.l.,bezdekov skola	1372-1
+roudnice n.l.,bezdekov skola	1372-2
+roudnice n.l.,zamecky park	1382-1
+roudnice n.l.,nemocnice	1384-1
+roudnice n.l.,nemocnice	1384-2
+roudnice n.l.,sidliste	1383-1
+roudnice n.l.,sidliste	1383-2
+roudnice n.l.,zel.st.	1386-1
+roudnice n.l.,zel.st.	1386-92
+roudnice n.l.,zel.st.	1386-93
+roudnice n.l.,zel.st.	1386-101
+roudnice n.l.,zel.st.	1386-201
+steti,bozeny nemcove	2636-1
+zaluzi	2308-1
+zaluzi	2308-2
+zaluzi	2308-92
+zaluzi	2308-101
+zaluzi,kozlovice,rozc.	1966-1
+zaluzi,kozlovice,rozc.	1966-2
+dobrin	254-1
+dobrin	254-2
+dobrin	254-3
+dobrin	254-92
+dobrin	254-101
+roudnice n.l.,na kolecku	1380-1
+roudnice n.l.,na kolecku	1380-2
+roudnice n.l.,podlusky,zahradni	1368-1
+roudnice n.l.,podlusky,zahradni	1368-2
+roudnice n.l.,podlusky,9.kvetna	1369-1
+roudnice n.l.,podlusky,9.kvetna	1369-2
+dusniky,cerp.st.	327-1
+dusniky,cerp.st.	327-2
+dusniky	328-1
+dusniky	328-2
+dubi,lazne	307-1
+dubi,kostel	305-1
+dubi,kostel	305-2
+dubi,skola	314-1
+dubi,skola	314-2
+dubi,meu	310-1
+dubi,meu	310-2
+dubi,krusnohorska	306-1
+dubi,krusnohorska	306-2
+dubi,krusnohorska	306-3
+dubi,porcelanka	311-1
+dubi,porcelanka	311-2
+dubi,bystrice,tovarni ii	315-1
+dubi,bystrice,tovarni ii	315-2
+dubi,bystrice,tovarni i	295-1
+dubi,bystrice,tovarni i	295-2
+dubi,bystrice,dlouha	291-1
+dubi,bystrice,dlouha	291-2
+dubi,bystrice,b.nemcove	290-1
+dubi,bystrice,b.nemcove	290-2
+dubi,bystrice,skola	294-1
+dubi,bystrice,skola	294-2
+dubi,bystrice,gymnazium	292-1
+dubi,bystrice,gymnazium	292-2
+dubi,pozorka	301-1
+dubi,pozorka	301-2
+dubi,pozorka	301-3
+dubi,pozorka	301-4
+dubi,pozorka,nam.	300-1
+dubi,pozorka,nam.	300-2
+dubi,pozorka,nam.	300-3
+dubi,pozorka,nam.	300-4
+dubi,pozorka,sklarna	302-1
+dubi,pozorka,sklarna	302-2
+dubi,pozorka,sklarna	302-3
+dubi,pozorka,sklarna	302-4
+dubi,pozorka,lesni brana	308-1
+dubi,pozorka,lesni brana	308-2
+dubi,pozorka,lesni brana	308-3
+teplice,lesni brana nadr.	1601-1
+teplice,lesni brana nadr.	1601-2
+teplice,trnovany,policie cr	1572-1
+teplice,trnovany,policie cr	1572-2
+teplice,trnovany	1574-1
+teplice,trnovany	1574-2
+teplice,trnovany,cerp.st.	1568-1
+teplice,trnovany,cerp.st.	1568-2
+srbice	1452-1
+srbice	1452-2
+krupka,rozc.	748-1
+krupka,rozc.	748-2
+krupka,rozc.	748-3
+krupka,rozc.	748-4
+krupka,prum.zona ii	746-1
+krupka,prum.zona ii	746-2
+krupka,bohosudov,zel.st.	728-1
+krupka,bohosudov,zel.st.	728-2
+krupka,bohosudov,zel.st.	728-92
+krupka,bohosudov,zel.st.	728-101
+krupka,bohosudov,komenskeho	725-1
+krupka,bohosudov,komenskeho	725-2
+krupka,marsov,skola	733-1
+krupka,marsov,skola	733-2
+krupka,uncin,u parku	738-1
+krupka,uncin,u parku	738-2
+krupka,uncin,u lipy	737-1
+krupka,uncin,u lipy	737-2
+krupka,prum.zona i	745-1
+krupka,prum.zona i	745-2
+krupka,ke katerine	2950-1
+krupka,ke katerine	2950-2
+krupka,prum.zona iii	747-1
+krupka,prum.zona iii	747-2
+dubi,mstisov,dvojhradi	296-1
+dubi,mstisov,dvojhradi	296-2
+dubi,mstisov,skolni	298-1
+dubi,mstisov,skolni	298-2
+dubi,mstisov,nam.	297-1
+dubi,mstisov,nam.	297-2
+teplice,olympia	1614-1
+teplice,olympia	1614-2
+dubi,mstisov	299-1
+dubi,rudolfova hut	312-1
+dubi,rudolfova hut	312-2
+dubi,cerpaci stanice	303-1
+dubi,cerpaci stanice	303-2
+usti n.l.,v besidkach	12133-1
+usti n.l.,v besidkach	12133-2
+usti n.l.,solvayova	12109-3
+usti n.l.,solvayova	12109-4
+usti n.l.,kojeticka	12048-1
+usti n.l.,kojeticka	12048-2
+usti n.l.,kojeticka	12048-4
+usti n.l.,nova ves	12070-1
+usti n.l.,nova ves	12070-2
+usti n.l.,kojetice	1721-1
+usti n.l.,kojetice	1721-2
+usti n.l.,za valcovnou	12148-1
+usti n.l.,za valcovnou	12148-2
+usti n.l.,bezejmenna	12003-1
+usti n.l.,bezejmenna	12003-2
+chribska,skola	535-1
+chribska,skola	535-2
+chribska,horni chribska	530-1
+chribska,horni chribska	530-2
+chribska,horni chribska,sklarna	529-1
+chribska,horni chribska,sklarna	529-2
+chribska,krasne pole	531-1
+chribska,krasne pole	531-2
+varnsdorf,,posta	12501-1
+varnsdorf,hotel sport	1806-1
+varnsdorf,hotel sport	1806-2
+varnsdorf,zitavska	2481-1
+varnsdorf,zitavska	2481-2
+varnsdorf,vasped	2483-1
+varnsdorf,bratislavska	2482-1
+litvinov,prum.zona	917-1
+litvinov,prum.zona	917-2
+chomutov,chomutovka	11012-1
+chomutov,prumyslova zona ii	502-1
+chomutov,prumyslova zona ii	502-2
+zatec,ceradicka	1995-1
+zatec,ceradicka	1995-2
+ceradice	147-1
+ceradice	147-2
+ceradice,vetrusice,navrsi	2543-1
+ceradice,vetrusice,navrsi	2543-2
+ceradice,vetrusice	146-1
+ceradice,vetrusice	146-2
+nove sedlo,sedcice	1159-1
+nove sedlo,sedcice	1159-2
+nove sedlo,sedcice	1159-3
+nove sedlo,sedcice	1159-4
+libedice,cejkovice	823-1
+libedice,cejkovice	823-2
+petipsy	2418-92
+petipsy	2418-101
+radonice,haj	337-1
+radonice,haj	337-2
+radonice,kadansky rohozec	625-1
+radonice,kadansky rohozec	625-92
+radonice,kadansky rohozec	625-101
+radonice,radechov	1351-1
+radonice,radechov	1351-2
+sirejovice	1434-1
+sirejovice	1434-2
+vrbicany	1921-1
+vrbicany	1921-2
+chotesov,brozanska	512-1
+chotesov,brozanska	512-2
+chotesov,brozanska	512-3
+chotesov,brozanska	512-4
+chotesov	515-1
+chotesov	515-2
+radovesice	1355-1
+radovesice	1355-2
+libochovice,cukrovar	852-1
+libochovice,cukrovar	852-2
+libochovice,aut.nadr.	851-1
+libochovice,aut.nadr.	851-2
+libochovice,aut.nadr.	851-3
+libochovice,aut.nadr.	851-4
+podborany,hlubany,zav.	1253-1
+podborany,hlubany,zav.	1253-2
+podborany,buskovice	1252-1
+podborany,buskovice	1252-2
+nepomysl	1140-1
+nepomysl	1140-2
+nepomysl,dverecka	1138-1
+nepomysl,dverecka	1138-2
+nepomysl,dverce	1137-1
+nepomysl,dverce	1137-2
+nepomysl,dverce,zav.	1136-1
+nepomysl,dverce,zav.	1136-2
+vroutek,lihen	1933-1
+vroutek,lihen	1933-2
+vroutek	2301-92
+vroutek	2301-101
+nepomysl,kostel	1139-1
+nepomysl,kostel	1139-2
+podboransky rohozec	1251-1
+krasny dvur	723-1
+krasny dvur	723-2
+kadan,polni	2693-1
+kadan,polni	2693-2
+kadan,vezni keramost	2694-1
+kadan,vezni keramost	2694-2
+kadan,jungmanova	619-1
+kadan,jungmanova	619-2
+kadan,komenskeho studentske.nam.	2688-1
+kadan,pod sv.kopeckem	2696-1
+kadan,na podlesi sidl.d	2697-1
+kadan,posta	2698-1
+kadan,posta	2698-2
+kadan,kpt.jarose u kina	2634-1
+kadan,kpt.jarose u kina	2634-2
+kadan,nemocnice poliklinika	623-1
+kadan,nemocnice poliklinika	623-2
+kadan,nemocnice dets.odd.	2699-1
+kadan,nemocnice dets.odd.	2699-2
+kadan,u hrbitova	2695-1
+kadan,jana rohace suplik	2685-1
+vrbice,bosov	3021-1
+valec	1788-1
+valec,jeren	2982-1
+valec,jeren	2982-2
+valec,kostrcany	138192-1
+valec,kostrcany	138192-2
+valec,nahorecice,rozc.	2980-1
+valec,nahorecice,rozc.	2980-2
+lubenec,libkovice,rozc.	2979-1
+teplice,trnovany,modlanska	1570-1
+teplice,trnovany,modlanska	1570-2
+teplice,trnovany,somet	1573-1
+teplice,trnovany,somet	1573-2
+srbice,stare srbice	1451-1
+srbice,stare srbice	1451-2
+modlany	1096-1
+modlany	1096-2
+modlany,nam.	1095-1
+modlany,nam.	1095-2
+teplice,masarykova	1607-1
+teplice,masarykova	1607-2
+teplice,jankovcova	1596-1
+teplice,jankovcova	1596-2
+teplice,plavecka hala	1617-1
+teplice,plavecka hala	1617-2
+teplice,raisova	1619-1
+teplice,raisova	1619-2
+teplice,frani sramka	1588-1
+teplice,frani sramka	1588-2
+teplice,panorama	1616-1
+teplice,panorama	1616-2
+modlany,drahkov	1090-1
+modlany,drahkov	1090-2
+modlany,kvitkov,za kvitkovem	1091-1
+modlany,kvitkov,za kvitkovem	1091-2
+modlany,kvitkov	1092-1
+modlany,kvitkov	1092-2
+modlany,suche	1093-1
+modlany,suche	1093-2
+modlany,vestany	1094-1
+modlany,vestany	1094-2
+teplice,hotel de saxe	1592-1
+teplice,hotel de saxe	1592-2
+postoloprty,zel.st.	1308-1
+postoloprty,zel.st.	1308-2
+postoloprty,zel.st.	1308-11
+postoloprty,zel.st.	1308-92
+postoloprty,zel.st.	1308-101
+postoloprty,nam.	1306-1
+postoloprty,nam.	1306-2
+postoloprty,vrbka	1304-1
+postoloprty,vrbka	1304-2
+vyskov,zav.	1952-1
+vyskov,zav.	1952-2
+vyskov,pocerady	1951-1
+vyskov,pocerady	1951-2
+vyskov,pocerady,elna	1950-1
+zatec,lounska	2002-1
+zatec,lounska	2002-2
+stankovice	1464-1
+stankovice	1464-2
+bitozeves,triangle-vychod	46-1
+bitozeves,triangle-vychod	46-2
+bitozeves	47-1
+bitozeves	47-2
+bitozeves	47-3
+bitozeves,skola	45-1
+bitozeves,skola	45-2
+bitozeves,vidovle	44-1
+bitozeves,vidovle	44-2
+blazim	56-1
+blazim	56-2
+vyskov	1953-1
+vyskov	1953-2
+bitozeves,triangle-stred	2932-1
+bitozeves,triangle-stred	2932-2
+bitozeves,triangle-stred	2932-3
+bitozeves,triangle-sever iii	2597-1
+bitozeves,triangle-sever iii	2597-2
+postoloprty,seletice	1299-1
+postoloprty,seletice	1299-2
+postoloprty,semenkovice	1301-1
+postoloprty,semenkovice	1301-2
+bitozeves,tatinna	43-1
+bitozeves,tatinna	43-2
+bitozeves,nehasice	42-1
+steti,hnevice,zel.st.	1522-1
+steti,hnevice,zel.st.	1522-92
+steti,hnevice,zel.st.	1522-93
+steti,hnevice,zel.st.	1522-101
+steti,hnevice,zel.st.	1522-201
+steti,zel.st.	2639-1
+steti,ostrovni	2637-1
+steti,ostrovni	2637-2
+steti,okruzni	2638-1
+steti,okruzni	2638-2
+steti,stracenska	2757-1
+steti,stracenska	2757-2
+steti,straci	2715-1
+chomutov,okaly	11031-1
+chomutov,pod strazistem	11033-1
+chomutov,pod strazistem	11033-2
+chomutov,brezenecka i	11005-1
+chomutov,brezenecka i	11005-2
+chomutov,prumyslova zona i	501-1
+chomutov,prumyslova zona i	501-2
+lom,loucna,libkovicka	936-1
+lom,loucna,k.h.machy	940-1
+lom,loucna,k.h.machy	940-2
+lom,horni lom	928-1
+litvinov,citadela	2480-1
+litvinov,citadela	2480-2
+litvinov,maj	2479-1
+litvinov,maj	2479-2
+litvinov,zaluzi,petrochemie	1968-1
+litvinov,zaluzi,petrochemie	1968-2
+vernerice	1892-1
+vernerice	1892-2
+loveckovice,mukarov,rozc.0.4	973-1
+loveckovice,mukarov,rozc.0.4	973-2
+loveckovice,levinske petrovice,rozc.	972-1
+loveckovice,levinske petrovice,rozc.	972-2
+loveckovice	977-1
+loveckovice,lukavice	976-1
+loveckovice,lukavice	976-2
+loveckovice,touchoriny	974-1
+loveckovice,touchoriny	974-2
+loveckovice,klinky	975-1
+loveckovice,klinky	975-2
+loveckovice,klinky	975-3
+loveckovice,klinky	975-4
+loveckovice,kninice,rozc.	970-1
+loveckovice,kninice,rozc.	970-2
+zubrnice,tyniste	1705-1
+zubrnice	2393-92
+zubrnice	2393-101
+lestina	2392-92
+lestina	2392-101
+lestina,host.	808-1
+lestina,host.	808-2
+usti n.l.,beethovenova	1729-1
+usti n.l.,beethovenova	1729-2
+libouchec,zdarek	863-1
+libouchec,zdarek	863-2
+libouchec,kninice,rozc.1.0	862-1
+libouchec,kninice,rozc.1.0	862-2
+velke chvojno,male chvojno,rozc.	1867-1
+velke chvojno,male chvojno,rozc.	1867-2
+velke chvojno,male chvojno,rozc.	1867-3
+libouchec,statek	868-1
+libouchec,statek	868-2
+libouchec,novy libouchec	865-1
+libouchec,novy libouchec	865-2
+tisa,detsky domov	1639-1
+tisa,detsky domov	1639-2
+tisa,rozc.sneznik 5.0	1642-1
+tisa,rozc.sneznik 5.0	1642-2
+tisa,rozc.sneznik 5.0	1642-3
+tisa,kult.dum	1640-1
+tisa,kult.dum	1640-2
+tisa,statek	1643-1
+tisa,statek	1643-2
+tisa,rozc.antoninov 0.5	1641-1
+tisa,rozc.antoninov 0.5	1641-2
+petrovice,rozc.krasny les	1228-1
+petrovice,rozc.krasny les	1228-2
+petrovice,skola	1229-1
+petrovice,skola	1229-2
+petrovice,skola	1229-3
+petrovice,u marvanu	1231-1
+petrovice,u marvanu	1231-2
+petrovice,zav.	1232-1
+petrovice,zav.	1232-2
+petrovice,u dubu	1230-1
+petrovice,u dubu	1230-2
+petrovice,konecna	1227-1
+petrovice,konecna	1227-2
+bahratal,grenzubergang	9-1
+loveckovice,kninice	971-1
+loveckovice,kninice	971-2
+most,krym	1109-1
+most,krym	1109-2
+most,zd.stepanka	1116-1
+most,zd.stepanka	1116-2
+velemysleves,triangle-zapad	2551-1
+velemysleves,triangle-zapad	2551-2
+stankovice,triangle-jih	1463-1
+rokle,hradec	409-1
+blov	58-1
+blov	58-2
+miretice u vintirova	1082-1
+miretice u vintirova	1082-2
+vintirov	1910-1
+vintirov	1910-2
+radonice,zel.st.	1353-1
+radonice,zel.st.	1353-2
+podlesice	1273-1
+podlesice	1273-2
+podlesice,skolka	1272-1
+podlesice,skolka	1272-2
+vitcice	2422-92
+vitcice	2422-101
+nove trebcice	1164-1
+nove trebcice	1164-2
+velika ves	1854-1
+velika ves	1854-2
+velika ves	1854-3
+velika ves	1854-4
+siroke trebcice	1498-1
+siroke trebcice	1498-2
+siroke trebcice	1498-3
+citoliby,skola	138-1
+citoliby,skola	138-2
+listany	883-1
+listany	883-2
+listany,brana	881-1
+listany,brana	881-2
+zbrasin,senkov,rozc.	1973-1
+zbrasin,senkov,rozc.	1973-2
+zbrasin,senkov,rozc.	1973-3
+zbrasin,senkov,rozc.	1973-4
+rocov	1365-1
+rocov	1365-2
+rocov,trebocka	1363-1
+rocov,trebocka	1363-2
+treboc	1680-1
+treboc	1680-2
+treboc	1680-3
+treboc,obchod	2474-1
+treboc,obchod	2474-2
+rakovnik,prokopova	2659-1
+rakovnik,prokopova	2659-2
+rakovnik,sidl.gen.kholla	2660-1
+rakovnik,sidl.gen.kholla	2660-2
+rakovnik,zel.zast.zapad	2661-1
+rocov,ulovice	1362-1
+rocov,ulovice	1362-2
+rocov,brinkov	1361-1
+rocov,brinkov	1361-2
+brodec	91-1
+brodec	91-2
+listany,hrabacov	882-1
+listany,hrabacov	882-2
+domousice,solopysky	273-1
+slany,blahotice	3112-1
+slany,blahotice	3112-2
+zizice,vitov	3111-1
+zizice,vitov	3111-2
+zizice,nad hristem	3110-1
+zizice,nad hristem	3110-2
+zizice,lunikov	3109-1
+zizice,lunikov	3109-2
+velvary,jesin	3108-1
+velvary,jesin	3108-2
+velvary,nam.	2943-1
+velvary,zel.st.	2944-1
+velvary,zel.st.	2944-2
+velvary,nove uhy	3104-1
+velvary,nove uhy	3104-2
+uhy,zamek	3103-1
+uhy,zamek	3103-2
+uhy	3102-1
+uhy	3102-2
+chrzin	3101-1
+chrzin	3101-2
+chrzin,u mostu	3100-1
+chrzin,u mostu	3100-2
+sazena	3099-1
+sazena	3099-2
+nova ves	2738-1
+nova ves	2738-2
+nova ves,u dalnice	2748-1
+nova ves,u dalnice	2748-2
+ledcice,rozc.	797-1
+ledcice,rozc.	797-2
+ledcice	798-1
+ledcice	798-2
+mnetes	2189-92
+mnetes	2189-101
+cernoucek	157-1
+cernoucek	157-2
+cernoucek	157-3
+cernoucek	157-4
+cernoucek	157-5
+ctineves	141-1
+ctineves	141-2
+ctineves,zel.st.	140-1
+ctineves,zel.st.	140-2
+ctineves,zel.st.	140-92
+ctineves,zel.st.	140-101
+krabcice,rovne,rozc.1.0	693-1
+krabcice,rovne,rozc.1.0	693-2
+krabcice	696-1
+krabcice	696-2
+krabcice,vesce,rozc.1.0	695-1
+krabcice,vesce,rozc.1.0	695-2
+roudnice n.l.,cihadla	1374-1
+roudnice n.l.,cihadla	1374-2
+roudnice n.l.,cihadla	1374-3
+slany,palackeho	2673-1
+slany,fantuv mlyn	3033-1
+slany,fantuv mlyn	3033-2
+slany,kvicek	3034-1
+slany,kvicek	3034-2
+slany,kvic,u hrusky	3035-1
+slany,kvic,u hrusky	3035-2
+slany,tehul	3113-1
+slany,tehul	3113-2
+hrdliv	3114-1
+hrdliv	3114-2
+trebichovice,u hrbitova	3115-1
+trebichovice,u hrbitova	3115-2
+trebichovice,u kaplicky	3116-1
+trebichovice,u kaplicky	3116-2
+trebichovice	3117-1
+trebichovice	3117-2
+vinarice,zahr.kolonie	3118-1
+vinarice,zahr.kolonie	3118-2
+vinarice,skola	3119-1
+vinarice,skola	3119-2
+vinarice	3120-1
+vinarice	3120-2
+vinarice,7.ulice	3121-1
+vinarice,7.ulice	3121-2
+vinarice,dul mayrau	3122-1
+vinarice,dul mayrau	3122-2
+vinarice,tuhan	3123-1
+vinarice,tuhan	3123-2
+kladno,seifertova	3124-1
+kladno,seifertova	3124-2
+kladno,husova	3125-1
+kladno,husova	3125-2
+kladno,u knotku	3126-1
+kladno,u knotku	3126-2
+kladno,na kopci	3127-1
+kladno,na kopci	3127-2
+kladno,nam.svobody	3044-1
+kladno,nam.svobody	3044-2
+kladno,nam.svobody	3044-3
+kladno,nam.svobody	3044-4
+kladno,gymnasium	3128-1
+kladno,gymnasium	3128-2
+kladno,autobusove nadrazi	2800-3
+kladno,autobusove nadrazi	2800-7
+kladno,autobusove nadrazi	2800-8
+kladno,autobusove nadrazi	2800-10
+kladno,autobusove nadrazi	2800-13
+velvary,skola	3106-1
+velvary,skola	3106-2
+petrovice,krasny les,konecna	1223-1
+petrovice,krasny les	1225-1
+petrovice,krasny les	1225-2
+petrovice,krasny les,rozc.naklerov	1224-1
+petrovice,krasny les,rozc.naklerov	1224-2
+telnice,rozc.krasny les	1548-1
+telnice,rozc.krasny les	1548-2
+telnice,haj.	1546-1
+telnice,haj.	1546-2
+telnice,lesni zamecek	1547-1
+telnice,lesni zamecek	1547-2
+telnice,zel.st.	1550-1
+telnice,zel.st.	1550-2
+telnice,zel.st.	1550-92
+telnice,varvazov	1545-1
+telnice,varvazov	1545-2
+telnice,varvazov,ctyrdomi	1543-1
+telnice,varvazov,ctyrdomi	1543-2
+telnice,varvazov,pomniky	1544-1
+telnice,varvazov,pomniky	1544-2
+chlumec,zandov,rozc.	474-1
+chlumec,zandov,rozc.	474-2
+chlumec,zel.prejezd	477-1
+chlumec,zel.prejezd	477-2
+homole u panny,suletice	1489-1
+homole u panny,nova ves u plane	1146-1
+homole u panny,nova ves u plane	1146-2
+homole u panny,nova ves u plane	1146-3
+homole u panny,nova ves u plane	1146-4
+homole u panny,blahov	48-1
+homole u panny,blahov	48-2
+homole u panny,rozc.doubravice	371-1
+homole u panny,rozc.doubravice	371-2
+homole u panny,haslice	349-1
+homole u panny,haslice	349-2
+homole u panny	372-1
+homole u panny	372-2
+homole u panny	372-3
+homole u panny,lhota p.pannou	813-1
+homole u panny,lhota p.pannou	813-2
+homole u panny,lhota p.pannou,rozc.	811-1
+homole u panny,lhota p.pannou,rozc.	811-2
+homole u panny,lhota p.pannou,samota	812-1
+homole u panny,lhota p.pannou,samota	812-2
+homole u panny,bynov,odb.probostov	117-1
+homole u panny,bynov,odb.probostov	117-2
+homole u panny,bynov	118-1
+homole u panny,bynov	118-2
+velke brezno,vitov	1861-1
+velke brezno,vitov	1861-2
+velke brezno,skola	1862-1
+velke brezno,skola	1862-2
+telnice,zadni telnice	1549-1
+zatec,stavbaru	2008-1
+zatec,stavbaru	2008-2
+zatec,volyn.cechu sepap	3054-1
+zatec,volyn.cechu sepap	3054-2
+zabovresky n.ohri	1977-1
+zabovresky n.ohri	1977-2
+budyne n.ohri,brezany n.ohri	103-1
+budyne n.ohri,brezany n.ohri	103-2
+budyne n.ohri,nizebohy	105-1
+budyne n.ohri,nizebohy	105-2
+budyne n.ohri,nizebohy	105-3
+budyne n.ohri,nizebohy	105-4
+kladno,autobusove nadrazi	3045-1
+kladno,autobusove nadrazi	3045-7
+kladno,autobusove nadrazi	3045-18
+kladno,nam.svobody	2801-3
+kladno,nam.svobody	2801-6
+kladno,nam.svobody	2801-8
+kladno,nam.svobody	2801-9
+kladno,u nemocnice	2802-1
+kladno,u nemocnice	2802-2
+kladno,zel.zast.mesto	3043-1
+kladno,zel.zast.mesto	3043-2
+kladno,u kostela	2804-1
+kladno,u kostela	2804-2
+kladno,rozdelov	3041-1
+kladno,rozdelov	3041-2
+kladno,smecenska	3040-1
+kladno,smecenska	3040-2
+libusin,dul kladno	3039-1
+libusin,dul kladno	3039-2
+smecno	3036-1
+smecno	3036-2
+slany,nosacicka	2668-1
+slany,nosacicka	2668-2
+slany,prum.zona sever	2669-1
+slany,prum.zona sever	2669-2
+slany,zelevcice	2670-1
+slany,zelevcice	2670-2
+berovice,bakov	2671-1
+berovice,bakov	2671-2
+zlonice,skola	2672-1
+zlonice,skola	2672-2
+zlonice	142069-999
+slapanice	2674-1
+slapanice	2674-2
+slapanice,samota	2675-1
+slapanice,samota	2675-2
+postovice	2676-1
+postovice	2676-2
+martineves,radesin	1043-1
+budyne n.ohri,slanska	110-1
+budyne n.ohri,slanska	110-2
+budyne n.ohri,prazska	109-1
+budyne n.ohri,zel.st.	112-1
+budyne n.ohri,zel.st.	112-2
+budyne n.ohri,pisty	106-1
+budyne n.ohri,pisty	106-2
+doksany,skola	255-1
+doksany,skola	255-2
+doksany,zamek	256-1
+doksany,zamek	256-2
+brozany n.ohri	93-1
+brozany n.ohri,kriz.	92-1
+brozany n.ohri,kriz.	92-2
+brozany n.ohri,kriz.	92-3
+brnany	89-1
+brnany	89-2
+brnany,zav.	88-1
+brnany,zav.	88-2
+bohusovice n.ohri,zel.st.	71-1
+bohusovice n.ohri,zel.st.	71-92
+bohusovice n.ohri,zel.st.	71-93
+bohusovice n.ohri,zel.st.	71-101
+bohusovice n.ohri,sidliste	69-1
+bohusovice n.ohri,sidliste	69-2
+bohusovice n.ohri,zav.	70-1
+bohusovice n.ohri,zav.	70-2
+litomerice,u posty	906-1
+litomerice,u posty	906-2
+litomerice,zel.st.hor.	910-1
+litomerice,zel.st.hor.	910-2
+litomerice,zel.st.hor.	910-92
+litomerice,zel.st.hor.	910-101
+litomerice,u zavor	908-1
+litomerice,u zavor	908-2
+litomerice,pokraticka	885-1
+litomerice,pokraticka	885-2
+litomerice,pokratice,kaplicka	884-1
+litomerice,pokratice,kaplicka	884-2
+litomerice,daliborova	890-1
+litomerice,daliborova	890-2
+litomerice,katastralni urad	895-1
+litomerice,katastralni urad	895-2
+zitenice	2031-1
+zitenice	2031-2
+zitenice,pohoranska	2029-1
+zitenice,pohoranska	2029-2
+zitenice,pohorany	2025-1
+zitenice,pohorany	2025-2
+ploskovice,maskovice	1235-1
+ploskovice,maskovice	1235-2
+ploskovice,slovarna	1240-1
+ploskovice,slovarna	1240-2
+ploskovice	1241-1
+ploskovice	1241-2
+ploskovice,techobuzice	1237-1
+ploskovice,techobuzice	1237-2
+ploskovice,techobuzice	1237-3
+ploskovice,techobuzice	1237-4
+chudoslavice	548-1
+chudoslavice	548-2
+stankovice,rozc.	1462-1
+stankovice,rozc.	1462-2
+trebusin,vseradiste rozc.0.5	1686-1
+trebusin,vseradiste rozc.0.5	1686-2
+trebusin,pecovatelsky dum	1685-1
+trebusin,pecovatelsky dum	1685-2
+trebusin	1687-1
+trebusin	1687-2
+trebusin,dolni tynec	1681-1
+trebusin,dolni tynec	1681-2
+trebusin,horni tynec	1682-1
+trebusin,horni tynec	1682-2
+stankovice,mlyn	1461-1
+stankovice,mlyn	1461-2
+chudoslavice,mystice,rozc.0.5	547-1
+chudoslavice,mystice,rozc.0.5	547-2
+usti n.l.,mojzir	12058-1
+usti n.l.,mojzir	12058-2
+usti n.l.,nestemice,sidl.	12068-1
+usti n.l.,nestemice,sidl.	12068-2
+most,j.skupy	1107-1
+most,j.skupy	1107-2
+most,zimni stadion	1117-1
+most,zimni stadion	1117-2
+most,zimni stadion	1117-3
+most,zimni stadion	1117-4
+most,sportovni hala	2047-1
+most,sportovni hala	2047-2
+velemysleves,triangle-sever	1849-1
+zbrasin	1974-1
+zbrasin	1974-2
+zbrasin,horany	1972-1
+zbrasin,horany	1972-2
+pnetluky,letovisko	1244-1
+pnetluky,letovisko	1244-2
+pnetluky,v domcich	1245-1
+pnetluky,v domcich	1245-2
+pnetluky	1246-1
+melnik,rybare	2844-1
+melnik,rybare	2844-2
+horin,brozanky,stare brozanky	2890-1
+horin,brozanky,stare brozanky	2890-2
+dolni berkovice,posadovice	2891-1
+dolni berkovice,posadovice	2891-2
+dolni berkovice,vlineves	2892-1
+dolni berkovice,vlineves	2892-2
+dolni berkovice,cukrovar	2893-1
+dolni berkovice,cukrovar	2893-2
+dolni berkovice	2504-91
+dolni berkovice	2504-92
+citov	2884-1
+citov	2884-2
+horni berkovice,tocna	2576-1
+horni berkovice,zel.st.	2364-1
+horni berkovice,zel.st.	2364-2
+horni berkovice,obu	109642-1
+horni berkovice,obu	109642-2
+chomutov,zatisi	508-1
+chomutov,zatisi	508-2
+chomutov,severka	11041-1
+chomutov,severka	11041-2
+chomutov,blatenska	11001-1
+chomutov,blatenska	11001-2
+knezeves,zel.zast.	2918-1
+knezeves,zel.zast.	2918-2
+rakovnik,nem.	2917-1
+rakovnik,nem.	2917-2
+kryry,strojetice,kriz.	756-1
+kryry,strojetice,kriz.	756-2
+strupcice,hosnice	400-1
+strupcice,hosnice	400-2
+strupcice,skola	1482-1
+strupcice,skola	1482-2
+strupcice	1483-1
+strupcice	1483-2
+strupcice,okorin	1185-1
+strupcice,okorin	1185-2
+strupcice,okorin,nova beta	2987-1
+strupcice,okorin,nova beta	2987-2
+vrskman	1936-1
+vrskman	1936-2
+vrskman,zajecice	1964-1
+vrskman,zajecice	1964-2
+vrskman,zajecice	1964-3
+jirkov,hrbitov	598-1
+jirkov,hrbitov	598-2
+vsestudy	1942-1
+vsestudy	1942-2
+pesvice	1215-1
+pesvice	1215-2
+strupcice,susany	1490-1
+decin,kresice lodenice	10527-1
+decin,nebocady,konecna	10541-1
+decin,nebocady,konecna	10541-2
+decin,boletice n.l.,sidliste	194-1
+lipova,u pomniku	875-1
+lipova,u pomniku	875-2
+lipova	876-1
+lipova	876-2
+lobendava	925-1
+lobendava	925-2
+lobendava	925-3
+velky senov,benzina	1879-1
+velky senov,benzina	1879-2
+velky senov,zel.zast.	1883-1
+velky senov,zel.zast.	1883-2
+velky senov,zel.zast.	1883-92
+velky senov,zel.zast.	1883-101
+sluknov,cisarsky,lom	1500-1
+sluknov,cisarsky,lom	1500-2
+sluknov,cisarsky	1502-1
+sluknov,cisarsky	1502-2
+sluknov,garaze	1512-1
+sluknov,garaze	1512-2
+sluknov,zamek-terminal	1513-1
+sluknov,zamek-terminal	1513-2
+sluknov,zamek-terminal	1513-3
+sluknov,benar	1510-1
+sluknov,benar	1510-2
+sluknov,kralovstvi,pradelna	1506-1
+sluknov,kralovstvi,pradelna	1506-2
+sluknov,kralovstvi,jednota	1503-1
+sluknov,kralovstvi,jednota	1503-2
+sluknov,kralovstvi,kostel	1504-1
+sluknov,kralovstvi,kostel	1504-2
+sluknov,kralovstvi,krizek	1505-1
+sluknov,kralovstvi,krizek	1505-2
+sluknov,kralovstvi,samota	1507-1
+sluknov,kralovstvi,samota	1507-2
+jirikov,kopec	610-1
+jirikov,kopec	610-2
+jirikov,nam.	612-1
+jirikov,nam.	612-2
+jirikov,koup.	611-1
+jirikov,koup.	611-2
+jirikov,predmesti	613-1
+jirikov,predmesti	613-2
+rumburk,zamecek	1407-1
+rumburk,zamecek	1407-2
+rumburk,zamecek	1407-3
+rumburk,desta	1401-1
+rumburk,desta	1401-2
+rumburk,odstavne park.	1404-1
+rumburk,odstavne park.	1404-2
+lobendava,severni,zatisi	922-1
+lobendava,severni,zatisi	922-2
+lobendava,severni	923-1
+krupka,bohosudov,meu	726-1
+krupka,bohosudov,meu	726-2
+louny,epl hl.vrat.	955-1
+cerncice,nad pivovarem	148-1
+cerncice,nad pivovarem	148-2
+cerncice	152-1
+cerncice	152-2
+cerncice,skola	151-1
+cerncice,skola	151-2
+obora,zavod	1173-1
+obora,zavod	1173-2
+velteze	1884-1
+velteze	1884-2
+slavetin	1439-1
+slavetin	1439-2
+peruc,telce	1211-1
+peruc,koupaliste	1212-1
+peruc,koupaliste	1212-2
+peruc,stradonice	1210-1
+peruc,stradonice	1210-2
+peruc,patek	1208-1
+peruc,patek	1208-2
+peruc,patek	1208-92
+peruc,patek	1208-96
+peruc,patek	1208-101
+peruc,radonice n.ohri	1209-1
+peruc,radonice n.ohri	1209-2
+slavetin,kystra,rozc.	1437-1
+slavetin,kystra,rozc.	1437-2
+slavetin,kystra,rozc.	1437-3
+slavetin,kystra,rozc.	1437-4
+slavetin,kystra	1438-1
+slavetin,kystra	1438-2
+chabarovice,zav.	465-1
+chabarovice,zav.	465-2
+chabarovice,roudniky,dilny	453-1
+chabarovice,roudniky,dilny	453-2
+chabarovice,roudniky,marie antonie	454-1
+chabarovice,roudniky,marie antonie	454-2
+chabarovice,roudniky	455-1
+chabarovice,roudniky	455-2
+usti n.l.,kockov	1720-1
+usti n.l.,kockov	1720-2
+usti n.l.,na kopecku	1747-1
+usti n.l.,na kopecku	1747-2
+chuderov,obu	542-1
+chuderov,obu	542-2
+chuderov	544-1
+chuderov	544-2
+chuderov,zezice	541-1
+chuderov,vlachovka	543-1
+chuderov,vlachovka	543-2
+chuderov,vlachovka	543-3
+chuderov,chuderovec	536-1
+chuderov,chuderovec	536-2
+usti n.l.,kamenny vrch skola	1740-1
+usti n.l.,kamenny vrch skola	1740-2
+usti n.l.,dilny	12013-1
+usti n.l.,dilny	12013-2
+usti n.l.,na luhach	12060-1
+usti n.l.,na luhach	12060-2
+zatec,osvoboditelu	2005-1
+zatec,osvoboditelu	2005-2
+zatec,u hrbitova	2011-1
+zatec,u hrbitova	2011-2
+zatec,chmelarstvi	1998-1
+zatec,chmelarstvi	1998-2
+zatec,zel.st.zapad	2016-1
+zatec,zel.st.zapad	2016-2
+zatec,zel.st.zapad	2016-92
+zatec,zel.st.zapad	2016-101
+zatec,u vytopny	2013-1
+zatec,u vytopny	2013-2
+zatec,zahori,rozc.	1991-1
+zatec,zahori,rozc.	1991-2
+zatec,zahori	1992-1
+stankovice	1465-1
+stankovice	1465-2
+malecov,rydec	1020-1
+malecov,rydec	1020-2
+zitenice,skalicka	2030-1
+zitenice,skalicka	2030-2
+horni police	2090-92
+horni police	2090-93
+horni police	2090-96
+horni police	2090-101
+zandov,nam.	1985-1
+stary sachov,zel.st.	1478-1
+stary sachov,zel.st.	1478-2
+stary sachov,zel.st.	1478-92
+stary sachov,zel.st.	1478-96
+stary sachov,zel.st.	1478-101
+merboltice,host.	1058-1
+merboltice,host.	1058-2
+vernerice,,za kostelem	2460-1
+vernerice,,za kostelem	2460-2
+zandov,velka javorska	3170-1
+podborany,kastice,zel.prejezd	1254-1
+podborany,kastice,zel.prejezd	1254-2
+podborany,kastice	1255-1
+podborany,kastice	1255-2
+podborany,neprobylice	1259-1
+podborany,neprobylice	1259-2
+podborany,oploty	1260-1
+podborany,oploty	1260-2
+podborany,knezice	1256-1
+podborany,knezice	1256-2
+podborany,knezice	1256-3
+ceradice,klicin	145-1
+ceradice,klicin	145-2
+horni jiretin,dolni jiretin,rozcesti	3150-1
+horni jiretin,dolni jiretin,rozcesti	3150-2
+horni jiretin,rozc.	2728-1
+horni jiretin,rozc.	2728-2
+vejprty,aut.st.	1825-1
+vejprty,aut.st.	1825-2
+vejprty,predmesti	1828-1
+vejprty,predmesti	1828-2
+vejprty,nove zvolani	1824-1
+vejprty,nove zvolani	1824-2
+vejprty,nove zvolani,kovo	1823-1
+vejprty,nove zvolani,kovo	1823-2
+loucna,ceske hamry,vysada	932-1
+loucna,ceske hamry,vysada	932-2
+loucna,ceske hamry	933-1
+loucna,ceske hamry	933-2
+loucna,ceske hamry	933-3
+loucna,ceske hamry	933-4
+loucna,haj,zav.	934-1
+loucna,haj,zav.	934-2
+loucna,rozc.1.0	939-1
+loucna,rozc.1.0	939-2
+loucna,meu	938-1
+loucna,meu	938-2
+kovarska,rozc.elektropristroj	690-1
+kovarska,rozc.elektropristroj	690-2
+kovarska,obu	689-1
+kovarska,obu	689-2
+kovarska,dlouha	688-1
+kovarska,dlouha	688-2
+vejprty,nove zvolani,cerny kriz	1822-1
+vejprty,nove zvolani,cerny kriz	1822-2
+vejprty,viadukt	1830-1
+vejprty,viadukt	1830-2
+litvinov,u hrbitova	920-1
+litvinov,u hrbitova	920-2
+lom,cerveny kriz	926-1
+lom,cerveny kriz	926-2
+lom,cerveny kriz	926-3
+lom,cerveny kriz	926-4
+lom,namesti republiky	929-1
+lom,namesti republiky	929-2
+osek,nam.	1193-1
+osek,nam.	1193-2
+osek,autokempink	2477-1
+osek,autokempink	2477-2
+osek,dlouha louka,haj.	2476-1
+osek,dlouha louka,haj.	2476-2
+osek,dlouha louka	2475-1
+osek,klaster	1191-1
+osek,klaster	1191-2
+jirikov,filipov,kino	606-1
+jirikov,filipov,kino	606-2
+jirikov,filipov,kino	606-3
+jirikov,filipov,kostel	607-1
+jirikov,filipov,kostel	607-2
+jirikov,vyhlidka	615-1
+jirikov,vyhlidka	615-2
+jirikov,elitex	609-1
+jirikov,elitex	609-2
+ebersbach,bahnhof	329-3
+rumburk,kult.dum	1403-1
+rumburk,kult.dum	1403-2
+rumburk,horni jindrichov,rybena	1398-1
+rumburk,horni jindrichov,rybena	1398-2
+rumburk,horni jindrichov,bytex 06	1397-1
+rumburk,horni jindrichov,bytex 06	1397-2
+seifhennersdorf,grenze rumburk	1429-1
+seifhennersdorf,grenze rumburk	1429-2
+seifhennersdorf,oberschule	1428-1
+seifhennersdorf,oberschule	1428-2
+seifhennersdorf,gymnasium	2763-1
+seifhennersdorf,gymnasium	2763-2
+seifhennersdorf,am bahnhof	2762-1
+seifhennersdorf,am bahnhof	2762-2
+seifhennersdorf,zollstr.	1431-1
+seifhennersdorf,zollstr.	1431-2
+seifhennersdorf,grenze varnsdorf	2761-1
+seifhennersdorf,grenze varnsdorf	2761-2
+varnsdorf,mlekarna	1809-1
+varnsdorf,mlekarna	1809-2
+varnsdorf,mlekarna	1809-101
+großschonau,oberdorf	2555-1
+großschonau,oberdorf	2555-2
+großschonau,weinhaus	2556-1
+großschonau,weinhaus	2556-2
+großschonau,cafe	2759-1
+großschonau,cafe	2759-2
+großschonau,bahnhof	2760-2
+großschonau,bahnhof	2760-3
+großschonau,schießwiese	2557-1
+großschonau,schießwiese	2557-2
+großschonau,jonsdorfer straße	2560-1
+großschonau,jonsdorfer straße	2560-2
+großschonau,trixi-park	2561-1
+litomerice,rozc.mentaurov	904-1
+litomerice,rozc.mentaurov	904-2
+hlinna,rozc.tlucen 2.0	365-1
+hlinna,rozc.tlucen 2.0	365-2
+hlinna	366-1
+hlinna,mentaurov	2458-1
+hlinna,mentaurov	2458-2
+hlinna,lbin	2459-1
+hlinna,tlucen	364-1
+litomerice,palachova	901-1
+litomerice,palachova	901-2
+usti n.l.,hostovicka	12032-1
+usti n.l.,hostovicka	12032-2
+usti n.l.,pod svahem	12082-1
+usti n.l.,pod svahem	12082-2
+duchcov,kino	319-1
+duchcov,kino	319-2
+duchcov,osecka	322-1
+duchcov,osecka	322-2
+duchcov,nem.	321-1
+duchcov,nem.	321-2
+haj u duchcova,dolni haj zel.zast.	343-1
+haj u duchcova,dolni haj zel.zast.	343-2
+haj u duchcova,dolni haj zel.zast.	343-92
+haj u duchcova,dolni haj zel.zast.	343-101
+haj u duchcova,dolni haj rozc.	342-1
+haj u duchcova,dolni haj rozc.	342-2
+osek,kolonie	1192-1
+osek,kolonie	1192-2
+osek,zbrojnice	1197-1
+osek,zbrojnice	1197-2
+osek,sidliste	1195-1
+osek,narodni dum	1194-1
+osek,narodni dum	1194-2
+duchcov,zelenska	325-1
+duchcov,zelenska	325-2
+zabrusany,vodarna	1962-1
+zabrusany,vodarna	1962-2
+zabrusany	1963-1
+zabrusany	1963-2
+zabrusany	1963-3
+zabrusany	1963-4
+zabrusany,zelenky,kriz.	1958-1
+zabrusany,zelenky,kriz.	1958-2
+zabrusany,zelenky,fucik	1957-1
+zabrusany,zelenky,fucik	1957-2
+hostomice,kolonie	395-1
+hostomice,kolonie	395-2
+decin,dopravni podnik	2486-1
+decin,dopravni podnik	2486-2
+decin,diana	214-1
+decin,diana	214-2
+decin,kovosrot	2593-1
+decin,kovosrot	2593-2
+decin,alusuisse	211-1
+decin,alusuisse	211-2
+decin,ferox	10511-1
+decin,ferox	10511-2
+decin,desta	213-1
+decin,desta	213-2
+decin,kotva	2485-1
+decin,kotva	2485-2
+klapy	637-1
+klapy	637-2
+libochovice,zel.zast.mesto	855-1
+libochovice,zel.zast.mesto	855-2
+libochovice,zel.zast.mesto	855-11
+libochovice,zel.zast.mesto	855-92
+libochovice,zel.zast.mesto	855-101
+libochovice,poplze	850-1
+libochovice,poplze	850-2
+evan	332-1
+evan	332-2
+chodovlice	481-1
+chodovlice	481-2
+trebenice,hrbitov	3167-1
+trebenice,hrbitov	3167-2
+evan,horka	331-1
+libochovice,nam.svobody	853-1
+libochovice,skola	2741-1
+chomutov,kadanska skola	490-1
+chomutov,kadanska skola	490-2
+chomutov,kadanska kaplicka	489-1
+chomutov,kadanska kaplicka	489-2
+cernovice	11008-1
+cernovice	11008-2
+nove sporice	11030-1
+nove sporice	11030-2
+chomutov,teplarna	11049-1
+chomutov,teplarna	11049-2
+chomutov,rozvodne zavody	11039-1
+chomutov,rozvodne zavody	11039-2
+chomutov,masokombinat	11028-1
+chomutov,masokombinat	11028-2
+sporice,pz nove sporice	11037-1
+chomutov,globus	11010-1
+chomutov,globus	11010-2
+decin,lesni cesta	10530-1
+decin,na vyhlidce	10538-1
+decin,na vyhlidce	10538-2
+roudnice n.l.,zizkova	2590-1
+roudnice n.l.,podluska	2587-1
+roudnice n.l.,libusina	2588-1
+roudnice n.l.,libusina	2588-2
+roudnice n.l.,skolni	2586-1
+roudnice n.l.,skolni	2586-2
+roudnice n.l.,okruzni	2585-1
+roudnice n.l.,okruzni	2585-2
+roudnice n.l.,obchodni zona	2584-1
+roudnice n.l.,obchodni zona	2584-2
+roudnice n.l.,tyrsuv stadion	1381-1
+roudnice n.l.,tyrsuv stadion	1381-2
+roudnice n.l.,riegrova	2589-1
+roudnice n.l.,riegrova	2589-2
+roudnice n.l.,riegrova	2589-3
+roudnice n.l.,palackeho	2581-1
+roudnice n.l.,28.rijna	2579-1
+roudnice n.l.,28.rijna	2579-2
+roudnice n.l.,tylova	2580-1
+roudnice n.l.,tylova	2580-2
+roudnice n.l.,dobrovskeho	2582-1
+roudnice n.l.,dobrovskeho	2582-2
+roudnice n.l.,hochmanova	2583-1
+roudnice n.l.,hochmanova	2583-2
+roudnice n.l.,roudnicka	2592-1
+roudnice n.l.,roudnicka	2592-2
+roudnice n.l.,glazura	1376-1
+roudnice n.l.,glazura	1376-2
+roudnice n.l.,glazura	1376-3
+roudnice n.l.,u hrbitova	2603-1
+roudnice n.l.,u hrbitova	2603-2
+roudnice n.l.,hornicka	2602-1
+roudnice n.l.,hornicka	2602-2
+roudnice n.l.,csad	1375-1
+roudnice n.l.,csad	1375-2
+chomutov,autoskola	11000-1
+chomutov,autoskola	11000-2
+chomutov,trebizskeho	11051-1
+chomutov,trebizskeho	11051-2
+chomutov,kostnicka	491-1
+chomutov,kostnicka	491-2
+chomutov,kostnicka skola	492-1
+chomutov,kostnicka skola	492-2
+chomutov,celakovska	11007-1
+chomutov,celakovska	11007-2
+chomutov,povodi ohre	11036-1
+chomutov,povodi ohre	11036-2
+litomerice,u stadionu	907-1
+litomerice,u stadionu	907-2
+litomerice,na myte	898-1
+litomerice,na myte	898-2
+trnovany	1658-1
+trnovany	1658-2
+trnovany	1658-92
+trnovany	1658-101
+ploskovice,rozc.1.5	1239-1
+ploskovice,rozc.1.5	1239-2
+byckovice,rozc.	114-1
+byckovice,rozc.	114-2
+byckovice,rozc.	114-3
+byckovice,rozc.	114-4
+libesice,dolni repcice	828-1
+libesice,dolni repcice	828-2
+libesice,dolni nezly	827-1
+libesice,dolni nezly	827-2
+trebusin,repcice	1684-1
+trebusin,repcice	1684-2
+ploskovice,vinne	1238-1
+ploskovice,vinne	1238-2
+ploskovice,stary mlynec,rozc.	1236-1
+ploskovice,stary mlynec,rozc.	1236-2
+libesice,sobenice,horni nezly	835-1
+libesice,sobenice,horni nezly	835-2
+trebusin,kotelice	1683-1
+trebusin,kotelice	1683-2
+litomerice,zel.st.nakl.nadr.	911-1
+litomerice,zel.st.nakl.nadr.	911-2
+litomerice,na vinici	899-1
+litomerice,na vinici	899-2
+kresice,treboutice	767-1
+kresice,treboutice	767-2
+kresice	772-1
+kresice	772-2
+kresice	772-3
+kresice	772-4
+kresice,zahorany	768-1
+kresice,zahorany	768-2
+byckovice,velky ujezd	113-1
+byckovice,velky ujezd	113-2
+byckovice	115-1
+byckovice	115-2
+jimlin,zemechy	591-1
+jimlin,zemechy	591-2
+jimlin,zemechy	591-92
+jimlin,zemechy	591-101
+postoloprty,malnice	1295-1
+postoloprty,malnice	1295-2
+postoloprty,skupice	1302-1
+postoloprty,skupice	1302-2
+postoloprty,mradice	1297-1
+postoloprty,mradice	1297-2
+postoloprty,mradice,mlyn	1296-1
+postoloprty,mradice,mlyn	1296-2
+postoloprty,strkovice	1303-1
+postoloprty,strkovice	1303-2
+postoloprty,hradiste	1293-1
+postoloprty,hradiste	1293-2
+zaluzice,steknik	1969-1
+zaluzice,steknik	1969-2
+zaluzice,rozc.	1970-1
+zaluzice,rozc.	1970-2
+zaluzice,rozc.	1970-3
+zaluzice,rozc.	1970-4
+zatec,trnovany	1989-1
+zatec,trnovany	1989-2
+zatec,trnovany	1989-3
+melnik,rousovice	2883-1
+melnik,rousovice	2883-2
+citov,melnicka	3022-1
+citov,melnicka	3022-2
+citov,roudnicka	2885-1
+citov,roudnicka	2885-2
+kostomlaty p.ripem,rozc.	2886-1
+kostomlaty p.ripem,rozc.	2886-2
+melnik,slovany	2887-1
+melnik,slovany	2887-2
+petrovice,krasny les,adolfov	12000-2
+msene-lazne,brnikov	1119-1
+msene-lazne,brnikov	1119-2
+msene-lazne,podbradec	1121-1
+msene-lazne,podbradec	1121-2
+msene-lazne,loucka	1126-1
+msene-lazne,loucka	1126-2
+msene-lazne,vrbice	1124-1
+msene-lazne,vrbice	1124-2
+libochovice,husova	854-1
+libochovice,husova	854-2
+slatina	1436-1
+slatina	1436-2
+cerniv,obu	155-1
+cerniv,obu	155-2
+upohlavy	1714-1
+upohlavy	1714-2
+cizkovice,zelechovice,obora	181-1
+cizkovice,zelechovice,obora	181-2
+cizkovice,zelechovice	182-1
+cizkovice,zelechovice	182-2
+cizkovice	185-1
+cizkovice	185-2
+zerotin	2021-1
+zerotin	2021-2
+zerotin	2021-3
+panensky tynec,skola	1199-1
+panensky tynec,skola	1199-2
+hriskov,bedrichovice	435-1
+hriskov,bedrichovice	435-2
+hriskov,skola	436-1
+hriskov,skola	436-2
+hriskov	437-1
+hriskov	437-2
+nova ves	1145-1
+nova ves	1145-2
+smolnice	1441-1
+smolnice	1441-2
+smolnice	1441-3
+louny,prum.zona	961-1
+zichovec	3047-1
+zichovec	3047-2
+bilichov	3048-1
+bilichov	3048-2
+bilichov,u krizku	3049-1
+bilichov,u krizku	3049-2
+lisky	3130-1
+kvilice,i	3050-1
+kvilice,i	3050-2
+decin,skrabky	10553-1
+decin,skrabky	10553-2
+decin,pod lesem	10546-1
+decin,pod lesem	10546-2
+decin,vojanova	10564-1
+decin,vojanova	10564-2
+decin,loubi,iii	10534-1
+decin,loubi,iv	2692-1
+decin,loubi,iv	2692-2
+uherce,zd	1709-1
+uherce,zd	1709-2
+uherce	1710-1
+uherce	1710-2
+klobuky,kokovice	655-1
+klobuky,kokovice	655-2
+klobuky,kokovice,u mlyna	654-1
+klobuky,kokovice,u mlyna	654-2
+klobuky,obu	656-1
+klobuky,obu	656-2
+klobuky,cukrovar	3055-1
+klobuky,cukrovar	3055-2
+klobuky,kobylniky,i	3056-1
+klobuky,kobylniky,i	3056-2
+klobuky,ceradice	3057-1
+klobuky,ceradice	3057-2
+klobuky,palecek	3058-1
+klobuky,palecek	3058-2
+stradonice	3059-1
+stradonice	3059-2
+zlonice,lisovice	3060-1
+zlonice,lisovice	3060-2
+zlonice,pejsova	3061-1
+zlonice,pejsova	3061-2
+zlonice,u fary	3062-1
+zlonice,u fary	3062-2
+zlonice,nadrazni	3063-1
+zlonice,nadrazni	3063-2
+drinov	3065-1
+drinov	3065-2
+drinov,drchkov	3067-1
+drinov,drchkov	3067-2
+kralovice,rozc.	3068-1
+kralovice,rozc.	3068-2
+slany,otruby	3069-1
+slany,otruby	3069-2
+slany,otruby,rozc.	3070-1
+slany,otruby,rozc.	3070-2
+slany,na hajich	3077-1
+slany,na hajich	3077-2
+slany,nemocnice	3076-1
+slany,nemocnice	3076-2
+slany,modelarske stredisko	3079-1
+slany,modelarske stredisko	3079-2
+slany,zizkova	3080-1
+slany,zizkova	3080-2
+slany,zel.st.	3081-1
+slany,zel.st.	3081-2
+slany,csad	3082-1
+slany,csad	3082-2
+slany,u stadionu	3083-1
+slany,rabasova	3085-1
+slany,rabasova	3085-2
+slany,smetackova	3086-1
+slany,smetackova	3086-2
+slany,p.hrubeho	3087-1
+slany,p.hrubeho	3087-2
+slany,arbesova	3088-1
+slany,zelevcice,obec	3071-1
+slany,zelevcice,obec	3071-2
+slany,zelevcice,rozc.	3072-1
+slany,zelevcice,rozc.	3072-2
+slany,dolin,ii	3073-1
+slany,dolin,ii	3073-2
+slany,dolin,i	3074-1
+slany,dolin,i	3074-2
+slany,farma	3075-1
+slany,farma	3075-2
+slany,mirova	3084-1
+slany,mirova	3084-2
+slany,tomanova	3089-1
+slany,tomanova	3089-2
+slany,masarykovo nam.	3078-1
+slany,drazkovicka	3090-1
+slany,drazkovicka	3090-2
+slany,v raji	3091-1
+kralovice,dvur	3066-1
+osek,tyrsova	1196-1
+osek,tyrsova	1196-2
+haj u duchcova,horni haj	344-1
+haj u duchcova,horni haj	344-2
+haj u duchcova,statek	346-1
+haj u duchcova,statek	346-2
+hrob,krizanov	411-1
+hrob,krizanov	411-2
+hrob,beseda	415-1
+hrob,beseda	415-2
+hrob	416-1
+hrob	416-2
+hrob,mlyny	414-1
+hrob,mlyny	414-2
+hrob,mlyny	414-3
+kostany,strelna	672-1
+kostany,strelna	672-2
+kostany,strelna,sidliste	669-1
+dubi,behanky,dubska	287-1
+dubi,behanky,dubska	287-2
+dubi,drahunky	289-1
+probostov,pritkov,kriz.	1324-1
+probostov,pritkov,kriz.	1324-2
+blsany,nam.	66-1
+blsany,nam.	66-2
+blsany,nam.	66-3
+blsany,stachov	65-1
+blsany,stachov	65-2
+blsany,sobechleby	64-1
+blsany,sobechleby	64-2
+blsany,mala cernoc	61-1
+blsany,mala cernoc	61-2
+blsany,mala cernoc	61-3
+blsany,mala cernoc	61-4
+velika ves,rozc.1.0	1853-1
+velika ves,rozc.1.0	1853-2
+krasny dvur,zlovedice,rozc.	722-1
+krasny dvur,zlovedice,rozc.	722-2
+petipsy	1216-1
+petipsy	1216-2
+mnetes	1089-1
+mnetes	1089-2
+vrazkov	2298-92
+vrazkov	2298-101
+straskov-vodochody	2472-1
+straskov-vodochody	2472-2
+straskov-vodochody,skola	1480-1
+straskov-vodochody,skola	1480-2
+straskov-vodochody,zel.st.	1481-1
+straskov-vodochody,zel.st.	1481-2
+straskov-vodochody,zel.st.	1481-92
+straskov-vodochody,zel.st.	1481-101
+briza	101-1
+briza	101-2
+prestavlky,rozc.1.0	1345-1
+prestavlky,rozc.1.0	1345-2
+chabarovice,besta	456-1
+chabarovice,besta	456-2
+krupka,sidliste	749-1
+krupka,sidliste	749-2
+krupka,sidliste	749-3
+krupka,stadion	750-1
+krupka,stadion	750-2
+teplice,sobedruhy	1566-1
+teplice,sobedruhy	1566-2
+praha,letnany	2967-1
+praha,letnany	2967-2
+dolanky n.ohri	2961-1
+dolanky n.ohri	2961-2
+bohusovice n.ohri,hrdly	2960-1
+bohusovice n.ohri,hrdly	2960-2
+travcice,obalovna	3146-1
+travcice,obalovna	3146-2
+terezin,u pamatniku	1638-1
+terezin,u pamatniku	1638-2
+krupka,sobechleby	736-1
+krupka,sobechleby	736-2
+teplice,alejni	1575-1
+teplice,alejni	1575-2
+teplice,zamecka zahrada	1629-1
+teplice,zamecka zahrada	1629-2
+teplice,zamecka zahrada	1629-3
+teplice,nem.	1609-1
+teplice,nem.	1609-2
+teplice,retenice,sidliste	1561-1
+teplice,retenice,sidliste	1561-2
+teplice,retenice,sklarska	1562-1
+teplice,retenice,sklarska	1562-2
+ujezdecek,nam.	1712-1
+ujezdecek,nam.	1712-2
+ujezdecek,dukla rozc.	1711-1
+ujezdecek,dukla rozc.	1711-2
+kostany,kamenny pahorek	673-1
+kostany,kamenny pahorek	673-2
+kostany,kamenny pahorek	673-3
+kostany,kamenny pahorek	673-4
+jenikov,oldrichov,rozc.zel.st.	564-1
+jenikov,oldrichov,rozc.zel.st.	564-2
+jenikov,oldrichov,barbora	562-1
+jenikov,oldrichov	565-1
+jenikov,oldrichov	565-2
+jenikov,oldrichov,obu	563-1
+jenikov,oldrichov,obu	563-2
+jenikov,nam.	566-1
+jenikov,nam.	566-2
+lahost	795-1
+lahost	795-2
+lahost	795-3
+lahost	795-4
+duchcov,zel.st.	324-1
+duchcov,zel.st.	324-2
+duchcov,zel.st.	324-92
+duchcov,zel.st.	324-101
+duchcov,teplicka	323-1
+duchcov,teplicka	323-2
+duchcov,teplicka	323-3
+duchcov,koupaliste	320-1
+chomutov,posta 3	11035-1
+chomutov,posta 3	11035-2
+chomutov,sd arena	11040-1
+chomutov,sd arena	11040-2
+horin,brozanky	2845-1
+horin,brozanky	2845-2
+horin	2846-1
+horin	2846-2
+horin,vrbno	2847-1
+horin,vrbno	2847-2
+horin,zelcin	2848-1
+horin,zelcin	2848-2
+luzec n.vlt.,chramostek	2849-1
+luzec n.vlt.,chramostek	2849-2
+luzec n.vlt.,strojirny	2850-1
+luzec n.vlt.,strojirny	2850-2
+luzec n.vlt.	2851-1
+luzec n.vlt.	2851-2
+vranany,skola	2852-1
+vranany,skola	2852-2
+vranany,zel.st.	2853-1
+vranany,zel.st.	2853-2
+vranany,u nadjezdu	2854-1
+vranany,u nadjezdu	2854-2
+spomysl,u lavky	2855-1
+spomysl,u lavky	2855-2
+spomysl	2856-1
+spomysl	2856-2
+jevineves	2818-1
+jevineves	2818-2
+duchcov,nerudova	3149-1
+velvary,nam.	3107-1
+velvary,nam.	3107-2
+cernuc	2059-101
+hospozin,nad kostelem	2941-1
+hospozin,nad kostelem	2941-2
+hospozin,obu	2940-1
+hospozin,obu	2940-2
+kmetineves,zel.st.	2939-1
+kmetineves,zel.st.	2939-2
+kmetineves	2938-1
+kmetineves	2938-2
+slapanice,zamek	2937-1
+slapanice,zamek	2937-2
+slapanice,dvur	2936-1
+slapanice,dvur	2936-2
+jarpice	2935-1
+jarpice	2935-2
+vrany,horni kamenice	2934-1
+vrany,horni kamenice	2934-2
+vrany	2933-1
+vrany	2933-2
+peruc,zel.st.	1213-1
+peruc,zel.st.	1213-92
+peruc,zel.st.	1213-101
+teplice,krizikova	1600-1
+teplice,krizikova	1600-2
+teplice,libusina	1602-1
+teplice,libusina	1602-2
+teplice,hudcov,panorama	1551-1
+teplice,hudcov,panorama	1551-2
+kostany,vjezd	676-1
+kostany,vjezd	676-2
+kostany,nam.	674-1
+kostany,nam.	674-2
+kostany,strelna,zatisi	671-1
+kostany,strelna,zatisi	671-2
+hrob,mlyny,zav.	413-1
+hrob,mlyny,zav.	413-2
+hrob,mlyny,myslivna	412-1
+hrob,mlyny,myslivna	412-2
+mikulov,mlyn	1074-1
+mikulov,mlyn	1074-2
+mikulov	1075-1
+mikulov	1075-2
+mikulov,chata vitiska	1073-1
+mikulov,chata vitiska	1073-2
+moldava,nove mesto,rozc.	1097-1
+moldava,nove mesto,rozc.	1097-2
+moldava,nove mesto	1098-1
+moldava,nove mesto	1098-2
+moldava,myslivna	1100-1
+moldava,myslivna	1100-2
+moldava,rozc.flaje	1101-1
+moldava,rozc.flaje	1101-2
+moldava,rozc.st.hranice	1102-1
+moldava,rozc.st.hranice	1102-2
+moldava,u hriste	2380-1
+moldava,u hriste	2380-2
+moldava,dol.moldava	1099-1
+decin,velka velen	10562-1
+decin,velka velen	10562-2
+decin,lesna	10529-1
+decin,lesna	10529-2
+decin,lesni mlyn	10531-1
+decin,lesni mlyn	10531-2
+decin,boletice n.l.,hrbitov	10503-1
+decin,boletice n.l.,hrbitov	10503-2
+decin,kamenna	10519-1
+decin,kamenna	10519-2
+decin,boletice n.l.,skola	10504-1
+decin,boletice n.l.,skola	10504-2
+litomerice,vojtesske nam.	909-1
+litomerice,vojtesske nam.	909-2
+litomerice,chladirny	892-1
+litomerice,chladirny	892-2
+litomerice,jatky	894-1
+litomerice,jatky	894-2
+litomerice,pod radobylem	902-1
+litomerice,pod radobylem	902-2
+zalhostice,na vinarne	2712-1
+zalhostice,na vinarne	2712-2
+zalhostice,zel.zast.	1983-1
+zalhostice,zel.zast.	1983-2
+zalhostice,zel.zast.	1983-92
+zalhostice,zel.zast.	1983-93
+zalhostice,zel.zast.	1983-101
+zalhostice	1984-1
+zalhostice	1984-2
+zalhostice,skola	1982-1
+zalhostice,skola	1982-2
+zalhostice,skola	1982-3
+zalhostice,skola	1982-4
+velke zernoseky,u hriste	1875-1
+velke zernoseky,u hriste	1875-2
+velke zernoseky	1876-1
+velke zernoseky	1876-2
+zalhostice,nove pistany	1981-1
+zalhostice,nove pistany	1981-2
+zalhostice,nove pistany	1981-3
+pistany	1234-1
+pistany	1234-201
+velke zernoseky,bytovky	1874-1
+velke zernoseky,bytovky	1874-2
+kamyk,rozc.	629-1
+kamyk,rozc.	629-2
+libochovany,repnice	848-1
+libochovany,repnice	848-2
+libochovany,tocna	849-1
+malic	1023-1
+malic	1023-2
+malic	1023-3
+michalovice	1065-1
+michalovice	1065-2
+litomerice,6.zs	888-1
+litomerice,6.zs	888-2
+litomerice,predmesti	903-1
+litomerice,predmesti	903-2
+kamyk	630-1
+litomerice,knobloska rozc.	896-1
+litomerice,knobloska rozc.	896-2
+mirejovice	1081-1
+mirejovice	1081-2
+mirejovice,vaha	1080-1
+mirejovice,vaha	1080-2
+litomerice,kamycka	905-1
+litomerice,kamycka	905-2
+kresice,zav.	771-1
+kresice,zav.	771-2
+kresice,nucnice	766-1
+kresice,nucnice	766-2
+kresice,nucnice	766-201
+polepy,okna	1283-1
+polepy,okna	1283-2
+polepy,rozc.	1284-1
+polepy,rozc.	1284-2
+polepy,rozc.	1284-3
+polepy,rozc.	1284-4
+polepy,stara skola	1287-1
+polepy,stara skola	1287-2
+polepy,skola	1285-1
+polepy,skola	1285-2
+polepy,zel.st.	1286-1
+polepy,zel.st.	1286-2
+polepy,zel.st.	1286-92
+polepy,zel.st.	1286-101
+polepy,u prejezdu	2433-1
+polepy,u prejezdu	2433-2
+vrutice	1940-1
+vrutice	1940-2
+vrutice,svarenice	1939-1
+vrutice,svarenice	1939-2
+vrbice,mastirovice,rozc.	1918-1
+vrbice,mastirovice,rozc.	1918-2
+hostka,zel.st.	406-1
+hostka,zel.st.	406-2
+hostka,zel.st.	406-92
+hostka,zel.st.	406-101
+hostka	407-1
+hostka	407-2
+hostka,na vyhlidce	403-1
+hostka,na vyhlidce	403-2
+kresice,kolonie	2432-1
+kresice,skolka	769-1
+kresice,skolka	769-2
+povrly,slavosov	1317-1
+povrly,slavosov	1317-2
+povrly,mirkov,samota	1314-1
+povrly,mirkov,samota	1314-2
+povrly,mirkov	1315-1
+povrly,mirkov	1315-2
+povrly,luzec	1312-1
+povrly,luzec	1312-2
+povrly,luzec,u mlyna	1311-1
+povrly,luzec,u mlyna	1311-2
+povrly,haj.	1319-1
+povrly,haj.	1319-2
+povrly,koupaliste	1320-1
+povrly,koupaliste	1320-2
+povrly,sidliste	1322-1
+povrly,sidliste	1322-2
+povrly,obu	1321-1
+povrly,obu	1321-2
+povrly,uciliste	1323-1
+povrly,uciliste	1323-2
+povrly,nestedice	1316-1
+povrly,nestedice	1316-2
+povrly,nestedice	1316-92
+povrly,nestedice	1316-96
+povrly,nestedice	1316-101
+usti n.l.,mojzir,veseli	1723-1
+usti n.l.,mojzir,veseli	1723-2
+usti n.l.,mojzir,sidl.	1722-1
+usti n.l.,mojzir,sidl.	1722-2
+povrly,lysa,rozc.	1313-1
+povrly,lysa,rozc.	1313-2
+povrly,sachov,rozc.	1318-1
+povrly,sachov,rozc.	1318-2
+povrly,cesky bukov	1310-1
+lovosice,jablonova alej	980-1
+lovosice,jablonova alej	980-2
+lovosice,hrbitov	2567-1
+lovosice,beseda	2570-1
+lovosice,lidl	2572-1
+louny,osvoboditelu	957-1
+louny,osvoboditelu	957-2
+dubi,pozorka,supermarket	2752-1
+dubi,pozorka,supermarket	2752-2
+dubi,pozorka,novosedlicka	2753-1
+dubi,pozorka,novosedlicka	2753-2
+dubi,pozorka,zavod	309-1
+dubi,pozorka,zavod	309-2
+novosedlice,hrbitov	1166-1
+novosedlice,hrbitov	1166-2
+teplice,mestske saly	1608-1
+teplice,mestske saly	1608-2
+dubi,ruska	313-1
+ceske zlatniky	3097-1
+most,specialni skola	1115-1
+most,specialni skola	1115-2
+dubi,behanky,pod navrsim	288-1
+dolni berkovice	2539-1
+dolni berkovice	2539-2
+horni pocaply,krivenice	2538-1
+horni pocaply,krivenice	2538-2
+horni pocaply,porobeton	2537-1
+horni pocaply,porobeton	2537-2
+horni pocaply,elektrarna ii	2536-1
+horni pocaply,elektrarna ii	2536-2
+horni pocaply,elektrarna i	2540-1
+horni pocaply	388-1
+horni pocaply	388-2
+horni pocaply	388-3
+horni pocaply	388-4
+horni pocaply,zel.st.	387-1
+horni pocaply,zel.st.	387-2
+horni pocaply,zel.st.	387-91
+bechlin,obu	19-1
+bechlin,obu	19-2
+bechlin,obu	19-3
+libkovice p.ripem,nad rokli	2362-1
+libkovice p.ripem,nad rokli	2362-2
+libkovice p.ripem	846-1
+libkovice p.ripem	846-2
+louny,otocka u kotelny	958-1
+louny,pudlovska	962-1
+louny,pudlovska	962-2
+louny,5.kvetna	3051-1
+louny,5.kvetna	3051-2
+louny,prum.zona i	2454-1
+louny,zahradni mesto	967-1
+louny,zahradni mesto	967-2
+louny,riegrova	963-1
+louny,riegrova	963-2
+postoloprty,brezno,rozc.skanzen	1290-1
+vrsovice	1938-1
+vrsovice	1938-2
+cerncice,prefa	149-1
+cerncice,prefa	149-2
+obora	1174-1
+obora	1174-2
+usti n.l.,kpt. jarose	12038-1
+usti n.l.,kpt. jarose	12038-2
+usti n.l.,dukelskych hrdinu	12018-1
+usti n.l.,dukelskych hrdinu	12018-2
+usti n.l.,na kohoute	12059-1
+usti n.l.,na kohoute	12059-2
+usti n.l.,vseborice	12146-1
+usti n.l.,vseborice	12146-2
+vroutek,karlovarska	1931-1
+vroutek,karlovarska	1931-2
+vroutek,zavod	1934-1
+vroutek,zavod	1934-2
+vroutek,vidhostice	1929-1
+vroutek,vidhostice	1929-2
+vroutek,luzec	1924-1
+vroutek,luzec	1924-2
+lubenec,drahonice	988-1
+lubenec,drahonice	988-2
+lubenec,u dalnice	2756-1
+lubenec,u dalnice	2756-2
+lubenec,libyne	990-1
+lubenec,libyne	990-2
+lubenec,zavod	994-1
+lubenec,zavod	994-2
+lubenec,jeleni	991-1
+lubenec,jeleni	991-2
+lubenec,lezky	989-1
+teplice,doubravicka	11510-1
+teplice,doubravicka	11510-2
+teplice,pod doubravkou	11514-1
+teplice,pod doubravkou	11514-2
+teplice,sukova	11517-1
+teplice,sukova	11517-2
+teplice,botanicka zahrada	11500-1
+teplice,botanicka zahrada	11500-2
+teplice,novakova	11513-1
+teplice,novakova	11513-2
+teplice,safarikova	11516-1
+teplice,sanov i lazne	1621-1
+teplice,sanov i lazne	1621-2
+teplice,zeyerovo namesti	2591-1
+teplice,zeyerovo namesti	2591-2
+teplice,na stinadlech	11512-1
+teplice,na stinadlech	11512-2
+teplice,sportovni hala	11515-1
+teplice,sportovni hala	11515-2
+teplice,buzulucka	1581-1
+teplice,buzulucka	1581-2
+teplice,retenice,perla	1560-1
+teplice,retenice,perla	1560-2
+teplice,erbenova	11511-1
+teplice,erbenova	11511-2
+trmice,mustek	1651-1
+trmice,mustek	1651-2
+trmice,ujezd	1655-1
+trmice,ujezd	1655-2
+trmice,panorama	1653-1
+trmice,panorama	1653-2
+usti n.l.,hostovice	1719-1
+usti n.l.,hostovice	1719-2
+stebno,milbohov,haj.	1078-1
+stebno,milbohov,haj.	1078-2
+stebno,milbohov	1079-1
+stebno,milbohov	1079-2
+stebno	1479-1
+stebno	1479-2
+stebno	1479-3
+stebno,podlesin	1274-1
+stebno,podlesin	1274-2
+stebno,chvalov	549-1
+stebno,sucha	1486-1
+kladno,zel.zast.mesto	2803-1
+kladno,zel.zast.mesto	2803-2
+kladno,zel.zast.mesto	2803-3
+kladno,zel.zast.mesto	2803-4
+kladno,rakovnicka	2805-1
+kladno,rakovnicka	2805-2
+kamenne zehrovice,haje	2770-1
+kamenne zehrovice,haje	2770-2
+kamenne zehrovice	2771-1
+kamenne zehrovice	2771-2
+tuchlovice,drevenkov	2772-1
+tuchlovice,drevenkov	2772-2
+tuchlovice	2773-1
+tuchlovice	2773-2
+stochov,slovanka	2774-1
+stochov,slovanka	2774-2
+lany,namesti	2876-1
+lany,lesni	2877-1
+lany,lesni	2877-2
+nove straseci,rozc.trtice	2878-1
+nove straseci,rozc.trtice	2878-2
+trtice,u brodku	2879-1
+trtice,u brodku	2879-2
+trtice	2880-1
+trtice	2880-2
+trtice,u skoly	2881-1
+trtice,u skoly	2881-2
+trtice,bucky rybnik	2882-1
+trtice,bucky rybnik	2882-2
+revnicov,rozc.k zel.st.	2810-1
+revnicov,rozc.k zel.st.	2810-2
+revnicov,k buckemu rybniku	2811-1
+revnicov,k buckemu rybniku	2811-2
+revnicov,u transf.	2647-1
+revnicov,u transf.	2647-2
+kroucova,kriz.	2646-1
+kroucova,kriz.	2646-2
+bilina,sidl.zch jednota	10013-1
+bilina,sidl.zch vytopna	10014-1
+bilina,csa	10004-1
+bilina,jakoubkova	10006-1
+bilina,sunn	10015-1
+bilina,nam.	34-1
+bilina,5.kvetna samoobsluha	10002-1
+bilina,5.kvetna	10001-1
+bilina,mirova	10009-1
+bilina,pp ii jizni	10011-1
+bilina,pp ii okaly	10012-1
+bilina,jenisovska	10007-1
+bilina,poliklinika	35-1
+bilina,poliklinika	35-2
+bilina,u holubu	10017-1
+bilina,lidl	33-2
+bilina,kino	10008-1
+bilina,vykup	10019-1
+bilina,vmg zast.	10018-1
+bilina,brezanska	10003-1
+bilina,na vysluni	10010-1
+bilina,hrbitov	10005-1
+bilina,teplicka	10016-1
+benesov n.pl.,zel.st.	30-1
+benesov n.pl.,zel.st.	30-92
+benesov n.pl.,zel.st.	30-95
+benesov n.pl.,nam.	25-1
+benesov n.pl.,nam.	25-2
+benesov n.pl.,nam.	25-3
+dolni habartice,obu	258-1
+dolni habartice,obu	258-2
+dolni habartice,rozc.	259-1
+dolni habartice,rozc.	259-2
+velka bukovina,mala bukovina,obu	1857-1
+velka bukovina,mala bukovina,obu	1857-2
+velka bukovina,mala bukovina,u krizku	1858-1
+velka bukovina,mala bukovina,u krizku	1858-2
+velka bukovina,karlovka,samota	1855-1
+velka bukovina,karlovka,samota	1855-2
+velka bukovina,karlovka	1856-1
+velka bukovina,karlovka	1856-2
+velka bukovina,rozc.	1860-1
+velka bukovina,rozc.	1860-2
+velka bukovina,cihelna	1859-1
+velka bukovina,cihelna	1859-2
+stary sachov,rozc.	1477-1
+stary sachov,rozc.	1477-2
+stary sachov,otocka	1476-1
+vernerice,rozc.	1890-1
+vernerice,rozc.	1890-2
+vernerice,rozc.	1890-3
+vernerice,rozc.	1890-4
+merboltice,konecna	1061-1
+merboltice,konecna	1061-2
+merboltice,hranicar	1059-1
+merboltice,hranicar	1059-2
+merboltice,dol.cast	1057-1
+merboltice,dol.cast	1057-2
+merboltice,i	1060-1
+merboltice,i	1060-2
+benesov n.pl.,pod parkem	26-1
+vernerice,za kostelem	169454-1
+vernerice,za kostelem	169454-2
+kostany,strelna,u kaplicky	670-1
+kostany,strelna,u kaplicky	670-2
+teplice,trnovany,pluto	1571-1
+teplice,trnovany,pluto	1571-2
+teplice,trnovany,pluto	1571-3
+teplice,trnovany,pluto	1571-4
+teplice,trnovany,bohosudovska	1567-1
+teplice,trnovany,bohosudovska	1567-2
+teplice,sobedruhy,nam.	1565-1
+teplice,sobedruhy,nam.	1565-2
+krupka,sobechleby,zahr.kolonie	734-1
+krupka,sobechleby,zahr.kolonie	734-2
+krupka,sobechleby,tocna	735-1
+kostany,skola	675-2
+chomutov,podhorska	11034-1
+chomutov,krusnohorska	11024-1
+chomutov,krusnohorska	11024-2
+chomutov,na pruhone	11029-1
+chomutov,na pruhone	11029-2
+branany,zavod	80-1
+branany	81-1
+branany	81-2
+zelenice	2018-1
+zelenice	2018-2
+zelenice,sterkovna	2017-1
+zelenice,sterkovna	2017-2
+libesice,kaplicka	841-1
+obrnice	2202-92
+obrnice	2202-101
+bylany	116-1
+bylany	116-2
+male brezno,vysoke brezno	1949-1
+male brezno,vysoke brezno	1949-2
+male brezno	1008-1
+male brezno	1008-2
+louny,zizkova	969-1
+louny,zizkova	969-2
+dobromerice	252-1
+dobromerice	252-2
+dobromerice,jednota	248-1
+dobromerice,jednota	248-2
+dobromerice,zzn	251-1
+dobromerice,u kadnera	250-1
+dobromerice,u kadnera	250-2
+lenesice,zel.st.	806-1
+lenesice,zel.st.	806-2
+lenesice,zel.st.	806-92
+lenesice,zel.st.	806-101
+lenesice,nakup.str.	803-1
+lenesice,nakup.str.	803-2
+lenesice,nam.	804-1
+lenesice,nam.	804-2
+postoloprty,rvenice	1298-1
+postoloprty,rvenice	1298-2
+blazim,kostel	2710-1
+blazim,kostel	2710-2
+moraveves	1103-1
+moraveves	1103-2
+havran,ke hrbitovu	350-1
+havran,ke hrbitovu	350-2
+dobromerice,sts	249-2
+lenesice,osada mlynek	805-1
+lenesice,osada mlynek	805-2
+lenesice,ovcin	2036-1
+lenesice,ovcin	2036-2
+lenesice,na samote	802-1
+lenesice,na samote	802-2
+brvany,host.	102-1
+vchynice,rozc.	1895-1
+vchynice,rozc.	1895-2
+vchynice,rozc.	1895-3
+vchynice,skola	1896-1
+vchynice,skola	1896-2
+vchynice	1897-1
+vchynice	1897-2
+vchynice	1897-3
+velemin,bilinka,rozc.0.5	1831-1
+velemin,bilinka,rozc.0.5	1831-2
+velemin,rezny ujezd,kaplicka	2359-1
+velemin,rezny ujezd,kaplicka	2359-2
+trebenice,sutom	1664-1
+velemin,brezno	1835-1
+velemin,brezno	1835-2
+velemin	1844-1
+velemin	1844-2
+velemin,skola	1843-1
+velemin,skola	1843-2
+velemin,milesovska	1842-1
+velemin,milesovska	1842-2
+velemin,milesov,mlynce rozc.0.5	1838-1
+velemin,milesov,mlynce rozc.0.5	1838-2
+velemin,milesov	1839-1
+velemin,milesov	1839-2
+chotimer,skolka	516-1
+chotimer,skolka	516-2
+velemin,hrusovka,rozc.	1837-1
+velemin,hrusovka,rozc.	1837-2
+velemin,bily ujezd	1833-1
+velemin,bily ujezd	1833-2
+velemin,bilinka	1832-1
+velemin,bilinka	1832-2
+velemin,oparno	1840-1
+velemin,oparno	1840-2
+chotimer	517-1
+chotimer	517-2
+velemin,dobkovicky	1836-1
+velemin,dobkovicky	1836-91
+velemin,dobkovicky	1836-92
+velemin,dobkovicky	1836-93
+velemin,borec	1834-1
+velemin,borec	1834-2
+velemin,rezny ujezd	1841-1
+velemin,rezny ujezd	1841-2
+decany,semec	188-1
+horni repcice	392-1
+horni repcice	392-2
+libesice,sobenice	837-1
+libesice,sobenice	837-2
+libesice,mlade	834-1
+libesice,mlade	834-2
+libesice,horni chobolice	830-1
+libesice,horni chobolice	830-2
+libesice,trnobrany	839-1
+libesice,trnobrany	839-2
+libesice,trnobrany	839-3
+libesice,zel.st.	843-1
+libesice,zel.st.	843-2
+libesice,zel.st.	843-92
+libesice,zel.st.	843-101
+libesice,skola	842-1
+libesice,skola	842-2
+libesice	845-1
+libesice	845-2
+velke chvojno	1873-1
+velke chvojno	1873-2
+velke chvojno,skola	1872-1
+velke chvojno,skola	1872-2
+velke chvojno,zdar,rozc.0.5	1870-1
+velke chvojno,zdar,rozc.0.5	1870-2
+velke chvojno,zdar,rozc.0.5	1870-3
+velke chvojno,zdar,rozc.0.5	1870-4
+velke chvojno,arnultovice	1865-1
+velke chvojno,arnultovice	1865-2
+velke chvojno,lucni chvojno	1866-1
+velke chvojno,lucni chvojno	1866-2
+velke chvojno,mnichov	1869-1
+velke chvojno,mnichov	1869-2
+chuderov,lipova	538-1
+chuderov,lipova	538-2
+chuderov,lipova,rozc.blansko 1.5	2727-1
+chuderov,lipova,rozc.blansko 1.5	2727-2
+chuderov,libov	537-1
+chuderov,libov	537-2
+chuderov,radesin	539-1
+chuderov,radesin	539-2
+chuderov,sovolusky,rozc.0.5	540-1
+chuderov,sovolusky,rozc.0.5	540-2
+chuderov,statek	3023-1
+chuderov,statek	3023-2
+malecov,odb.	1021-1
+malecov,odb.	1021-2
+malecov,brezi,rozc.0.3	1014-1
+malecov,brezi,rozc.0.3	1014-2
+malecov	1022-1
+malecov	1022-2
+malecov,pohori,rozc.0.5	1016-1
+malecov,pohori,rozc.0.5	1016-2
+tasov	1538-1
+tasov	1538-2
+tasov	1538-3
+tasov	1538-4
+tasov,ovcarna	1537-1
+tasov,ovcarna	1537-2
+tasov,ovcarna	1537-3
+tasov,ovcarna	1537-4
+malecov,rydec,odb.lhota pod pannou	1019-1
+malecov,rydec,odb.lhota pod pannou	1019-2
+malecov,probostov,odb.lhota pod pannou	1018-1
+malecov,probostov,odb.lhota pod pannou	1018-2
+malecov,probostov,host.	1017-1
+malecov,probostov,host.	1017-2
+velke chvojno,male chvojno	1868-1
+velke chvojno,male chvojno	1868-2
+malecov,cereniste	1015-1
+malecov,cereniste	1015-2
+velke chvojno,zdar	1871-1
+velke chvojno,zdar	1871-2
+jilove,papirny	590-1
+jilove,papirny	590-2
+jilove,sneznik	588-1
+jilove,sneznik	588-2
+jilove,sneznik,rest.hranicar	587-1
+jilove,sneznik,rest.hranicar	587-2
+jilove,sneznik,lesni sprava	586-1
+jilove,sneznik,lesni sprava	586-2
+jilove,sneznik,celnice	585-1
+jilove,sneznik,celnice	585-2
+jilove,nam.	589-1
+jilove,nam.	589-2
+steti,ujezd	1525-1
+steti,veseli	1526-1
+steti,veseli	1526-2
+steti,chcebuz	1523-1
+steti,chcebuz	1523-2
+steti,chcebuz	1523-3
+steti,brocno	1515-1
+steti,brocno	1515-2
+most,sukova blok 508	2629-1
+most,sukova blok 508	2629-2
+jirkov,hornicka	596-1
+jirkov,hornicka	596-2
+jirkov,vinaricka i	603-1
+jirkov,vinaricka i	603-2
+chomutov,zahradni tip	11059-1
+chomutov,zahradni tip	11059-2
+chomutov,kamenna	11022-1
+chomutov,kamenna	11022-2
+chomutov,brezenecka ii	11006-1
+chomutov,brezenecka ii	11006-2
+chomutov,sportovni hala	11042-1
+chomutov,sportovni hala	11042-2
+chomutov,kundraticka	11026-1
+chomutov,kundraticka	11026-2
+jirkov,hornik	597-1
+jirkov,hornik	597-2
+nove sedlo,zabokliky	1161-1
+nove sedlo,zabokliky	1161-2
+nove sedlo,zabokliky,zel.st.	1160-1
+nove sedlo,zabokliky,zel.st.	1160-2
+nove sedlo,unv	1162-1
+nove sedlo,unv	1162-2
+nove sedlo,brezany	1158-1
+upohlavy,host.	1713-1
+upohlavy,host.	1713-2
+sedlec	1425-1
+sedlec	1425-2
+sedlec	1425-3
+lkan	921-1
+lkan	921-2
+decany,solany	189-1
+decany,solany	189-2
+trebivlice,sepetely,cesta	1675-1
+trebivlice,sepetely,cesta	1675-2
+trebivlice,stare	1674-1
+trebivlice,stare	1674-2
+trebivlice,stare,haj.	1673-1
+trebivlice,stare,haj.	1673-2
+trebivlice,skalice	1672-1
+decany,lukohorany	187-1
+trebivlice,leska	1671-1
+podborany,mory	1258-1
+podborany,mory	1258-2
+krasny dvur,chotebudice	717-1
+krasny dvur,chotebudice	717-2
+becov	15-1
+becov	15-2
+luzice	1003-1
+svincice,otocka	1496-1
+patokryje	1202-1
+patokryje	1202-2
+obrnice,sterkovna	1177-1
+obrnice,sterkovna	1177-2
+obrnice	1178-1
+obrnice	1178-2
+nemilkov	1135-1
+nemilkov	1135-2
+lisnice,rozc.	880-1
+lisnice,rozc.	880-2
+polerady	1288-1
+polerady	1288-2
+volevcice	2296-92
+volevcice	2296-101
+svincice,rozc.1.0	1497-1
+svincice,rozc.1.0	1497-2
+svincice,rozc.1.0	1497-3
+svincice,rozc.1.0	1497-4
+belusice,odolice,osada	1181-1
+belusice	23-1
+belusice	23-2
+belusice,bedrichuv svetec	17-1
+belusice,bedrichuv svetec	17-2
+lisnice,koporec	2360-1
+jilove,kamenec	580-1
+jilove,kamenec	580-2
+jilove,modra	584-1
+jilove,modra	584-2
+jilove,modra,lidovy dum	583-1
+jilove,modra,lidovy dum	583-2
+jilove,sidliste	2463-1
+usti n.l.,odb.neznabohy	2677-1
+vsehrdy	1941-1
+nezabylice	1144-1
+nezabylice	1144-2
+nezabylice,horenec	1142-1
+nezabylice,horenec	1142-2
+bilence	31-1
+bilence	31-2
+bilence,voderady,rozc.	1914-1
+bilence,voderady,rozc.	1914-2
+bilence,skrle	1499-1
+bilence,skrle	1499-2
+velemysleves,zalezly	1848-1
+velemysleves,zalezly	1848-2
+hrusovany,kriz.	2965-1
+hrusovany,kriz.	2965-2
+kostomlaty p.milesovkou,nam.	665-1
+kostomlaty p.milesovkou,nam.	665-2
+kostomlaty p.milesovkou,nam.	665-3
+kostomlaty p.milesovkou,obu	666-1
+kostomlaty p.milesovkou,obu	666-2
+kostomlaty p.milesovkou,garaze	664-1
+kostomlaty p.milesovkou,garaze	664-2
+bzany,lhenice	134-1
+bzany,lhenice	134-2
+bzany,mosnov	136-1
+bzany,mosnov	136-2
+bzany	137-1
+bzany	137-2
+kostomlaty p.milesovkou,skola	667-1
+kostomlaty p.milesovkou,skola	667-2
+svetec,strbice	1536-1
+svetec,strbice	1536-2
+svetec,kostomlatska	1493-1
+svetec,kostomlatska	1493-2
+svetec,zav.	1495-1
+svetec,zav.	1495-2
+svetec,zamecka zahrada	1494-1
+svetec,zamecka zahrada	1494-2
+zabrusany,zelenky	1959-1
+zabrusany,obu	1960-1
+zabrusany,obu	1960-2
+zabrusany,obu	1960-3
+zabrusany,obu	1960-4
+zabrusany,vsechlapy	1956-1
+zabrusany,vsechlapy	1956-2
+teplice,hudcov	1553-1
+teplice,hudcov	1553-2
+teplice,hudcov,vysina	1552-1
+teplice,hudcov,vysina	1552-2
+horni halze	384-1
+horni halze	384-2
+medenec,rozc.k dolu	1047-1
+medenec,rozc.k dolu	1047-2
+medenec	1049-1
+medenec	1049-2
+medenec,zel.st.	1048-1
+medenec,zel.st.	1048-2
+medenec,zel.st.	1048-92
+medenec,zel.st.	1048-101
+petlery	1217-1
+petlery	1217-2
+klasterec n.ohri,stadion	114432-1
+klasterec n.ohri,stadion	114432-2
+klasterec n.ohri,zel.st.	2628-1
+klasterec n.ohri,zel.st.	2628-2
+klasterec n.ohri,mikulovice	1358-1
+klasterec n.ohri,mikulovice	1358-2
+klasterec n.ohri,mikulovice,statek	1076-1
+klasterec n.ohri,mikulovice,statek	1076-2
+barenstein,turnhalle	13-1
+barenstein,turnhalle	13-2
+barenstein,ortseingang	12-1
+barenstein,ortseingang	12-2
+barenstein,kuhlberg,b 95	11-1
+barenstein,kuhlberg,b 95	11-2
+cunersdorf,gh morgensonne	142-1
+cunersdorf,gh morgensonne	142-2
+annaberg-buchholz,turnhalle	5-1
+annaberg-buchholz,turnhalle	5-2
+annaberg-buchholz,bahnhofstr.	1-1
+annaberg-buchholz,unterer bahnhof	6-1
+annaberg-buchholz,unterer bahnhof	6-2
+annaberg-buchholz,gerisch ruh	163667-1
+annaberg-buchholz,gerisch ruh	163667-2
+annaberg-buchholz,rve	4-1
+annaberg-buchholz,busbahnhof	2-1
+vedomice,zavadilka,na pruhonu	2594-1
+vedomice,zavadilka,na pruhonu	2594-2
+vedomice	1821-1
+vedomice	1821-2
+vedomice,most	3140-1
+vedomice,most	3140-2
+vedomice,rozc.0.7	1820-1
+vedomice,rozc.0.7	1820-2
+kyskovice	793-1
+kyskovice	793-2
+kyskovice,hamracek,rozc.	792-1
+kyskovice,hamracek,rozc.	792-2
+brzanky,rozc.	94-1
+brzanky,rozc.	94-2
+vrbice,vetla	1919-1
+vrbice,vetla	1919-2
+vrbice	1920-1
+vrbice	1920-2
+vrutice,svarenice,vrbicka	2545-1
+vrutice,svarenice,vrbicka	2545-2
+radovesice,naves	2544-1
+radovesice,naves	2544-2
+budyne n.ohri,kostelec n.ohri	104-1
+budyne n.ohri,kostelec n.ohri	104-2
+budyne n.ohri,roudnicek	107-1
+budyne n.ohri,roudnicek	107-2
+budyne n.ohri,vrbka	108-1
+budyne n.ohri,vrbka	108-2
+budyne n.ohri,skola	111-1
+budyne n.ohri,skola	111-2
+prestavlky	1346-1
+prestavlky	1346-2
+hostka,skola	2949-1
+hostka,nam.	404-1
+hostka,nam.	404-2
+hostka,nam.	404-3
+hostka,nam.	404-4
+sebnitz,bahnhof	2334-1
+sebnitz,bahnhof	2334-92
+sebnitz,bahnhof	2334-94
+sebnitz,bahnhof	2334-101
+bad schandau, elbkai	3156-94
+schmilka,grenzubergang	1432-1
+schmilka,grenzubergang	1432-93
+stary brezenec,skola	11003-1
+stary brezenec,skola	11003-2
+stary brezenec,u rybnika	11004-1
+stary brezenec,u rybnika	11004-2
+stary brezenec	11002-1
+stary brezenec	11002-2
+novy brezenec	11017-1
+novy brezenec	11017-2
+jirkov,palackeho	11018-1
+chomutov,pisecna	498-1
+chomutov,pisecna	498-2
+chomutov,kaufland	11023-1
+klasterec n.ohri,vernerov,ip verne i	151443-1
+klasterec n.ohri,vernerov,ip verne i	151443-2
+kadan,kralovsky vrch	622-1
+kadan,kralovsky vrch	622-2
+klasterec n.ohri,vernerov	139157-1
+klasterec n.ohri,vernerov	139157-2
+osek,hrdlovska	2945-1
+litvinov,zs ruska	918-1
+litvinov,janov,otocka	551-1
+litomerice,nem.hl.vstup	900-1
+litomerice,plesivecka	2919-1
+litomerice,plesivecka	2919-2
+litomerice,michalovicka	897-1
+litomerice,michalovicka	897-2
+teplice,mariansky dvur	1605-1
+teplice,mariansky dvur	1605-2
+teplice,retenice,v brizkach	1564-1
+teplice,retenice,v brizkach	1564-2
+horni habartice,obu	383-1
+horni habartice,obu	383-2
+markvartice,zel.st.	1040-1
+markvartice,zel.st.	1040-2
+markvartice,obu	1039-1
+markvartice,obu	1039-2
+vesele,obu	1894-1
+vesele,obu	1894-2
+vesele,horni	2470-1
+vesele,horni	2470-2
+ceska kamenice,kerhartice	634-1
+ceska kamenice,kerhartice	634-2
+ceska kamenice,kerhartice,hl.sil.	633-1
+ceska kamenice,kerhartice,hl.sil.	633-2
+ceska kamenice,hunikov	444-1
+ceska kamenice,hunikov	444-2
+ceska kamenice,hunikov,kult.dum	443-1
+ceska kamenice,hunikov,kult.dum	443-2
+ceska kamenice,5.kvetna	172-1
+ceska kamenice,5.kvetna	172-2
+ceska kamenice,pekelsky dul	1203-1
+ceska kamenice,pekelsky dul	1203-2
+kunratice	784-1
+kunratice	784-2
+kunratice,horni	783-1
+kunratice,horni	783-2
+kunratice,lipnice	870-1
+kunratice,lipnice	870-2
+kunratice,studeny	1485-1
+kunratice,studeny	1485-2
+obora,tranzitni plynovod	1172-1
+obora,tranzitni plynovod	1172-2
+pocedelice	1250-1
+pocedelice	1250-2
+pocedelice,orasice	1248-1
+pocedelice,orasice	1248-2
+pocedelice,volenice	1249-1
+kostice	680-1
+kostice	680-2
+kostice,samota	679-1
+kostice,samota	679-2
+kostice,vojnice	677-1
+kostice,vojnice	677-2
+kostice,vojnicky	678-1
+kostice,vojnicky	678-2
+decany,lukohorany,rozc.	186-1
+decany,lukohorany,rozc.	186-2
+libceves,risuty	820-1
+zabrusany,rozc.	1961-1
+zabrusany,rozc.	1961-2
+zabrusany,sterbina	1955-1
+zabrusany,sterbina	1955-2
+zabrusany,straky	1954-1
+zabrusany,straky	1954-2
+teplice,novoveska	1612-1
+teplice,novoveska	1612-2
+teplice,bila cesta	1579-1
+teplice,bila cesta	1579-2
+teplice,bystranska u prejezdu	1582-1
+teplice,bystranska u prejezdu	1582-2
+teplice,valy	1628-1
+teplice,valy	1628-2
+krupka,muzeum	744-1
+krupka,muzeum	744-2
+krupka,husitska	741-1
+krupka,hornicka stezka	742-1
+krupka,hornicka stezka	742-2
+krupka,zahr.kolonie	753-1
+krupka,zahr.kolonie	753-2
+krupka,stola stary martin	743-1
+krupka,stola stary martin	743-2
+krupka,horni krupka,host.	731-1
+krupka,horni krupka,host.	731-2
+krupka,horni krupka	732-1
+krupka,horni krupka	732-2
+krupka,fojtovice,komari vizka	729-1
+krupka,fojtovice,komari vizka	729-2
+krupka,fojtovice	730-1
+haj u duchcova,dolni haj	341-1
+haj u duchcova,obu	345-1
+kadan,straziste	2690-1
+kadan,frantiskansky klaster	2689-1
+kadan,u nadrazi	2686-1
+kadan,u nadrazi	2686-2
+karlovy vary,trznice	3001-1
+louka u litvinova,u nadrazi	945-1
+louka u litvinova,u nadrazi	945-2
+louka u litvinova,u rybnicka	946-1
+louka u litvinova,u rybnicka	946-2
+louka u litvinova,sokolovska	944-1
+louka u litvinova,sokolovska	944-2
+louka u litvinova,kulturni dum	943-1
+louka u litvinova,kulturni dum	943-2
+louka u litvinova,husova	947-1
+louka u litvinova,husova	947-2
+marianske radcice,dul kohinoor	1035-1
+marianske radcice,dul kohinoor	1035-2
+marianske radcice,poz.zbroj.	1038-1
+marianske radcice,poz.zbroj.	1038-2
+marianske radcice,otocka	1037-1
+marianske radcice,otocka	1037-2
+postoloprty,sidliste	1307-1
+postoloprty,sidliste	1307-2
+postoloprty,levonice	1294-1
+postoloprty,levonice	1294-2
+lisany,zav.	878-1
+lisany,zav.	878-2
+lisany	879-1
+lisany	879-2
+lisany,obu	877-1
+lisany,obu	877-2
+libesice,dobricany,rozc.	825-1
+libesice,dobricany,rozc.	825-2
+libesice	844-1
+libesice	844-2
+tuchorice,treskonice,haj.	1692-1
+tuchorice,treskonice,haj.	1692-2
+tuchorice,treskonice,vyhledy	1693-1
+tuchorice,treskonice,vyhledy	1693-2
+tuchorice,necemice,osada	1690-1
+tuchorice,necemice,osada	1690-2
+tuchorice,necemice	1691-1
+kounov,rozc.haj.	685-1
+kounov,rozc.haj.	685-2
+kounov,rozc.	684-1
+kounov,rozc.	684-2
+kounov,skola	686-1
+kounov,skola	686-2
+pnetluky,haj.	1243-1
+pnetluky,haj.	1243-2
+libesice,lickov	833-1
+libesice,lickov	833-2
+libesice,lickov,skolni	832-1
+libesice,lickov,skolni	832-2
+libesice,klucek	831-1
+libesice,klucek	831-2
+libesice,dobricany	826-1
+domousice,zel.st.	275-1
+domousice,zel.st.	275-2
+domousice,zel.st.	275-92
+domousice,zel.st.	275-101
+domousice	276-1
+domousice	276-2
+domousice,filipov	274-1
+domousice,filipov	274-2
+kounov,u mostu	2986-1
+kounov,u mostu	2986-2
+kounov,u mostu	2986-3
+kounov,u mostu	2986-4
+terezin,ceske kopisty	1631-1
+terezin,ceske kopisty	1631-2
+terezin,pocaply	1634-1
+terezin,pocaply	1634-2
+travcice	1648-1
+travcice	1648-2
+terezin,pocaply,cesta	1633-1
+terezin,pocaply,cesta	1633-2
+travcice,nucnicky	1647-1
+travcice,nucnicky	1647-2
+libotenice,hrbitov	859-1
+libotenice,hrbitov	859-2
+libotenice	860-1
+libotenice	860-2
+libotenice	860-201
+libotenice,drubezarna	858-1
+libotenice,drubezarna	858-2
+hrobce	419-1
+hrobce	419-2
+hrobce,zel.st.	418-1
+hrobce,zel.st.	418-2
+hrobce,rohatce	417-1
+hrobce,rohatce	417-2
+hrobce,rohatce	417-3
+zidovice	2022-1
+zidovice	2022-2
+bechlin,u ctvrtecku	20-1
+bechlin,u ctvrtecku	20-2
+kostomlaty p.ripem	668-1
+kostomlaty p.ripem	668-2
+horni berkovice,obu	382-1
+horni berkovice,obu	382-2
+bechlin,predonin,vinice	2578-1
+bechlin,predonin,vinice	2578-2
+olesko	2205-1
+olesko	2205-92
+olesko	2205-101
+vedomice,zavadilka	1817-1
+vedomice,zavadilka	1817-2
+vedomice,zavadilka	1817-3
+vedomice,zavadilka	1817-4
+vedomice,lesni skolka	1818-1
+vedomice,lesni skolka	1818-2
+cerneves,rozc.	153-1
+cerneves,rozc.	153-2
+cerneves,rozc.	153-3
+cerneves,rozc.	153-4
+chodouny	480-1
+chodouny	480-2
+chodouny,lounky	479-1
+chodouny,lounky	479-2
+libesice,dubcany	829-1
+libesice,dubcany	829-2
+tuchorice,samota	1696-1
+tuchorice,samota	1696-2
+tuchorice,skola	1697-1
+tuchorice,skola	1697-2
+lipno	874-1
+lipno	874-2
+lipno,drahomysl	871-1
+lipno,drahomysl	871-2
+krimov,celna	773-1
+krimov,celna	773-2
+krimov,celna	773-3
+krimov,celna	773-4
+vysluni,kysovice	1943-1
+vysluni,kysovice	1943-2
+vysluni	1946-1
+vysluni	1946-2
+vysluni,trebiska,rozc.	1944-1
+vysluni,trebiska,rozc.	1944-2
+vysluni,volyne,rozc.	1945-1
+vysluni,volyne,rozc.	1945-2
+krystofovy hamry,rozc.3.0	763-1
+krystofovy hamry,rozc.3.0	763-2
+cerny potok	159-1
+cerny potok	159-2
+vejprty,haj.	1827-1
+vejprty,haj.	1827-2
+vejprty,prisecnicka	1829-1
+vejprty,prisecnicka	1829-2
+krystofovy hamry,prehrada	762-1
+krystofovy hamry,prehrada	762-2
+krystofovy hamry	764-1
+teplice,u vlastniho krbu	1627-1
+teplice,u vlastniho krbu	1627-2
+kresice,ustav	770-1
+kresice,ustav	770-2
+polepy,encovany,dolni encovany	1279-1
+polepy,encovany,dolni encovany	1279-2
+polepy,encovany	1280-1
+polepy,encovany	1280-2
+polepy,hrusovany	1281-1
+polepy,hrusovany	1281-2
+hostka,malesov,rozc.	401-1
+hostka,malesov,rozc.	401-2
+drahobuz	281-1
+drahobuz	281-2
+ustek,vedlice	1777-1
+ustek,vedlice	1777-2
+ustek,vedlice	1777-3
+ustek,vedlice	1777-4
+ustek,julcin	1762-1
+ustek,julcin	1762-2
+kurort oberwiesenthal,neues haus	788-1
+kurort oberwiesenthal,neues haus	788-2
+kurort oberwiesenthal,hotel am fichtelberg	786-1
+kurort oberwiesenthal,hotel am fichtelberg	786-2
+kurort oberwiesenthal,markt	787-1
+kurort oberwiesenthal,markt	787-2
+kurort oberwiesenthal,am bahnhof	785-1
+kurort oberwiesenthal,penzion herberger	789-1
+kurort oberwiesenthal,penzion herberger	789-2
+decin,bela	10502-1
+decin,bela	10502-2
+decin,natura	10540-1
+decin,natura	10540-2
+decin,kovarna	10524-1
+decin,kovarna	10524-2
+decin,u pomniku	10558-1
+decin,u pomniku	10558-2
+decin,cechy	10510-1
+decin,cechy	10510-2
+decin,u hrbitova	10555-1
+decin,u hrbitova	10555-2
+decin,folknarska	10513-1
+decin,folknarska	10513-2
+decin,folknare	10512-1
+decin,folknare	10512-2
+decin,armex	10500-1
+perstejn,kino	1204-1
+perstejn,kino	1204-2
+decin,priper	207-1
+decin,priper	207-2
+decin,jaluvci,rozc.	201-1
+decin,jaluvci,rozc.	201-2
+decin,jaluvci,rozc.	201-3
+decin,jaluvci,rozc.	201-4
+decin,zotavovna	237-1
+decin,zotavovna	237-2
+decin,maxicky	205-1
+decin,maxicky	205-2
+decin,kristin hradek,rozc.	202-1
+decin,kristin hradek,rozc.	202-2
+decin,maresova skolka	220-1
+decin,maresova skolka	220-2
+decin,u mostu	235-1
+horesedly	2093-1
+horesedly	2093-2
+horesedly	2093-92
+petrohrad,rozc.	2788-1
+petrohrad,rozc.	2788-2
+lubenec,lezky,rozc.0.3	2789-1
+lubenec,lezky,rozc.0.3	2789-2
+vrbice,skripova,rozc.	3020-1
+vrbice,skripova,rozc.	3020-2
+verusicky	3019-1
+verusicky	3019-2
+verusicky,budov,rozc.	3018-1
+verusicky,budov,rozc.	3018-2
+verusicky,hvezda	3017-1
+verusicky,hvezda	3017-2
+bochov,herstosice	3016-1
+bochov,herstosice	3016-2
+bochov,udrc,rozc.skoky	3015-1
+bochov,udrc,rozc.skoky	3015-2
+bochov,sus	3014-1
+bochov,sus	3014-2
+bochov,nam.	3013-1
+bochov,nam.	3013-2
+struzna,horni tasovice	3012-1
+struzna,horni tasovice	3012-2
+struzna,rozc.	3011-1
+struzna,rozc.	3011-2
+struzna,zalmanov	3010-1
+struzna,zalmanov	3010-2
+andelska hora,rozc.	3009-1
+andelska hora,rozc.	3009-2
+andelska hora,horni obec	3008-1
+andelska hora,horni obec	3008-2
+andelska hora,dolni obec	3007-1
+andelska hora,dolni obec	3007-2
+andelska hora,chaty	3006-1
+andelska hora,chaty	3006-2
+karlovy vary,olsova vrata,rozc.	3005-1
+karlovy vary,olsova vrata,rozc.	3005-2
+karlovy vary,mattoniho nabr.	3004-1
+karlovy vary,mattoniho nabr.	3004-2
+karlovy vary,prasna	3003-1
+karlovy vary,prasna	3003-2
+karlovy vary,mlekarna	3002-1
+karlovy vary,mlekarna	3002-2
+stochov,slovanka ii	2775-1
+stochov,slovanka ii	2775-2
+praha,depo zlicin	2790-1
+struzna,obec	3025-1
+trebenice,tepla	1665-1
+trebenice,tepla	1665-2
+vlastislav,rozc.	1912-1
+vlastislav,rozc.	1912-2
+vlastislav	1913-1
+vlastislav	1913-2
+trebenice,mrsklesy	1663-1
+trebenice,mrsklesy	1663-2
+trebenice,lipa	1661-1
+trebenice,lipa	1661-2
+trebenice,medvedice	1662-1
+trebenice,medvedice	1662-2
+trebenice,kocourov	1659-1
+lobendava,rybnik	924-1
+lobendava,rybnik	924-2
+dolni poustevna,marketa,odb.	269-1
+dolni poustevna,marketa,odb.	269-2
+dolni poustevna,horni poustevna	266-1
+dolni poustevna,horni poustevna	266-2
+vroutek,vesce,rozc.	1928-1
+vroutek,vesce,rozc.	1928-2
+vroutek,mlynce	1925-1
+vroutek,mlynce	1925-2
+vroutek,skytaly	1927-1
+vroutek,skytaly	1927-2
+vroutek,vrbicka	1930-1
+vroutek,vrbicka	1930-2
+vroutek,skytaly,rozc.1.0 detan	1926-1
+vroutek,skytaly,rozc.1.0 detan	1926-2
+decin,monos	222-1
+decin,monos	222-2
+decin,vilsnice	209-1
+decin,vilsnice	209-2
+decin,vilsnice	209-92
+decin,vilsnice	209-96
+decin,vilsnice	209-101
+decin,vilsnice,zav.	208-1
+decin,vilsnice,zav.	208-2
+malsovice,cetrans	1031-1
+malsovice,cetrans	1031-2
+malsovice,dol.ves	1032-1
+malsovice,dol.ves	1032-2
+malsovice,rest.	1033-1
+malsovice,rest.	1033-2
+malsovice,stara bohyne,rozc.	1030-1
+malsovice,stara bohyne,rozc.	1030-2
+malsovice,nova bohyne,rozc.	1029-1
+malsovice,nova bohyne,rozc.	1029-2
+malsovice,hlinena,rozc.	1026-1
+malsovice,hlinena,rozc.	1026-2
+malsovice,javory	1028-1
+malsovice,javory	1028-2
+malsovice,hlinena	1027-1
+malsovice,hlinena	1027-2
+malsovice,borek	1025-1
+malsovice,tocna	2635-1
+litomerice,husova	891-1
+louny,petra obrovce	2478-1
+usti n.l.,krusnohorska	12053-1
+usti n.l.,krusnohorska	12053-2
+trebivlice,zel.st.	1679-1
+trebivlice,zel.st.	1679-2
+chozov,trteno	522-1
+chozov,trteno	522-2
+chozov,mnichovsky tynec,rozc.	520-1
+chozov,mnichovsky tynec,rozc.	520-2
+chozov,u cs.kostela	524-1
+chozov,u cs.kostela	524-2
+chozov,u vahy	525-1
+chozov,u vahy	525-2
+chozov,samota	523-1
+chozov,samota	523-2
+vrsovice,u jezu	1937-1
+vrsovice,u jezu	1937-2
+krabcice,rovne,vaha	694-1
+misto,blahunov	1083-1
+misto,blahunov	1083-2
+misto	1086-1
+misto	1086-2
+misto,vychovny ustav	1085-1
+misto,vychovny ustav	1085-2
+misto,vysoka jedle	1084-1
+misto,vysoka jedle	1084-2
+misto,vysoka jedle	1084-3
+dubi,bystrice,papirny	293-1
+dubi,bystrice,papirny	293-2
+novosedlice,seko	1170-1
+novosedlice,seko	1170-2
+novosedlice,bystricka	1165-1
+novosedlice,bystricka	1165-2
+dubi,zel.st.	316-1
+dubi,zel.st.	316-2
+dubi,zel.st.	316-92
+dubi,zel.st.	316-101
+dubi,hotel sport	304-1
+dubi,hotel sport	304-2
+maly haj,lesna,rozc.	2492-1
+maly haj,lesna,rozc.	2492-2
+janska,prodejna	559-1
+janska,prodejna	559-2
+janska,bytovky	556-1
+janska,bytovky	556-2
+litvinov,poliklinika	3132-1
+litvinov,poliklinika	3132-2
+litvinov,poliklinika	3132-3
+litvinov,poliklinika	3132-4
+litvinov,meziborska	3133-1
+litvinov,meziborska	3133-2
+mezibori,namesti 8.kvetna	3134-1
+mezibori,lazne	3135-1
+mezibori,stadion	3136-1
+mezibori,stredni skola	3137-1
+mezibori,penziony	3138-1
+mezibori,meu	3139-1
+stankovice,tvrsice	1460-1
+stankovice,tvrsice	1460-2
+stankovice,selibice	1458-1
+stankovice,selibice	1458-2
+postoloprty,dolejsi hurky	1292-1
+postoloprty,dolejsi hurky	1292-2
+nove dvory	1156-1
+nove dvory	1156-2
+nove dvory,chvalin	1155-1
+nove dvory,chvalin	1155-2
+nove dvory,chvalin	1155-3
+nove dvory,chvalin	1155-4
+dusniky,cesta	326-1
+dusniky,cesta	326-2
+roudnice n.l.,podlusky,chvalinska	1370-1
+roudnice n.l.,podlusky,chvalinska	1370-2
+cerneves	154-1
+zitenice,skalice,mocidla	2026-1
+zitenice,skalice,mocidla	2026-2
+zitenice,skalice,ustav	2027-1
+zitenice,skalice,ustav	2027-2
+zitenice,skalice	2028-1
+klasterec n.ohri,utociste	2998-1
+klasterec n.ohri,evzenie	2999-1
+postoloprty,semenkovice,rozc.	1300-1
+postoloprty,semenkovice,rozc.	1300-2
+chotineves	519-1
+chotineves	519-2
+chotineves,jisterpy	518-1
+chotineves,jisterpy	518-2
+polepy,libinky	1282-1
+polepy,libinky	1282-2
+libesice,zimor	840-1
+libesice,zimor	840-2
+ustek,predmesti	1782-1
+ustek,predmesti	1782-2
+ustek,zel.st.	1785-1
+ustek,zel.st.	1785-92
+ustek,zel.st.	1785-101
+ustek,nam.	1781-1
+ustek,nam.	1781-2
+velky senov,brtnicka	1882-1
+velky senov,brtnicka	1882-2
+velky senov,janovka,rozc.	1877-1
+velky senov,janovka,rozc.	1877-2
+velky senov,janovka	1878-1
+velky senov,janovka	1878-2
+sluknov,cisarsky,odb.lom	1501-1
+sluknov,cisarsky,odb.lom	1501-2
+sluknov,cisarsky,pod hrazenym	2604-1
+sluknov,cisarsky,pod hrazenym	2604-2
+sluknov,budisinska	1511-1
+sluknov,budisinska	1511-2
+sluknov,rozany	1509-1
+sluknov,rozany	1509-2
+sluknov,rozany,bytex	1508-1
+sporice	11043-1
+sporice,sokolovna	11046-1
+chomutov,zelezarny	11061-1
+chomutov,zelezarny	11061-2
+revnicov,obu	2648-1
+revnicov,obu	2648-2
+vinarice,sokolovna	1908-1
+vinarice,sokolovna	1908-2
+vinarice,divice	1907-1
+vinarice,divice	1907-2
+brodec,rozc.2.0	90-1
+brodec,rozc.2.0	90-2
+louny,brloh,rozc.smolnice	948-1
+louny,brloh,rozc.smolnice	948-2
+louny,brloh	949-1
+louny,brloh	949-2
+kadanska jesen	2700-1
+kadanska jesen	2700-2
+uhostany	2701-1
+uhostany	2701-2
+brodce	2702-1
+benesov n.pl.,rozc.hermanov	27-1
+benesov n.pl.,rozc.hermanov	27-2
+benesov n.pl.,rozc.hermanov	27-3
+benesov n.pl.,rozc.hermanov	27-4
+hermanov,odb.mlatce	2562-1
+hermanov,odb.mlatce	2562-2
+hermanov,u zahorku	362-1
+hermanov,u zahorku	362-2
+hermanov,u skoly	361-1
+hermanov,u skoly	361-2
+hermanov,rozc.blankartice	359-1
+hermanov,rozc.blankartice	359-2
+hermanov,blankartice,dol.	353-1
+hermanov,blankartice,dol.	353-2
+hermanov,blankartice	354-1
+hermanov,u ciasku	360-1
+hermanov,u ciasku	360-2
+hermanov,obuv	358-1
+hermanov,obuv	358-2
+hermanov,fojtovice,dol.	355-1
+hermanov,fojtovice,dol.	355-2
+hermanov,fojtovice,host.	356-1
+hermanov,fojtovice,host.	356-2
+hermanov,fojtovice,konecna	357-1
+zatec,teplarna perc	2010-1
+zatec,teplarna perc	2010-2
+holedec	370-1
+holedec	370-2
+mecholupy	2177-92
+mecholupy	2177-101
+liborice,zelezna	856-1
+liborice,zelezna	856-2
+liborice	857-1
+liborice	857-2
+liborice	857-3
+blsany,libesovice	60-1
+blsany,libesovice	60-2
+blsany,libesovice,carka	59-1
+blsany,libesovice,carka	59-2
+blsany,sirem	62-1
+blsany,sirem	62-2
+podborany,letov	1257-1
+podborany,letov	1257-2
+podborany,letovska	1266-1
+podborany,letovska	1266-2
+mecholupy,milosice	1050-1
+mecholupy,milosice	1050-2
+blsany,sobechleby,rozc.	63-1
+blsany,sobechleby,rozc.	63-2
+holedec,stranky,rozc.	368-1
+holedec,stranky,rozc.	368-2
+holedec,veletice	369-1
+chlumcany,vlci	470-1
+chlumcany,obec	472-1
+chlumcany,obec	472-2
+chlumcany,obec	472-3
+chlumcany,obec	472-4
+chlumcany,zel.st.	473-1
+chlumcany,zel.st.	473-2
+blsany u loun	67-1
+blsany u loun	67-2
+cerncice,raisova	150-1
+cerncice,raisova	150-2
+dobromerice,necisska	2605-1
+dobromerice,necisska	2605-2
+louny,necichy	950-1
+louny,necichy	950-2
+louny,necichy	950-3
+chraberce	526-1
+chraberce	526-2
+chozov,mnichovsky tynec	521-1
+chozov,mnichovsky tynec	521-2
+libceves	2401-92
+libceves	2401-101
+louny,28.rijna	951-1
+decin,parkoviste	10544-1
+decin,parkoviste	10544-2
+decin,zoo decin	10567-1
+decin,zoo decin	10567-2
+ceska kamenice,benar	170-1
+ceska kamenice,benar	170-2
+janska,odb.vu	558-1
+janska,odb.vu	558-2
+janska,u bednaru	560-1
+janska,u bednaru	560-2
+janska,drubezarna	557-1
+janska,drubezarna	557-2
+ruzova,i	1409-1
+ruzova,i	1409-2
+ruzova,i	1409-3
+ruzova,i	1409-4
+ruzova,ii	1410-1
+ruzova,ii	1410-2
+janov,hajenky-soutesky	552-1
+janov,hajenky-soutesky	552-2
+janov,hajenky-soutesky	552-3
+janov,u myskovskych	553-1
+janov,u myskovskych	553-2
+janov	554-1
+janov	554-2
+hrensko,mezni louka	427-1
+hrensko,mezni louka	427-2
+hrensko,mezni louka	427-3
+hrensko,mezni louka	427-4
+hrensko,mezna	425-1
+hrensko,mezna	425-2
+merunice	1063-1
+merunice	1063-2
+hrobcice,tvrdin	1704-1
+hrobcice,tvrdin	1704-2
+hrobcice,mrzlice	1118-1
+hrobcice,mrzlice	1118-2
+hrobcice,razice	1360-1
+hrobcice,razice	1360-2
+hrobcice,razice	1360-3
+hrobcice,razice	1360-4
+hrobcice,skolka	421-1
+hrobcice,skolka	421-2
+hrobcice	422-1
+hrobcice	422-2
+merunice,rozc.	1062-1
+merunice,rozc.	1062-2
+merunice,rozc.	1062-3
+merunice,rozc.	1062-4
+hrobcice,kuclin	782-1
+hrobcice,kuclin	782-2
+bilina,pp ii skola	37-1
+merunice,zichov	2356-1
+hrobcice,mirosovice	420-1
+hrobcice,mirosovice	420-2
+hrobcice,mirosovice,zamek	2357-1
+hrobcice,mirosovice,zamek	2357-2
+hrobcice,chouc,rozc.	2358-1
+hrobcice,chouc,rozc.	2358-2
+kostomlaty p.milesovkou,pod brezinou	2361-1
+kostomlaty p.milesovkou,pod brezinou	2361-2
+ustek,sidliste	1783-1
+ustek,sidliste	1783-2
+ustek,lukov,hl.sil.	1766-1
+ustek,lukov,hl.sil.	1766-2
+ustek,lukov	1767-1
+stare krecany,elite	1470-1
+stare krecany,elite	1470-2
+stare krecany,jednota	1471-1
+stare krecany,jednota	1471-2
+krasna lipa,zahrady	706-1
+krasna lipa,zahrady	706-2
+velvary,na sibenici	139104-999
+cernuc,miletice	121079-999
+loucka	2160-101
+hradecna,rozc.1.0	410-1
+hradecna,rozc.1.0	410-2
+blatno,suska	52-1
+blatno,suska	52-2
+blatno	54-1
+blatno	54-2
+kvetnov,rozc.1.0	791-1
+kvetnov,rozc.1.0	791-2
+radenov	1352-1
+radenov	1352-2
+mezihori	1064-1
+mezihori	1064-2
+zakouti	1965-1
+zakouti	1965-2
+blatno,novy dum rozc.	51-1
+blatno,novy dum rozc.	51-2
+nacetin,odb.	1131-1
+nacetin,odb.	1131-2
+kalek	626-1
+kalek	626-2
+nacetin	1132-1
+jilove,martineves,rozc.	581-1
+jilove,martineves,rozc.	581-2
+jilove,martineves	582-1
+jilove,martineves	582-2
+ludvikovice,csad	995-1
+ludvikovice,csad	995-2
+ludvikovice,rozc.	999-1
+ludvikovice,rozc.	999-2
+ludvikovice,posta	997-1
+ludvikovice,posta	997-2
+ludvikovice,poz.zbroj.	998-1
+ludvikovice,poz.zbroj.	998-2
+ludvikovice,hor.ves	996-1
+ludvikovice,hor.ves	996-2
+kamen,rozc.	627-1
+kamen,rozc.	627-2
+kamen	628-1
+kamen	628-2
+bynovec	120-1
+bynovec	120-2
+bynovec	120-3
+bynovec,hriste	119-1
+bynovec,hriste	119-2
+bynovec,hriste	119-3
+ruzova,novy svet	1411-1
+ruzova,novy svet	1411-2
+ruzova,samota	1412-1
+ruzova,samota	1412-2
+arnoltice	8-1
+arnoltice	8-2
+arnoltice,u pajonku	7-1
+arnoltice,u pajonku	7-2
+labska stran	794-1
+libesice,srdov	838-1
+libesice,srdov	838-2
+ustek,hradec	1778-1
+ustek,hradec	1778-2
+ustek,hradec	1778-3
+ustek,hradec	1778-4
+levin,horni vysoke	810-1
+levin,horni vysoke	810-2
+kladruby	636-1
+kladruby	636-2
+hostomice,nadjezd	396-1
+hostomice,nadjezd	396-2
+rana	1356-1
+rana	1356-2
+belusice,odolice,rozc.	1182-1
+belusice,odolice,rozc.	1182-2
+belusice,obu	21-1
+libceves,charvatce	817-1
+libceves,charvatce	817-2
+libceves,mnichov	819-1
+libceves,mnichov	819-2
+hrensko,privoz	2452-1
+hrensko,privoz	2452-2
+hrensko,privoz	2452-201
+lukov,stepanov	1514-1
+lukov,stepanov	1514-2
+lukov	1002-1
+hrobcice,mukov	1128-1
+hrobcice,mukov	1128-2
+hrobcice,cerveny ujezd	163-1
+hrobcice,cerveny ujezd,ke mlynu	2550-1
+hrobcice,cerveny ujezd,rozc.	162-1
+hrobcice,cerveny ujezd,rozc.	162-2
+jirkov,jindrisska	599-1
+jirkov,jindrisska	599-2
+bolebor,rozc.orasin 1.0	72-1
+bolebor,rozc.orasin 1.0	72-2
+bolebor	73-1
+bolebor	73-2
+orasin	1190-1
+hora sv.kateriny,maly haj	2713-1
+hora sv.kateriny,maly haj	2713-2
+klasterec n.ohri,aut.nadr.	114429-1
+klasterec n.ohri,aut.nadr.	114429-3
+klasterec n.ohri,aut.nadr.	114429-4
+klasterec n.ohri,aut.nadr.	114429-5
+klasterec n.ohri,aut.nadr.	114429-6
+klasterec n.ohri,aut.nadr.	114429-8
+klasterec n.ohri,aut.nadr.	114429-10
+klasterec n.ohri,petlerska	114433-1
+klasterec n.ohri,petlerska	114433-2
+lestkov	807-1
+klasterec n.ohri,rasovice	1359-1
+klasterec n.ohri,rasovice	1359-2
+klasterec n.ohri,suchy dul	1487-1
+klasterec n.ohri,suchy dul	1487-2
+zasada u rasovic	1971-1
+zasada u rasovic	1971-2
+pokutice	1278-1
+pokutice	1278-2
+domasin	272-1
+domasin	272-2
+louchov	942-1
+louchov	942-2
+klasterec n.ohri,hradiste,rozc.	941-1
+klasterec n.ohri,hradiste,rozc.	941-2
+ustek,udoli	1784-1
+ustek,udoli	1784-2
+ustek,lhota,rozc.0.7	1765-1
+ustek,lhota,rozc.0.7	1765-2
+ustek,tetcineves	1775-1
+ustek,tetcineves	1775-2
+ustek,rochov	1772-1
+ustek,rochov	1772-2
+drahobuz,straziste,rozc.	280-1
+drahobuz,straziste,rozc.	280-2
+hostka,malesov	402-1
+hostka,malesov	402-2
+steti,hnevice,obec	1519-1
+steti,hnevice,obec	1519-2
+steti,hnevice,cerp.st.	1518-1
+steti,hnevice,cerp.st.	1518-2
+decin,priper,u prejezdu	10549-1
+decin,priper,u prejezdu	10549-2
+decin,jaluvci	10517-1
+decin,jaluvci	10517-2
+decin,krasny studenec	10526-1
+decin,krasny studenec	10526-2
+decin,u tabule	10560-1
+decin,u tabule	10560-2
+decin,na skluzu	10536-1
+decin,na skluzu	10536-2
+decin,vodarna	10563-1
+decin,vodarna	10563-2
+decin,na strani	10537-1
+decin,na strani	10537-2
+decin,u kaple	10556-1
+decin,u kaple	10556-2
+cizkovice,cementarna	183-1
+zizelice,stroupec	2034-1
+teplice,sobedruhy,rudne doly	11507-1
+teplice,sobedruhy,rudne doly	11507-2
+krupka,vrchoslav,tocna	740-1
+jesenice,zel.st.	2468-1
+jesenice,zel.st.	2468-2
+jesenice,zel.st.	2468-92
+jesenice,zel.st.	2468-101
+jesenice,tlestky	2717-1
+jesenice,tlestky	2717-2
+jesenice,tlestky	2717-3
+jesenice,tlestky	2717-4
+zdar	2719-1
+zdar	2719-2
+vysoka libyne	2720-1
+vysoka libyne	2720-2
+kralovice,hubenov,rozc.	2721-1
+kralovice,hubenov,rozc.	2721-2
+kralovice,hradecko	2723-1
+kralovice,hradecko	2723-2
+kralovice,csad	2724-1
+kralovice,csad	2724-2
+kralovice,zatecka	2725-1
+kralovice,zatecka	2725-2
+kralovice	2726-1
+kralovice	2726-3
+kralovice,hubenov	2722-1
+kralovice,hubenov	2722-2
+ustek,ostre	1768-1
+ustek,ostre	1768-2
+blizevedly,skalka,rozc.	57-1
+blizevedly,skalka,rozc.	57-2
+ustek,krasna studanka	1779-1
+ustek,krasna studanka	1779-2
+ustek,rasovice	1769-1
+ustek,rasovice	1769-2
+ustek,kalovice	1763-1
+ustek,kalovice	1763-2
+ustek,robec,hor.	1771-1
+ustek,robec,hor.	1771-2
+ustek,robec,dol.	1770-1
+ustek,robec,dol.	1770-2
+snedovice,sukorady,rozc.	1445-1
+snedovice,sukorady,rozc.	1445-2
+steti,cakovice	1516-1
+steti,cakovice	1516-2
+hostka,velesice	1852-1
+hostka,velesice	1852-2
+hostka,velesicka	405-1
+hostka,velesicka	405-2
+snedovice,lomy	1448-1
+snedovice,lomy	1448-2
+snedovice,strachaly	1443-1
+bystrany,zel.prejezd	130-1
+bystrany,zel.prejezd	130-2
+bystrany,domov duchodcu	126-1
+bystrany,domov duchodcu	126-2
+bystrany,skola	129-1
+bystrany,skola	129-2
+bystrany,uporiny,host.	123-1
+bystrany,uporiny,host.	123-2
+bystrany,uporiny,has.zbroj.	122-1
+bystrany,uporiny,has.zbroj.	122-2
+bystrany,uporiny,rozc.	124-1
+bystrany,uporiny,rozc.	124-2
+decin,breziny,hor.	195-1
+decin,breziny,hor.	195-2
+mala velen,soutesky	1007-1
+mala velen,soutesky	1007-2
+mala velen,jedlka,rozc.	1005-1
+mala velen,jedlka,rozc.	1005-2
+mala velen,jedlka,zav.	1006-1
+mala velen,jedlka,zav.	1006-2
+benesov n.pl.,u cerp.st.	28-1
+benesov n.pl.,u cerp.st.	28-2
+benesov n.pl.,zav.i	29-1
+benesov n.pl.,zav.i	29-2
+benesov n.pl.,bedrichov zav.	24-1
+benesov n.pl.,bedrichov zav.	24-2
+frantiskov n.pl.,ostry	333-1
+frantiskov n.pl.,ostry	333-2
+frantiskov n.pl.,zav.	336-1
+frantiskov n.pl.,zav.	336-2
+frantiskov n.pl.,pila	334-1
+frantiskov n.pl.,pila	334-2
+frantiskov n.pl.,valkericke rozc.	335-1
+frantiskov n.pl.,valkericke rozc.	335-2
+frantiskov n.pl.,valkericke rozc.	335-3
+frantiskov n.pl.,valkericke rozc.	335-4
+valkerice,u benesu	1791-1
+valkerice,u benesu	1791-2
+valkerice,u machacku	1793-1
+valkerice,u machacku	1793-2
+valkerice,hriste	1789-1
+valkerice,hriste	1789-2
+valkerice,posta	1790-1
+valkerice,posta	1790-2
+valkerice,u kostela	1792-1
+valkerice,u kostela	1792-2
+valkerice,u sedlacku	1794-1
+valkerice,u sedlacku	1794-2
+vernerice,rychnov	1888-1
+vernerice,pribram,rozc.	1887-1
+vernerice,pribram,rozc.	1887-2
+vernerice,pribram,dol.	1886-1
+vernerice,pribram,dol.	1886-2
+vernerice,caslav,rozc.	1885-1
+vernerice,caslav,rozc.	1885-2
+vernerice,statek	1889-1
+vernerice,statek	1889-2
+vernerice,susicka	1891-1
+vernerice,susicka	1891-2
+lom,horni lom rozc.	2037-1
+lom,horni lom rozc.	2037-2
+lom,moritze bauera	927-1
+lom,moritze bauera	927-2
+lom,skola	931-1
+lom,skola	931-2
+lom,cs.armady	930-1
+lom,cs.armady	930-2
+litomerice,zeleticka	887-1
+litomerice,zeleticka	887-2
+vrbicany,rozc.	2484-1
+vrbicany,rozc.	2484-2
+rochov	1366-1
+rochov	1366-2
+dolanky n.ohri,obec	257-1
+dolanky n.ohri,obec	257-2
+bohusovice n.ohri,hrdly,obec	68-1
+bohusovice n.ohri,hrdly,obec	68-2
+chotesov,na navsi	513-1
+chotesov,na navsi	513-2
+chotesov,zel.st.	514-1
+chotesov,zel.st.	514-2
+chotesov,zel.st.	514-92
+chotesov,zel.st.	514-96
+chotesov,zel.st.	514-101
+cerniv	156-1
+cerniv	156-2
+klasterec n.ohri,kulturni centrum	114427-1
+klasterec n.ohri,kulturni centrum	114427-2
+okounov,obu	1186-1
+okounov	1187-1
+okounov	1187-2
+luzny	1004-1
+luzny	1004-2
+cernys,rozc.1.0	160-1
+cernys,rozc.1.0	160-2
+klasterec n.ohri,sumna,rozc.sumburk	114441-1
+klasterec n.ohri,sumna,rozc.sumburk	114441-2
+kadan,koh-i-noor	620-1
+kadan,koh-i-noor	620-2
+perstejn,posta	1205-1
+klasterec n.ohri,klasterecka jesen	648-1
+teplice,prosetice	1559-1
+teplice,prosetice	1559-2
+teplice,prosetice,zel.zast.	1558-1
+teplice,prosetice,zel.zast.	1558-2
+teplice,prosetice,zel.zast.	1558-92
+teplice,prosetice,zel.zast.	1558-101
+teplice,prosetice,skola	1557-1
+teplice,prosetice,skola	1557-2
+teplice,kamenne lazne	1599-1
+teplice,kamenne lazne	1599-2
+teplice,nove lazne	1610-1
+teplice,nove lazne	1610-2
+teplice,nove lazne	1610-3
+teplice,gagarinova	1589-1
+teplice,gagarinova	1589-2
+teplice,sanov ii trnovanska	1624-1
+teplice,sanov ii trnovanska	1624-2
+teplice,sanov ii	1622-1
+teplice,sanov ii	1622-2
+teplice,areal labe	1577-1
+teplice,areal labe	1577-2
+teplice,sanov ii skola	1623-1
+teplice,sanov ii skola	1623-2
+ustek,dolni vysoke	1759-1
+ustek,dolni vysoke	1759-2
+ustek,habrina	1761-1
+ustek,habrina	1761-2
+ustek,motel	1780-1
+ustek,motel	1780-2
+ustek,stary tyn,rozc.	1773-1
+ustek,stary tyn,rozc.	1773-2
+ustek,licenice,rozc.	2553-1
+ustek,licenice,rozc.	2553-2
+ustek,konojedy	1764-1
+ustek,konojedy	1764-2
+ustek,brusov	1758-1
+ustek,brusov	1758-2
+ustek,drzovice	1760-1
+ustek,drzovice	1760-2
+ustek,stary tyn	1774-1
+ustek,stary tyn	1774-2
+usti n.l.,dulce	12019-1
+usti n.l.,dulce	12019-2
+usti n.l.,stribrnicke nivy	12118-1
+usti n.l.,stribrnicke nivy	12118-2
+usti n.l.,v rokli	12134-1
+usti n.l.,v rokli	12134-2
+usti n.l.,vozovna	12144-1
+usti n.l.,vozovna	12144-2
+usti n.l.,predlicka	12093-1
+usti n.l.,predlicka	12093-2
+usti n.l.,saldova	12124-1
+usti n.l.,saldova	12124-2
+usti n.l.,v zahradkach	12135-1
+usti n.l.,v zahradkach	12135-2
+usti n.l.,vinarska	12141-1
+usti n.l.,vinarska	12141-2
+teplice,doubravska	1586-1
+teplice,doubravska	1586-2
+teplice,okresni soud	1613-1
+teplice,okresni soud	1613-2
+teplice,retenice,tolsteho	1563-1
+teplice,retenice,tolsteho	1563-2
+kostov,konecna	12049-1
+kostov,konecna	12049-2
+chomutov,zahradni	11057-1
+chomutov,zahradni	11057-2
+chomutov,zahradni ii	11058-1
+chomutov,zahradni ii	11058-2
+teplice,nova ves	1554-1
+teplice,nova ves	1554-2
+teplice,javorova	1598-1
+teplice,javorova	1598-2
+teplice,topolova	1625-1
+teplice,topolova	1625-2
+teplice,slovenska	1620-1
+teplice,slovenska	1620-2
+teplice,opavska	1615-1
+teplice,opavska	1615-2
+most,rozcesti kopisty	3148-1
+most,rozcesti kopisty	3148-2
+teplice,tresnovka	1626-1
+teplice,tresnovka	1626-2
+teplice,cisarske lazne	1583-1
+teplice,cisarske lazne	1583-2
+teplice,trnovany,cerveny kostel	1569-1
+teplice,trnovany,cerveny kostel	1569-2
+teplice,luna	1603-1
+teplice,luna	1603-2
+teplice,luna	1603-3
+teplice,anger	1576-1
+teplice,anger	1576-2
+teplice,havirska	1590-1
+teplice,srbicka	11508-1
+teplice,srbicka	11508-2
+usti n.l.,keplerova	12043-1
+usti n.l.,keplerova	12043-2
+usti n.l.,anezky ceske	12001-1
+usti n.l.,anezky ceske	12001-2
+usti n.l.,zezicka	12155-1
+usti n.l.,zezicka	12155-2
+teplice,jatecni	1597-1
+teplice,jatecni	1597-2
+teplice,jatecni	1597-3
+teplice,jatecni	1597-4
+teplice,marsovska	1606-1
+teplice,marsovska	1606-2
+teplice,majova	11503-1
+teplice,zemska	1630-1
+probostov,zel.zast.	11506-1
+probostov,zel.zast.	11506-2
+probostov,hriste	11505-1
+probostov,hriste	11505-2
+teplice,prosetice,sidliste	1556-1
+teplice,prosetice,sidliste	1556-2
+chomutov,vinohradska	11054-1
+chomutov,vinohradska	11054-2
+teplice,bystranska	11502-1
+teplice,bystranska	11502-2
+usti n.l.,vetruse	12140-3
+usti n.l.,vetruse	12140-4
+usti n.l.,oc forum	12074-1
+usti n.l.,oc forum	12074-2
