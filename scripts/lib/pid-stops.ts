@@ -15,7 +15,7 @@ export interface GtfsStopFeature {
     };
 }
 
-/** One `stops-enrichment.json` entry: the PID lines (`e` = exit only) and full name of a GTFS stop. */
+/** One PID enrichment entry: the PID lines (`e` = exit only) and full name of a GTFS stop. */
 export interface PidEnrichment {
     l: Array<{ n: string; t: string; e: number }>;
     n: string | undefined;

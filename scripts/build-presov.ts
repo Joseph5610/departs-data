@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type AdmZip from 'adm-zip';
 import type { ContinuationRow, DepartureRow, ParentChildMap, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, departuresChunkId, parentIndex, shapeChunkId, TRIP_BUCKETS_DIR, tripBucketId, tripChunkId } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, TRIP_BUCKETS_DIR, tripBucketId } from './lib/contract.ts';
 import { fetchJson, fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { clusterByDistance } from './lib/cluster.ts';
@@ -362,7 +362,7 @@ async function main(): Promise<void> {
     }
 
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
-    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, tripShapes });
+    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
     console.log(`Wrote ${stations.length} stations over ${platforms.length} platforms`);
 
     // --- CONTINUATIONS: the feed has no block_id, so match the named line leaving the same stop ---
@@ -422,10 +422,9 @@ async function main(): Promise<void> {
     // --- DEPARTURES ---
     sortDepartures(departuresByStop);
     const parentOf = parentIndex(parentChildMap);
-    const departuresChunks = chunkBy(departuresByStop, departuresChunkId);
-    writeChunks(path.join(DATA_DIR, 'departures'), departuresChunks);
-    writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf)));
-    console.log(`Wrote ${departuresChunks.size} departure chunks for ${departuresByStop.size} stops`);
+    const departureBuckets = chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf));
+    writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), departureBuckets);
+    console.log(`Wrote ${departureBuckets.size} departure buckets for ${departuresByStop.size} stops`);
 
     // --- TRIPS ---
     const platformById = new Map(platforms.map(p => [p.stop_id, p]));
@@ -449,17 +448,14 @@ async function main(): Promise<void> {
             };
         }));
     }
-    const tripChunks = chunkBy(tripStops, tripChunkId);
-    writeChunks(path.join(DATA_DIR, 'trips'), tripChunks);
-    writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), chunkBy(tripStops, tripBucketId));
-    console.log(`Wrote ${tripChunks.size} trip chunks for ${tripsData.size} trips`);
+    const tripBuckets = chunkBy(tripStops, tripBucketId);
+    writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), tripBuckets);
+    console.log(`Wrote ${tripBuckets.size} trip buckets for ${tripsData.size} trips`);
 
     // --- SHAPE GEOMETRY ---
     const shapeGeometry = readGtfsShapes(zip, neededShapes, { coordDecimals: CONFIG.SHAPE_COORD_DECIMALS });
-    const shapeChunks = chunkBy(shapeGeometry, shapeChunkId);
-    writeChunks(path.join(DATA_DIR, 'shape_chunks'), shapeChunks);
     const largestShapeFile = writeShapeBuckets(DATA_DIR, tripShapes, shapeGeometry);
-    console.log(`Wrote ${shapeGeometry.size} shapes into ${shapeChunks.size} chunks and hashed buckets (largest ${(largestShapeFile / 1024).toFixed(0)}KB)`);
+    console.log(`Wrote ${shapeGeometry.size} shapes into hashed buckets (largest ${(largestShapeFile / 1024).toFixed(0)}KB)`);
 
     if (modified) fs.writeFileSync(lastModifiedPath, modified);
     console.log('Done!');

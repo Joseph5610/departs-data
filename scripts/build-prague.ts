@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import type AdmZip from 'adm-zip';
 import path from 'node:path';
-import { outputDir, writeJson } from './lib/emit.ts';
+import { outputDir, removeRetired, writeJson } from './lib/emit.ts';
 import { MAP_STOPS_FILE, type RouteInfo } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { readStops } from './lib/stops.ts';
@@ -12,14 +12,12 @@ import { writeStopSearch } from './lib/stop-search.ts';
 /**
  * Prague (PID) stops.
  *
- * Writes `stops-enrichment.json`, an O(1) lookup of PID lines and names keyed by GTFS id that the
- * Worker still reads for departures and vehicle detail, `map-stops.json`, the final map stop list
- * built from the PID GTFS stops and that enrichment, and the route shapes the app reads directly.
+ * Writes `map-stops.json`, the final map stop list built from the PID GTFS stops enriched with PID's
+ * lines and names, and the route shapes the app reads directly.
  */
 const CONFIG = {
     CITY: 'prague',
     SOURCE_URL: 'https://data.pid.cz/stops/json/stops.json',
-    OUTPUT_FILE: 'stops-enrichment.json',
     /** Abort threshold guarding against an empty or truncated upstream feed. */
     MIN_ENTRIES: 1000,
     GTFS_URL: 'https://data.pid.cz/PID_GTFS.zip',
@@ -78,9 +76,7 @@ async function main(): Promise<void> {
     }
 
     fs.mkdirSync(dataDir, { recursive: true });
-    const outputFile = path.join(dataDir, CONFIG.OUTPUT_FILE);
-    fs.writeFileSync(outputFile, JSON.stringify(enrichmentMap));
-    console.log(`[SYNC] SUCCESS: Saved enrichment data to ${outputFile}`);
+    removeRetired(dataDir);
 
     const zip = await fetchZip(CONFIG.GTFS_URL, 'GTFS_ZIP');
     writePragueRoutes(zip, dataDir);

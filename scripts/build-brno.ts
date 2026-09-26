@@ -3,7 +3,7 @@ import path from 'node:path';
 import https from 'node:https';
 import type AdmZip from 'adm-zip';
 import type { DepartureRow, FeederRow, ParentChildMap, RouteInfo, ShapeGeometry, StopFeature, TripConnection, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, departuresChunkId, parentIndex, shapeChunkId, TRIP_BUCKETS_DIR, tripBucketId, tripChunkId } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, TRIP_BUCKETS_DIR, tripBucketId } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { distanceToLinesM, fanOutColocated } from './lib/geo.ts';
@@ -389,7 +389,6 @@ async function main(): Promise<void> {
     safetyCheck(departuresByStop.size, tripsData.size, CONFIG.MIN_DEPARTURE_STOPS, CONFIG.MIN_ACTIVE_TRIPS);
 
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
-    // trip_shapes.json is written by the shapes step below, so a skipped fetch keeps the existing file.
     writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
     console.log(`Wrote ${features.length} stops`);
 
@@ -420,10 +419,9 @@ async function main(): Promise<void> {
 
     sortDepartures(departuresByStop);
     const parentOf = parentIndex(parentChildMap);
-    const departuresChunks = chunkBy(departuresByStop, departuresChunkId);
-    writeChunks(path.join(DATA_DIR, 'departures'), departuresChunks);
-    writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf)));
-    console.log(`Wrote ${departuresChunks.size} departure chunks for ${departuresByStop.size} stops`);
+    const departureBuckets = chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf));
+    writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), departureBuckets);
+    console.log(`Wrote ${departureBuckets.size} departure buckets for ${departuresByStop.size} stops`);
 
     // --- TRIPS ---
     const stopNodes = new Map(features.map(f => [f.properties.stop_id, {
@@ -468,10 +466,9 @@ async function main(): Promise<void> {
         }));
     }
     console.log(`Attached ${tripConnections} onward connections to trip stops`);
-    const tripChunks = chunkBy(tripStops, tripChunkId);
-    writeChunks(path.join(DATA_DIR, 'trips'), tripChunks);
-    writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), chunkBy(tripStops, tripBucketId));
-    console.log(`Wrote ${tripChunks.size} trip chunks for ${tripsData.size} trips`);
+    const tripBuckets = chunkBy(tripStops, tripBucketId);
+    writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), tripBuckets);
+    console.log(`Wrote ${tripBuckets.size} trip buckets for ${tripsData.size} trips`);
 
     // --- SHAPES: the feed ships none, so geometry comes from the Lissy API ---
     const shapeToken = process.env.LISSY_API_TOKEN;
@@ -533,15 +530,9 @@ async function main(): Promise<void> {
 
             // Buckets are derivable from the shape_id on both sides, so no index file is needed and
             // adding a shape only rewrites its own bucket. 'stale' pruning keeps the rest untouched.
-            const shapeChunks = chunkBy(allShapes, shapeChunkId);
-            console.log(`Writing ${shapeChunks.size} shape chunks for ${allShapes.size} shapes...`);
-            const largest = writeChunks(path.join(DATA_DIR, 'shape_chunks'), shapeChunks, 'stale');
-            console.log(`Largest shape chunk: ${(largest / 1024).toFixed(0)}KB`);
-
-            fs.writeFileSync(path.join(DATA_DIR, 'trip_shapes.json'), JSON.stringify(tripShapes));
             const largestBucket = writeShapeBuckets(DATA_DIR, tripShapes, allShapes, 'stale');
             console.log(`Largest shape bucket: ${(largestBucket / 1024).toFixed(0)}KB`);
-            console.log(`Wrote trip_shapes.json mapping for ${Object.keys(tripShapes).length} trips (${rejected} Lissy trip ids matched no trip's stops)`);
+            console.log(`Wrote shapes for ${Object.keys(tripShapes).length} trips (${rejected} Lissy trip ids matched no trip's stops)`);
         } catch (e) {
             console.error('Failed to fetch or process shapes, skipping shape generation.', e);
         }

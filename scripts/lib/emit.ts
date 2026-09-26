@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { MAP_STOPS_FILE, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
+import { MAP_STOPS_FILE, RETIRED_OUTPUTS, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
 import { buildGtfsMapStops } from './map-stops.ts';
 import { writeStopSearch } from './stop-search.ts';
 
@@ -87,21 +87,23 @@ export interface CityFiles {
     routes: RouteLookup;
     tripRoutes: Record<string, string>;
     tripWindows: TripWindowsFile;
-    /** Omitted where the city writes its own geometry mapping later, so an earlier file is not clobbered. */
-    tripShapes?: Record<string, string> | undefined;
+}
+
+/** Deletes a city's `RETIRED_OUTPUTS`, so the next publish drops them from the data branch. */
+export function removeRetired(dir: string): void {
+    for (const name of RETIRED_OUTPUTS) fs.rmSync(path.join(dir, name), { recursive: true, force: true });
 }
 
 /** Writes the root JSON files every city adapter reads, plus the final map stop list. */
 export function writeCityFiles(dir: string, files: CityFiles): void {
     fs.mkdirSync(dir, { recursive: true });
-    writeJson(dir, 'stops.json', files.features);
+    removeRetired(dir);
     const mapStops = buildGtfsMapStops(files.features);
     writeJson(dir, MAP_STOPS_FILE, mapStops);
     writeStopSearch(dir, mapStops);
     writeJson(dir, 'parent_child_map.json', files.parentChildMap);
     writeJson(dir, 'routes.json', files.routes instanceof Map ? Object.fromEntries(files.routes) : files.routes);
     writeJson(dir, 'trip_routes.json', files.tripRoutes);
-    if (files.tripShapes) writeJson(dir, 'trip_shapes.json', files.tripShapes);
     const bytes = writeJson(dir, 'trip_windows.json', files.tripWindows);
     console.log(`Wrote trip_windows.json: ${Object.keys(files.tripWindows.trips).length} trips, ${(bytes / 1024).toFixed(0)}KB`);
 }

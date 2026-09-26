@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import AdmZip from 'adm-zip';
 import type { DepartureRow, ParentChildMap, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, departuresChunkId, parentIndex, TRACKS_DIR, TRIP_BUCKETS_DIR, tripBucketId, tripChunkId } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, TRACKS_DIR, TRIP_BUCKETS_DIR, tripBucketId } from './lib/contract.ts';
 import { downloadLargeZip, fetchJson } from './lib/feed.ts';
 import { czechHolidays, formatTime, getServiceDays, type ServiceDay } from './lib/time.ts';
 import { distanceM, fanOutColocated, localXY, round6, type Point } from './lib/geo.ts';
@@ -746,20 +746,18 @@ async function main(): Promise<void> {
 
     // JDF has no geometry; the app draws the route stop to stop.
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
-    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, tripShapes: {} });
+    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
     console.log(`Wrote ${servedNodes.size} stations and ${Object.keys(routes).length} routes`);
 
     sortDepartures(departuresByStop);
     const parentOf = parentIndex(parentChildMap);
-    const departuresChunks = chunkBy(departuresByStop, departuresChunkId);
-    writeChunks(path.join(DATA_DIR, 'departures'), departuresChunks);
-    writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf)));
-    console.log(`Wrote ${departuresChunks.size} departure chunks for ${departuresByStop.size} stops`);
+    const departureBuckets = chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf));
+    writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), departureBuckets);
+    console.log(`Wrote ${departureBuckets.size} departure buckets for ${departuresByStop.size} stops`);
 
-    const tripChunks = chunkBy(tripStops, tripChunkId);
-    writeChunks(path.join(DATA_DIR, 'trips'), tripChunks);
-    writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), chunkBy(tripStops, tripBucketId));
-    console.log(`Wrote ${tripChunks.size} trip chunks for ${activeTrips.size} trips`);
+    const tripBuckets = chunkBy(tripStops, tripBucketId);
+    writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), tripBuckets);
+    console.log(`Wrote ${tripBuckets.size} trip buckets for ${activeTrips.size} trips`);
 
     const tracks = buildTripTracks(tripStops, tripWindows);
     const largestTrack = writeChunks(path.join(DATA_DIR, TRACKS_DIR), tracks);

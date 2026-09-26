@@ -8,12 +8,6 @@
 
 /** Mirrors GTFS_CONFIG in departs-app `functions/_adapters/gtfs/core/config.ts`. */
 export const CHUNKING = {
-    /** Shapes bucket numerically, so no index file is needed on either side. */
-    SHAPE_CHUNK_COUNT: 512,
-    /** Leading characters of a stop_id that name its departures chunk. */
-    DEPARTURES_CHUNK_PREFIX: 4,
-    /** Leading characters of a trip_id that name its trips chunk. */
-    TRIP_CHUNK_PREFIX: 3,
     /** Files a stop's departures are hashed across (`departure_buckets/`); keeps each near 100KB. */
     DEPARTURE_BUCKET_COUNT: 1024,
     /** Files a trip's stops are hashed across (`trip_buckets/`); keeps each near 100KB. */
@@ -25,6 +19,12 @@ export const CHUNKING = {
 } as const;
 
 export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
+
+/**
+ * Outputs no reader uses any more, deleted from a city's directory on every build: the workflows seed
+ * staging from the published data, so a file a build merely stops writing would be published forever.
+ */
+export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops.json', 'stops-enrichment.json'] as const;
 export const TRIP_BUCKETS_DIR = 'trip_buckets';
 /** Mirrors departs-app `TRIP_SHAPES_CONFIG` in `src/config/constants.ts`. */
 export const TRIP_SHAPE_BUCKETS_DIR = 'trip_shape_buckets';
@@ -63,16 +63,6 @@ export function tripBucketId(tripId: string): string {
     return bucketOf(tripId, CHUNKING.TRIP_BUCKET_COUNT);
 }
 
-/** departures/<prefix>.json - superseded by `departuresBucketId`, still written until every Worker reads buckets. */
-export function departuresChunkId(stopId: string): string {
-    return stopId.substring(0, CHUNKING.DEPARTURES_CHUNK_PREFIX).toUpperCase();
-}
-
-/** trips/<prefix>.json - superseded by `tripBucketId`, still written until every Worker reads buckets. */
-export function tripChunkId(tripId: string): string {
-    return tripId.substring(0, CHUNKING.TRIP_CHUNK_PREFIX).toUpperCase();
-}
-
 /** trip_shape_buckets/<bucket>.json */
 export function tripShapeBucketId(tripId: string): string {
     return bucketOf(tripId, CHUNKING.TRIP_SHAPE_BUCKET_COUNT);
@@ -88,12 +78,6 @@ export type ShapePoint = [number, number] | [number, number, number];
 
 /** A shape as line segments; GTFS shapes have one, Lissy's may have several. */
 export type ShapeGeometry = ShapePoint[][];
-
-/** shape_chunks/<bucket>.json - superseded by `shapeBucketId`, still written until every app reads buckets. */
-export function shapeChunkId(shapeId: string): string {
-    const numeric = parseInt(shapeId, 10);
-    return String((Number.isNaN(numeric) ? 0 : Math.abs(numeric)) % CHUNKING.SHAPE_CHUNK_COUNT);
-}
 
 /**
  * A trip that this departure waits for: `[feeder_trip_id, feeder_route_id, feeder_arrival_ms,
