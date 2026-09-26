@@ -212,6 +212,18 @@ export interface MapStopCollection {
 
 export const MAP_STOPS_FILE = 'map-stops.json';
 
+/** `<city>/stop_search.txt` and `.bin`: the stop index departs-app's MCP tools search (see `writeStopSearch`). */
+export const STOP_SEARCH_TEXT_FILE = 'stop_search.txt';
+export const STOP_SEARCH_BIN_FILE = 'stop_search.bin';
+/** `<city>/stop_details/<block>.json`: the stops of one block of indexes into the search index. */
+export const STOP_DETAILS_DIR = 'stop_details';
+/** Stops per `stop_details` file; mirrors `STOP_SEARCH_CONFIG.DETAILS_BLOCK` in departs-app. */
+export const STOP_DETAILS_BLOCK = 256;
+/** `[stop_id, stop_name, platform_code, location_type, lon, lat, lines]` */
+export type StopDetail = [string, string, string | null, number, number, number, RouteInfo[]];
+/** `<city>/sitemap_stops.txt`: the stop ids departs-app's sitemap links. */
+export const SITEMAP_STOPS_FILE = 'sitemap_stops.txt';
+
 /**
  * `prague/connections.json`: held connections and through-running for a network whose timetable is
  * served live by another API, so there are no trip or departure chunks to embed them in. Small

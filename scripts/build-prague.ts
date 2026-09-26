@@ -7,6 +7,7 @@ import { fetchZip, readTable } from './lib/feed.ts';
 import { readStops } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
 import { buildPragueMapStops, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
+import { writeStopSearch } from './lib/stop-search.ts';
 
 /**
  * Prague (PID) stops.
@@ -87,6 +88,7 @@ async function main(): Promise<void> {
     const gtfsStops = readGtfsStops(zip);
     const mapStops = buildPragueMapStops(gtfsStops, enrichmentMap);
     writeJson(dataDir, MAP_STOPS_FILE, mapStops);
+    writeStopSearch(dataDir, mapStops);
     console.log(`[SYNC] SUCCESS: Saved ${mapStops.features.length} map stops to ${path.join(dataDir, MAP_STOPS_FILE)}`);
 
     writePragueShapes(zip, dataDir);

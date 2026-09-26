@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MAP_STOPS_FILE, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
 import { buildGtfsMapStops } from './map-stops.ts';
+import { writeStopSearch } from './stop-search.ts';
 
 const REPO_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -94,7 +95,9 @@ export interface CityFiles {
 export function writeCityFiles(dir: string, files: CityFiles): void {
     fs.mkdirSync(dir, { recursive: true });
     writeJson(dir, 'stops.json', files.features);
-    writeJson(dir, MAP_STOPS_FILE, buildGtfsMapStops(files.features));
+    const mapStops = buildGtfsMapStops(files.features);
+    writeJson(dir, MAP_STOPS_FILE, mapStops);
+    writeStopSearch(dir, mapStops);
     writeJson(dir, 'parent_child_map.json', files.parentChildMap);
     writeJson(dir, 'routes.json', files.routes instanceof Map ? Object.fromEntries(files.routes) : files.routes);
     writeJson(dir, 'trip_routes.json', files.tripRoutes);
