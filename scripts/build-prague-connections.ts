@@ -1,18 +1,22 @@
 import type AdmZip from 'adm-zip';
-import type { LiveConnectionsFile, LiveContinuationRow, LiveTripConnections } from './lib/contract.ts';
+import { CHUNKING, CONNECTION_BUCKETS_DIR, connectionBucketId, type LiveConnectionsFile, type LiveContinuationRow, type LiveTripConnections } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToOffsetMs } from './lib/time.ts';
 import { readServiceDates } from './lib/calendar.ts';
 import { readHeldConnections, tripStopKey } from './lib/connections.ts';
-import { outputDir, writeJson } from './lib/emit.ts';
+import { outputDir, writeChunks, writeJson } from './lib/emit.ts';
 import fs from 'node:fs';
+import path from 'node:path';
 
 /**
  * Prague (PID) connections from the official PID GTFS.
  *
  * Departures and trip stop times come live from Golemio, whose trip and stop ids are the GTFS ones,
  * so this only emits what Golemio lacks: held connections (`transfers.txt`) and through-running
- * between lines (`block_id`), as one `connections.json` the Worker merges by trip id.
+ * between lines (`block_id`), hashed by trip id into `connection_buckets/`, each a `LiveConnectionsFile`
+ * of its trips, so a board or a trip detail reads only its own few KB. Every bucket is written, empty
+ * or not, so the Worker never asks for a file that does not exist. `connections.json` (all trips in
+ * one file) is still written until every Worker reads the buckets.
  */
 const CONFIG = {
     CITY: 'prague',
@@ -139,6 +143,12 @@ async function main(): Promise<void> {
     fs.mkdirSync(dir, { recursive: true });
     const size = writeJson(dir, CONFIG.OUTPUT_FILE, file);
     console.log(`Wrote ${CONFIG.OUTPUT_FILE}: ${Object.keys(out).length} trips, ${continuations} continuations, ${(size / 1024).toFixed(0)}KB`);
+
+    const buckets = new Map<string, LiveConnectionsFile>();
+    for (let i = 0; i < CHUNKING.CONNECTION_BUCKET_COUNT; i++) buckets.set(String(i), { days: file.days, trips: {} });
+    for (const [tripId, connections] of Object.entries(out)) buckets.get(connectionBucketId(tripId))!.trips[tripId] = connections;
+    const largest = writeChunks(path.join(dir, CONNECTION_BUCKETS_DIR), buckets);
+    console.log(`Wrote ${buckets.size} connection buckets (largest ${(largest / 1024).toFixed(1)}KB)`);
 }
 
 main().catch((err: unknown) => {

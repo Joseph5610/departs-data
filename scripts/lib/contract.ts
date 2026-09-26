@@ -12,6 +12,8 @@ export const CHUNKING = {
     DEPARTURE_BUCKET_COUNT: 1024,
     /** Files a trip's stops are hashed across (`trip_buckets/`); keeps each near 100KB. */
     TRIP_BUCKET_COUNT: 2048,
+    /** Files Prague's connections are hashed across by trip id (`connection_buckets/`); mirrors `CONNECTION_BUCKET_COUNT` in departs-app. */
+    CONNECTION_BUCKET_COUNT: 256,
     /** Files the trip -> shape_id index is hashed across (`trip_shape_buckets/`); read by the app. */
     TRIP_SHAPE_BUCKET_COUNT: 512,
     /** Files shape geometry is hashed across (`shape_buckets/`); read by the app. */
@@ -26,6 +28,7 @@ export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
  */
 export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops.json', 'stops-enrichment.json'] as const;
 export const TRIP_BUCKETS_DIR = 'trip_buckets';
+export const CONNECTION_BUCKETS_DIR = 'connection_buckets';
 /** Mirrors departs-app `TRIP_SHAPES_CONFIG` in `src/config/constants.ts`. */
 export const TRIP_SHAPE_BUCKETS_DIR = 'trip_shape_buckets';
 export const SHAPE_BUCKETS_DIR = 'shape_buckets';
@@ -61,6 +64,11 @@ export function departuresBucketId(stopId: string, parentOf: ReadonlyMap<string,
 /** trip_buckets/<bucket>.json */
 export function tripBucketId(tripId: string): string {
     return bucketOf(tripId, CHUNKING.TRIP_BUCKET_COUNT);
+}
+
+/** connection_buckets/<bucket>.json */
+export function connectionBucketId(tripId: string): string {
+    return bucketOf(tripId, CHUNKING.CONNECTION_BUCKET_COUNT);
 }
 
 /** trip_shape_buckets/<bucket>.json */
