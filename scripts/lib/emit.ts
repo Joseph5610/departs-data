@@ -99,6 +99,9 @@ export function writeCityFiles(dir: string, files: CityFiles): void {
     fs.mkdirSync(dir, { recursive: true });
     removeRetired(dir);
     const mapStops = buildGtfsMapStops(files.features);
+    if (!mapStops.features.some((f) => f.properties.is_centroid)) {
+        throw new Error(`No station centroids in ${MAP_STOPS_FILE}. Aborting before publishing stops the app cannot group.`);
+    }
     writeJson(dir, MAP_STOPS_FILE, mapStops);
     writeStopSearch(dir, mapStops);
     writeJson(dir, 'parent_child_map.json', files.parentChildMap);
