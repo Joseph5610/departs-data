@@ -3,7 +3,7 @@ import path from 'node:path';
 import https from 'node:https';
 import type AdmZip from 'adm-zip';
 import type { DepartureRow, FeederRow, ParentChildMap, RouteInfo, ShapeGeometry, StopFeature, TripConnection, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, TRIP_BUCKETS_DIR, tripBucketId } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, toTripRuns, TRIP_BUCKETS_DIR, tripBucketId } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { distanceToLinesM, fanOutColocated } from './lib/geo.ts';
@@ -182,6 +182,7 @@ function generateAliases(
     const generations = [current, ...olderGenerations].slice(0, CONFIG.COURSE_GENERATIONS);
 
     fs.writeFileSync(path.join(dataDir, 'trip_aliases.json'), JSON.stringify(tripAliases));
+    fs.writeFileSync(path.join(dataDir, 'trip_alias_runs.json'), JSON.stringify(toTripRuns(tripAliases)));
     fs.writeFileSync(coursePath, JSON.stringify(generations));
     console.log(`Mapped ${Object.keys(tripAliases).length} legacy trip ids onto current trips via ${currentByCourse.size} runs (${generations.length} export generations retained).`);
 

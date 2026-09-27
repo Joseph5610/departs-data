@@ -33,6 +33,36 @@ export const CONNECTION_BUCKETS_DIR = 'connection_buckets';
 export const TRIP_SHAPE_BUCKETS_DIR = 'trip_shape_buckets';
 export const SHAPE_BUCKETS_DIR = 'shape_buckets';
 
+/** Mirrors `TripRunsFile` in departs-app `functions/_feeds/gtfs/trip-runs.ts` (`trip_alias_runs.json`). */
+export interface TripRunsFile {
+    /** Flat `[firstTripId, firstValue, count, ...]`, sorted by `firstTripId`. */
+    runs: number[];
+    /** Trips whose ids or values are not canonical integers, including null values. */
+    other?: Record<string, string | null>;
+}
+
+const isCanonicalInt = (s: string | null): s is string => s !== null && Number.isSafeInteger(Number(s)) && String(Number(s)) === s;
+
+/** A trip id -> trip id table as runs of consecutive ids mapping to consecutive ids; the rest stays listed. */
+export function toTripRuns(table: Record<string, string | null>): TripRunsFile {
+    const pairs: Array<[number, number]> = [];
+    const other: Record<string, string | null> = {};
+    for (const [tripId, value] of Object.entries(table)) {
+        if (isCanonicalInt(tripId) && isCanonicalInt(value)) pairs.push([Number(tripId), Number(value)]);
+        else other[tripId] = value;
+    }
+    pairs.sort((a, b) => a[0] - b[0]);
+
+    const grouped: Array<[number, number, number]> = [];
+    let last: [number, number, number] | undefined;
+    for (const [tripId, value] of pairs) {
+        if (last && tripId === last[0] + last[2] && value === last[1] + last[2]) last[2]++;
+        else grouped.push(last = [tripId, value, 1]);
+    }
+    const runs = grouped.flat();
+    return Object.keys(other).length ? { runs, other } : { runs };
+}
+
 const utf8 = new TextEncoder();
 
 /** FNV-1a (32-bit) of the id's UTF-8 bytes, modulo `count`. The Worker computes the same to find a file. */
