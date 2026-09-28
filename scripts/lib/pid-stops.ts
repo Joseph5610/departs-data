@@ -28,12 +28,33 @@ export interface PidEnrichment {
  * `grouping.ts`), which did this per request; the output must stay identical to what
  * `/api/prague/stops` returned.
  */
-export function buildPragueMapStops(rawStops: readonly GtfsStopFeature[], enrichmentMap: Readonly<Record<string, PidEnrichment>>): MapStopCollection {
-    return { type: 'FeatureCollection', features: processStops(enrichStops(rawStops, enrichmentMap)) };
+export function buildPragueMapStops(
+    rawStops: readonly GtfsStopFeature[],
+    enrichmentMap: Readonly<Record<string, PidEnrichment>>,
+    interchanges: ReadonlyMap<string, ReadonlySet<string>>
+): MapStopCollection {
+    return { type: 'FeatureCollection', features: processStops(enrichStops(rawStops, enrichmentMap, interchanges)) };
 }
 
+/** PID's documented `stop_icons` order: metro, rail, funicular, ferry, airport, tram, trolleybus, bus. */
+const INTERCHANGE_ORDER = ['Ma', 'Mb', 'Mc', 'Md', 'Ra', 'Sb', 'Fu', 'Fe', 'Ap', 'Tw', 'Tb', 'Bu'];
+
+const orderInterchanges = (codes: ReadonlySet<string>): string[] | undefined => {
+    if (codes.size === 0) return undefined;
+    const rank = (c: string) => { const i = INTERCHANGE_ORDER.indexOf(c); return i === -1 ? INTERCHANGE_ORDER.length : i; };
+    return [...codes].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+};
+
+/** Union of the features' interchanges, in PID order. */
+const mergeInterchanges = (features: readonly MapStopFeature[]): string[] | undefined =>
+    orderInterchanges(new Set(features.flatMap(f => f.properties.interchanges ?? [])));
+
 /** Drops exit-only stops and attaches PID lines and names. */
-function enrichStops(rawStops: readonly GtfsStopFeature[], enrichmentMap: Readonly<Record<string, PidEnrichment>>): MapStopFeature[] {
+function enrichStops(
+    rawStops: readonly GtfsStopFeature[],
+    enrichmentMap: Readonly<Record<string, PidEnrichment>>,
+    interchanges: ReadonlyMap<string, ReadonlySet<string>>
+): MapStopFeature[] {
     return rawStops
         .filter(f => {
             const enrichment = enrichmentMap[f.properties.stop_id];
@@ -55,7 +76,8 @@ function enrichStops(rawStops: readonly GtfsStopFeature[], enrichmentMap: Readon
                     parent_station: f.properties.parent_station ?? null,
                     platform_code: f.properties.platform_code ?? null,
                     zone_id: f.properties.zone_id ?? null,
-                    lines
+                    lines,
+                    interchanges: orderInterchanges(interchanges.get(f.properties.stop_id) ?? new Set())
                 }
             };
         });
@@ -63,7 +85,6 @@ function enrichStops(rawStops: readonly GtfsStopFeature[], enrichmentMap: Readon
 
 interface HierarchyContext {
     stationAnchors: Map<string, MapStopFeature>;
-    stationChildren: Map<string, string[]>;
     stationChildrenFeatures: Map<string, MapStopFeature[]>;
     publicStops: MapStopFeature[];
 }
@@ -71,7 +92,6 @@ interface HierarchyContext {
 function buildStructuralHierarchy(allStops: MapStopFeature[]): HierarchyContext {
     const ctx: HierarchyContext = {
         stationAnchors: new Map(),
-        stationChildren: new Map(),
         stationChildrenFeatures: new Map(),
         publicStops: []
     };
@@ -92,15 +112,6 @@ function buildStructuralHierarchy(allStops: MapStopFeature[]): HierarchyContext 
                 ctx.stationChildrenFeatures.set(p.parent_station, features);
             }
             features.push(f);
-            
-            if (type !== 2) {
-                let children = ctx.stationChildren.get(p.parent_station);
-                if (!children) {
-                    children = [];
-                    ctx.stationChildren.set(p.parent_station, children);
-                }
-                children.push(p.stop_id);
-            }
         }
     }
     return ctx;
@@ -144,13 +155,9 @@ function enrichPublicStops(ctx: HierarchyContext): EnrichmentContext {
             parent_station: p.parent_station ?? null,
             zone_id: p.zone_id ?? null,
             is_train: isTrain as 0 | 1,
-            metro_a: (metroSet.has('A') ? 1 : 0) as 0 | 1,
-            metro_b: (metroSet.has('B') ? 1 : 0) as 0 | 1,
-            metro_c: (metroSet.has('C') ? 1 : 0) as 0 | 1,
             metro_lines: metroLines.length > 0 ? metroLines.map(name => ({ name, route_color: getVehicleColor('metro', name) })) : undefined,
-            metro_color: metroLines.length > 0 ? getVehicleColor('metro', metroLines[0]) : undefined,
-            metro_color_2: metroLines.length > 1 ? getVehicleColor('metro', metroLines[1]) : undefined,
-            lines: lines.map(l => ({ name: l.name, type: l.type, route_color: getVehicleColor(String(l.type), l.name) }))
+            lines: lines.map(l => ({ name: l.name, type: l.type, route_color: getVehicleColor(String(l.type), l.name) })),
+            interchanges: p.interchanges
         };
 
         const nodeIdMatch = stopId.match(/^([A-Za-z]*\d+)/);
@@ -170,8 +177,17 @@ function enrichPublicStops(ctx: HierarchyContext): EnrichmentContext {
 
         // Structural Station (Type 1): Merge all child lines/colors into the parent node
         if (type === 1) {
-            const childrenList = ctx.stationChildren.get(stopId) || [];
             const childFeatures = ctx.stationChildrenFeatures.get(stopId) || [];
+            // The station id is its departure-board id: served platforms only, never pathway nodes or track sectors.
+            const platforms: MapStopFeature[] = [];
+            const served: MapStopFeature[] = [];
+            for (const c of childFeatures) {
+                if (Number(c.properties.location_type) !== 0) continue;
+                platforms.push(c);
+                if ((c.properties.lines?.length ?? 0) > 0) served.push(c);
+            }
+            const departurePlatforms = served.length > 0 ? served : platforms;
+            const childrenList = departurePlatforms.map(c => c.properties.stop_id);
             
             const uniqueLinesMap = new Map<string, { name: string, type: string, route_color: string }>();
             let aggIsTrain = 0;
@@ -207,12 +223,8 @@ function enrichPublicStops(ctx: HierarchyContext): EnrichmentContext {
                     ...enrichedProperties,
                     lines: Array.from(uniqueLinesMap.values()),
                     metro_lines: aggregatedMetroLines.map(name => ({ name, route_color: getVehicleColor('metro', name) })),
-                    metro_color: aggregatedMetroLines.length > 0 ? getVehicleColor('metro', aggregatedMetroLines[0]) : undefined,
-                    metro_color_2: aggregatedMetroLines.length > 1 ? getVehicleColor('metro', aggregatedMetroLines[1]) : undefined,
-                    metro_a: (aggMetroSet.has('A') ? 1 : 0) as 0 | 1,
-                    metro_b: (aggMetroSet.has('B') ? 1 : 0) as 0 | 1,
-                    metro_c: (aggMetroSet.has('C') ? 1 : 0) as 0 | 1,
                     is_train: (aggIsTrain || isTrain) as 0 | 1,
+                    interchanges: mergeInterchanges(departurePlatforms),
                     location_type: 1,
                     stop_id: childrenList.length > 0 ? childrenList.join(',') : stopId
                 }
@@ -234,6 +246,7 @@ function enrichPublicStops(ctx: HierarchyContext): EnrichmentContext {
                 groups.set(key, { type: 'Feature', geometry: f.geometry, properties: { ...enrichedProperties, all_ids: [stopId] } });
             } else {
                 existing.properties.all_ids = [...(existing.properties.all_ids || []), stopId];
+                existing.properties.interchanges = mergeInterchanges([existing, enrichedFeature]);
             }
         }
     }
@@ -276,10 +289,8 @@ function generateVirtualCentroids(ctx: EnrichmentContext): MapStopFeature[] {
             properties: {
                 ...baseFeature.properties,
                 metro_lines: allMetroNames.map(name => ({ name, route_color: getVehicleColor('metro', name) })),
-                metro_a: (aggMetroSet.has('A') ? 1 : 0) as 0 | 1,
-                metro_b: (aggMetroSet.has('B') ? 1 : 0) as 0 | 1,
-                metro_c: (aggMetroSet.has('C') ? 1 : 0) as 0 | 1,
                 is_train: aggIsTrain as 0 | 1,
+                interchanges: undefined,
                 is_centroid: true,
                 stop_id: centroidId
             }

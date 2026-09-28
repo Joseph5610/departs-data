@@ -82,7 +82,7 @@ async function main(): Promise<void> {
     writePragueRoutes(zip, dataDir);
 
     const gtfsStops = readGtfsStops(zip);
-    const mapStops = buildPragueMapStops(gtfsStops, enrichmentMap);
+    const mapStops = buildPragueMapStops(gtfsStops, enrichmentMap, readStopInterchanges(zip));
     writeJson(dataDir, MAP_STOPS_FILE, mapStops);
     writeStopSearch(dataDir, mapStops);
     console.log(`[SYNC] SUCCESS: Saved ${mapStops.features.length} map stops to ${path.join(dataDir, MAP_STOPS_FILE)}`);
@@ -172,6 +172,24 @@ function writePragueRoutes(zip: AdmZip, dataDir: string): void {
     }
     writeJson(dataDir, 'routes.json', routes);
     console.log(`[SYNC] SUCCESS: Saved ${count} routes to ${path.join(dataDir, 'routes.json')}`);
+}
+
+const STOP_ICONS_TABLE = { required: ['stop_id'], optional: ['stop_icons'] } as const;
+
+/** PID's `stop_icons` per stop across all trips: the modes a rider can change to there (`MaMc` -> Ma, Mc). */
+function readStopInterchanges(zip: AdmZip): Map<string, Set<string>> {
+    const interchanges = new Map<string, Set<string>>();
+    for (const st of readTable(zip, 'stop_times.txt', STOP_ICONS_TABLE)) {
+        if (!st.stop_icons) continue;
+        let codes = interchanges.get(st.stop_id);
+        if (!codes) {
+            codes = new Set();
+            interchanges.set(st.stop_id, codes);
+        }
+        for (const code of st.stop_icons.match(/[A-Z][a-z]/g) ?? []) codes.add(code);
+    }
+    console.log(`[SYNC] Read interchanges for ${interchanges.size} stops.`);
+    return interchanges;
 }
 
 const TRIPS_TABLE = { required: ['trip_id', 'shape_id'] } as const;

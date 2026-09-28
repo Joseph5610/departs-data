@@ -26,7 +26,7 @@ export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
  * Outputs no reader uses any more, deleted from a city's directory on every build: the workflows seed
  * staging from the published data, so a file a build merely stops writing would be published forever.
  */
-export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops.json', 'stops-enrichment.json'] as const;
+export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json'] as const;
 export const TRIP_BUCKETS_DIR = 'trip_buckets';
 export const CONNECTION_BUCKETS_DIR = 'connection_buckets';
 /** Mirrors departs-app `TRIP_SHAPES_CONFIG` in `src/config/constants.ts`. */
@@ -209,12 +209,9 @@ export interface MapStopProperties {
     is_centroid?: boolean;
     is_drop_off_only?: true | undefined;
     is_train?: 0 | 1;
-    metro_a?: 0 | 1;
-    metro_b?: 0 | 1;
-    metro_c?: 0 | 1;
     metro_lines?: Array<{ name: string; route_color: string }> | undefined;
-    metro_color?: string | undefined;
-    metro_color_2?: string | undefined;
+    /** PID `stop_icons` codes of the modes a rider can change to here (`Ma`, `Ra`, `Ap`, ...). */
+    interchanges?: string[];
     all_ids?: string[];
     lines?: RouteInfo[];
 }
@@ -247,9 +244,8 @@ export type StopDetail = [string, string, string | null, number, number, number,
 export const SITEMAP_STOPS_FILE = 'sitemap_stops.txt';
 
 /**
- * `prague/connections.json`: held connections and through-running for a network whose timetable is
- * served live by another API, so there are no trip or departure chunks to embed them in. Small
- * enough to be read whole, which keeps a departure board at one static fetch.
+ * One `prague/connection_buckets/` file: held connections and through-running for a network whose
+ * timetable is served live by another API, so there are no trip or departure chunks to embed them in.
  */
 export interface LiveConnectionsFile {
     /** YYYYMMDD service days the `dayFlags` bitmasks refer to. */

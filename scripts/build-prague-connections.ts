@@ -4,7 +4,7 @@ import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToOffsetMs } from './lib/time.ts';
 import { readServiceDates } from './lib/calendar.ts';
 import { readHeldConnections, tripStopKey } from './lib/connections.ts';
-import { outputDir, writeChunks, writeJson } from './lib/emit.ts';
+import { outputDir, removeRetired, writeChunks } from './lib/emit.ts';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -15,8 +15,7 @@ import path from 'node:path';
  * so this only emits what Golemio lacks: held connections (`transfers.txt`) and through-running
  * between lines (`block_id`), hashed by trip id into `connection_buckets/`, each a `LiveConnectionsFile`
  * of its trips, so a board or a trip detail reads only its own few KB. Every bucket is written, empty
- * or not, so the Worker never asks for a file that does not exist. `connections.json` (all trips in
- * one file) is still written until every Worker reads the buckets.
+ * or not, so the Worker never asks for a file that does not exist.
  */
 const CONFIG = {
     CITY: 'prague',
@@ -26,7 +25,6 @@ const CONFIG = {
     DAY_OFFSETS: [0, 1],
     /** Connections held for less than this are planned only and not emitted. */
     MIN_CONNECTION_WAIT_S: 1,
-    OUTPUT_FILE: 'connections.json',
     /** Abort threshold guarding against an empty or truncated upstream feed. */
     MIN_ACTIVE_TRIPS: 10000,
 } as const;
@@ -141,8 +139,8 @@ async function main(): Promise<void> {
     const file: LiveConnectionsFile = { days: days.map(d => d.str), trips: out };
     const dir = outputDir(CONFIG.CITY);
     fs.mkdirSync(dir, { recursive: true });
-    const size = writeJson(dir, CONFIG.OUTPUT_FILE, file);
-    console.log(`Wrote ${CONFIG.OUTPUT_FILE}: ${Object.keys(out).length} trips, ${continuations} continuations, ${(size / 1024).toFixed(0)}KB`);
+    removeRetired(dir);
+    console.log(`Built connections for ${Object.keys(out).length} trips, ${continuations} continuations`);
 
     const buckets = new Map<string, LiveConnectionsFile>();
     for (let i = 0; i < CHUNKING.CONNECTION_BUCKET_COUNT; i++) buckets.set(String(i), { days: file.days, trips: {} });

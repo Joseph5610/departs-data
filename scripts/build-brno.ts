@@ -181,7 +181,6 @@ function generateAliases(
 
     const generations = [current, ...olderGenerations].slice(0, CONFIG.COURSE_GENERATIONS);
 
-    fs.writeFileSync(path.join(dataDir, 'trip_aliases.json'), JSON.stringify(tripAliases));
     fs.writeFileSync(path.join(dataDir, 'trip_alias_runs.json'), JSON.stringify(toTripRuns(tripAliases)));
     fs.writeFileSync(coursePath, JSON.stringify(generations));
     console.log(`Mapped ${Object.keys(tripAliases).length} legacy trip ids onto current trips via ${currentByCourse.size} runs (${generations.length} export generations retained).`);
