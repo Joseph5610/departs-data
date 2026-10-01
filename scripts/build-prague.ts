@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import type AdmZip from 'adm-zip';
 import path from 'node:path';
-import { outputDir, removeRetired, writeJson } from './lib/emit.ts';
+import { outputDir, removeRetired, writeCoverage, writeJson } from './lib/emit.ts';
 import { MAP_STOPS_FILE, type RouteInfo } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { readStops } from './lib/stops.ts';
@@ -84,6 +84,7 @@ async function main(): Promise<void> {
     const gtfsStops = readGtfsStops(zip);
     const mapStops = buildPragueMapStops(gtfsStops, enrichmentMap, readStopInterchanges(zip));
     writeJson(dataDir, MAP_STOPS_FILE, mapStops);
+    writeCoverage(dataDir, mapStops);
     writeStopSearch(dataDir, mapStops);
     console.log(`[SYNC] SUCCESS: Saved ${mapStops.features.length} map stops to ${path.join(dataDir, MAP_STOPS_FILE)}`);
 

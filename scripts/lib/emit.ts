@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { MAP_STOPS_FILE, RETIRED_OUTPUTS, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
+import { COVERAGE_CELL_DEG, COVERAGE_FILE, MAP_STOPS_FILE, RETIRED_OUTPUTS, type CoverageFile, type MapStopCollection, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
 import { buildGtfsMapStops } from './map-stops.ts';
 import { writeStopSearch } from './stop-search.ts';
 
@@ -89,6 +89,20 @@ export interface CityFiles {
     tripWindows: TripWindowsFile;
 }
 
+/** Writes the grid of where the network has stops; station centroids are left out so a station counts once per platform. */
+export function writeCoverage(dir: string, mapStops: MapStopCollection): void {
+    const cells: Record<string, number> = {};
+    for (const f of mapStops.features) {
+        if (f.properties.is_centroid) continue;
+        const [lng, lat] = f.geometry.coordinates;
+        const key = `${Math.floor(lng / COVERAGE_CELL_DEG)}|${Math.floor(lat / COVERAGE_CELL_DEG)}`;
+        cells[key] = (cells[key] ?? 0) + 1;
+    }
+    const coverage: CoverageFile = { cell: COVERAGE_CELL_DEG, cells };
+    const bytes = writeJson(dir, COVERAGE_FILE, coverage);
+    console.log(`Wrote ${COVERAGE_FILE}: ${Object.keys(cells).length} cells, ${(bytes / 1024).toFixed(0)}KB`);
+}
+
 /** Deletes a city's `RETIRED_OUTPUTS`, so the next publish drops them from the data branch. */
 export function removeRetired(dir: string): void {
     for (const name of RETIRED_OUTPUTS) fs.rmSync(path.join(dir, name), { recursive: true, force: true });
@@ -103,6 +117,7 @@ export function writeCityFiles(dir: string, files: CityFiles): void {
         throw new Error(`No station centroids in ${MAP_STOPS_FILE}. Aborting before publishing stops the app cannot group.`);
     }
     writeJson(dir, MAP_STOPS_FILE, mapStops);
+    writeCoverage(dir, mapStops);
     writeStopSearch(dir, mapStops);
     writeJson(dir, 'parent_child_map.json', files.parentChildMap);
     writeJson(dir, 'routes.json', files.routes instanceof Map ? Object.fromEntries(files.routes) : files.routes);

@@ -231,6 +231,18 @@ export interface MapStopCollection {
 
 export const MAP_STOPS_FILE = 'map-stops.json';
 
+/**
+ * `<city>/coverage.json`: where the network has stops, as stop counts per grid cell keyed
+ * `<floor(lng / cell)>|<floor(lat / cell)>`. departs-app picks the networks to show on a map view by it.
+ */
+export const COVERAGE_FILE = 'coverage.json';
+/** Cell size in degrees; departs-app reads it from the file. */
+export const COVERAGE_CELL_DEG = 0.05;
+export interface CoverageFile {
+    cell: number;
+    cells: Record<string, number>;
+}
+
 /** `<city>/stop_search.txt` and `.bin`: the stop index departs-app's MCP tools search (see `writeStopSearch`). */
 export const STOP_SEARCH_TEXT_FILE = 'stop_search.txt';
 export const STOP_SEARCH_BIN_FILE = 'stop_search.bin';
