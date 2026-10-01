@@ -271,6 +271,16 @@ export type LiveFeederRow = [string, string, string, number, number, number];
 /** `[trip_id, line, route_type, headsign, departure_time]` */
 export type LiveContinuationRow = [string, string, string, string, string];
 
+/** Realtime node id -> stop name, for naming a vehicle's destination without the network's whole stop list. */
+export const STATION_NAMES_FILE = 'station_names.json';
+
+/**
+ * Railway stops by SR70 number, for trains whose route comes from a realtime source rather than the
+ * timetable: `[name, lat, lon]`, plus the network's own platform id where one lies at the station.
+ */
+export const RAIL_STOPS_FILE = 'rail_stops.json';
+export type RailStop = [string, number, number] | [string, number, number, string];
+
 /** `tracks/<HH>.json`: where each trip running in that hour should be, for matching vehicles by schedule. */
 export const TRACKS_DIR = 'tracks';
 

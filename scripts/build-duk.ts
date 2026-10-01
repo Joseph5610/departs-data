@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import AdmZip from 'adm-zip';
-import type { DepartureRow, ParentChildMap, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, TRACKS_DIR, TRIP_BUCKETS_DIR, tripBucketId } from './lib/contract.ts';
-import { downloadLargeZip, fetchJson } from './lib/feed.ts';
+import type { DepartureRow, ParentChildMap, RailStop, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, RAIL_STOPS_FILE, STATION_NAMES_FILE, TRACKS_DIR, TRIP_BUCKETS_DIR, tripBucketId } from './lib/contract.ts';
+import { downloadLargeZip, fetchJson, parseCSV } from './lib/feed.ts';
 import { czechHolidays, formatTime, getServiceDays, type ServiceDay } from './lib/time.ts';
 import { distanceM, fanOutColocated, localXY, round6, type Point } from './lib/geo.ts';
-import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
+import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles, writeJson } from './lib/emit.ts';
 import { buildTripTracks } from './lib/tracks.ts';
 import {
     CALENDAR, LAYOUTS, NOT_VIA, PASSES, SYMBOL, TRIP_CODE_FIELDS, WEEKDAY_SYMBOLS,
@@ -28,6 +28,13 @@ const CONFIG = {
     /** Bus lines, and urban rail (trolleybuses, trams, funiculars) which CIS JŘ exports separately. */
     JDF_URLS: ['https://portal.cisjr.cz/pub/JDF/JDF.zip', 'https://portal.cisjr.cz/pub/draha/mestske/JDF.zip'],
     STATIONS_URL: 'https://tabule.portabo.cz/api/v1-tabule/cis/GetStations',
+    /** JrUtil's railway stops (SR70), the ids its realtime train routes are given in. */
+    RAIL_STOPS_URL: 'https://rt.jrutil.konarici.cz/api/stops?stopIdLike=-SR70ST-%25',
+    RAIL_STOP_PREFIX: '-SR70ST-',
+    /** JrUtil marks a halt, as opposed to a station, with a trailing " z" or " nz". */
+    RAIL_HALT_SUFFIX: / n?z$/,
+    /** A rail post this close to a railway stop is that stop's platform. */
+    RAIL_PLATFORM_RADIUS_M: 300,
     DOWNLOAD_TIMEOUT_S: 600,
     DOWNLOAD_ATTEMPTS: 4,
     JDF_CACHE_MAX_AGE_MS: 12 * 3_600_000,
@@ -136,6 +143,8 @@ interface NodeIndex {
     bySuffix: Map<string, Node[]>;
     byAltName: Map<string, Node[]>;
     byAltSuffix: Map<string, Node[]>;
+    /** Every node's name as its first post gives it, wherever it lies: a vehicle may be bound for a node no trip here serves. */
+    names: Record<string, string>;
 }
 
 /** Portabo nodes with a usable position, plus exact-name, alternate-name and town-less-suffix indexes over them. */
@@ -145,10 +154,14 @@ async function fetchNodes(): Promise<NodeIndex> {
 
     const [west, south, east, north] = CONFIG.POST_BOUNDS;
     const postsByNode = new Map<string | number, PortaboPost[]>();
+    const names: Record<string, string> = {};
     for (const p of posts) {
+        if (typeof p.Node === 'number' && p.Name && !(p.Node in names)) names[p.Node] = p.Name;
         if (!p.Name || !(p.Longitude >= west! && p.Longitude <= east! && p.Latitude >= south! && p.Latitude <= north!)) continue;
         let list = postsByNode.get(p.Node);
         if (!list) { list = []; postsByNode.set(p.Node, list); }
+        // GetStations lists some posts twice; a repeat would publish two platforms under one id.
+        if (list.some(known => known.Post === p.Post)) continue;
         list.push(p);
     }
 
@@ -189,7 +202,42 @@ async function fetchNodes(): Promise<NodeIndex> {
         for (const name of altNames.values()) indexName(name, byAltName, byAltSuffix);
     }
 
-    return { nodes, byName, bySuffix, byAltName, byAltSuffix };
+    return { nodes, byName, bySuffix, byAltName, byAltSuffix, names };
+}
+
+/**
+ * Railway stops for train routes, each tied to the published rail platform at it where there is one,
+ * so the app can open that platform. A stop's position is its latest in JrUtil's validity history.
+ */
+async function fetchRailStops(railPosts: { id: string; lat: number; lon: number }[]): Promise<Record<string, RailStop>> {
+    const res = await fetch(CONFIG.RAIL_STOPS_URL);
+    if (!res.ok) throw new Error(`Rail stops fetch failed: ${res.status}`);
+    const rows = parseCSV(Buffer.from(await res.arrayBuffer()));
+
+    const latest = new Map<string, { range: string; name: string; lat: number; lon: number }>();
+    for (const row of rows) {
+        const id = row.id, lat = Number(row.lat), lon = Number(row.lon);
+        if (!id?.startsWith(CONFIG.RAIL_STOP_PREFIX) || !row.name || !Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+        const range = row.validdaterange ?? '';
+        const known = latest.get(id);
+        if (!known || range > known.range) latest.set(id, { range, name: row.name.replace(CONFIG.RAIL_HALT_SUFFIX, ''), lat, lon });
+    }
+
+    const [west, south, east, north] = CONFIG.POST_BOUNDS;
+    const stops: Record<string, RailStop> = {};
+    for (const [id, stop] of latest) {
+        let platform: string | undefined;
+        if (stop.lon >= west! && stop.lon <= east! && stop.lat >= south! && stop.lat <= north!) {
+            let nearest: number = CONFIG.RAIL_PLATFORM_RADIUS_M;
+            for (const post of railPosts) {
+                const d = distanceM(stop, post);
+                if (d < nearest) { nearest = d; platform = post.id; }
+            }
+        }
+        const at: [string, number, number] = [stop.name, round6(stop.lat), round6(stop.lon)];
+        stops[id.slice(CONFIG.RAIL_STOP_PREFIX.length)] = platform ? [...at, platform] : at;
+    }
+    return stops;
 }
 
 interface JdfStop { name: string; district: string }
@@ -719,6 +767,7 @@ async function main(): Promise<void> {
     }
 
     const features: StopFeature[] = [];
+    const railPosts: { id: string; lat: number; lon: number }[] = [];
     const parentChildMap: ParentChildMap = {};
     for (const node of servedNodes.values()) {
         const parentId = `${CONFIG.STATION_PREFIX}${node.id}`;
@@ -738,6 +787,8 @@ async function main(): Promise<void> {
                 properties: { stop_id: id, stop_name: node.name, platform_code: platformCode, location_type: 0, parent_station: parentId, zone_id: node.zone_id, is_drop_off_only: lines.length === 0 || undefined, lines },
             });
             parentChildMap[parentId]!.push(id);
+            const post = Number(platform.post);
+            if (post >= CONFIG.FIRST_UNNUMBERED_POST && post < CONFIG.FERRY_POST_START) railPosts.push({ id, lat: platform.lat, lon: platform.lon });
         }
     }
 
@@ -747,6 +798,15 @@ async function main(): Promise<void> {
     // JDF has no geometry; the app draws the route stop to stop.
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
     writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
+    writeJson(DATA_DIR, STATION_NAMES_FILE, index.names);
+    // A third-party source: when it is down the file already published stays.
+    try {
+        const railStops = await fetchRailStops(railPosts);
+        writeJson(DATA_DIR, RAIL_STOPS_FILE, railStops);
+        console.log(`Wrote ${Object.keys(railStops).length} railway stops`);
+    } catch (err) {
+        console.warn('Railway stops unavailable, keeping the published ones:', err);
+    }
     console.log(`Wrote ${servedNodes.size} stations and ${Object.keys(routes).length} routes`);
 
     sortDepartures(departuresByStop);
