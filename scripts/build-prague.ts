@@ -8,12 +8,14 @@ import { readStops } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
 import { buildPragueMapStops, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
 import { writeStopSearch } from './lib/stop-search.ts';
+import { writePragueConnections } from './lib/prague-connections.ts';
 
 /**
- * Prague (PID) stops.
+ * Prague (PID) static data.
  *
  * Writes `map-stops.json`, the final map stop list built from the PID GTFS stops enriched with PID's
- * lines and names, and the route shapes the app reads directly.
+ * lines and names, the route shapes the app reads directly, and the held connections and
+ * through-running Golemio lacks (`connection_buckets/`), all from one download of the PID GTFS.
  */
 const CONFIG = {
     CITY: 'prague',
@@ -89,6 +91,7 @@ async function main(): Promise<void> {
     console.log(`[SYNC] SUCCESS: Saved ${mapStops.features.length} map stops to ${path.join(dataDir, MAP_STOPS_FILE)}`);
 
     writePragueShapes(zip, dataDir);
+    writePragueConnections(zip, dataDir);
 }
 
 const isDigit = (c: string) => c >= '0' && c <= '9';

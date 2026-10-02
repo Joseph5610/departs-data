@@ -3,13 +3,14 @@ import path from 'node:path';
 import https from 'node:https';
 import type AdmZip from 'adm-zip';
 import type { DepartureRow, FeederRow, ParentChildMap, RouteInfo, ShapeGeometry, StopFeature, TripConnection, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, toTripRuns, TRIP_BUCKETS_DIR, tripBucketId } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, toTripRuns, TRIP_ALIAS_RUNS_FILE, TRIP_BUCKETS_DIR } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { distanceToLinesM, fanOutColocated } from './lib/geo.ts';
 import { readServiceDates } from './lib/calendar.ts';
 import { readHeldConnections, tripStopKey } from './lib/connections.ts';
-import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
+import { buildTripBuckets } from './lib/trip-buckets.ts';
+import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
 import { readStops } from './lib/stops.ts';
 import { writeShapeBuckets } from './lib/shapes.ts';
 
@@ -181,7 +182,7 @@ function generateAliases(
 
     const generations = [current, ...olderGenerations].slice(0, CONFIG.COURSE_GENERATIONS);
 
-    fs.writeFileSync(path.join(dataDir, 'trip_alias_runs.json'), JSON.stringify(toTripRuns(tripAliases)));
+    writeFeedIndex(dataDir, TRIP_ALIAS_RUNS_FILE, toTripRuns(tripAliases));
     fs.writeFileSync(coursePath, JSON.stringify(generations));
     console.log(`Mapped ${Object.keys(tripAliases).length} legacy trip ids onto current trips via ${currentByCourse.size} runs (${generations.length} export generations retained).`);
 
@@ -466,7 +467,7 @@ async function main(): Promise<void> {
         }));
     }
     console.log(`Attached ${tripConnections} onward connections to trip stops`);
-    const tripBuckets = chunkBy(tripStops, tripBucketId);
+    const tripBuckets = buildTripBuckets(tripStops, windowsFile, tripRoutes);
     writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), tripBuckets);
     console.log(`Wrote ${tripBuckets.size} trip buckets for ${tripsData.size} trips`);
 

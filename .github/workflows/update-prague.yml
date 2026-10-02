@@ -45,13 +45,8 @@ jobs:
           mkdir -p out
           cp -a data-branch/prague out/prague
 
-      - name: Fetch and format stops
+      - name: Build stops, shapes and connections
         run: node scripts/build-prague.ts
-        env:
-          OUT_DIR: ${{ github.workspace }}/out/prague
-
-      - name: Build connections from PID GTFS
-        run: node scripts/build-prague-connections.ts
         env:
           OUT_DIR: ${{ github.workspace }}/out/prague
 

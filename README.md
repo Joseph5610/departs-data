@@ -25,6 +25,12 @@ there by hand or branch from it.
 
 ## 🏙 City Data Pipelines
 
+Every GTFS-stack city (Brno, Prešov, DÚK) publishes the same files through the shared writers in `scripts/lib`:
+- `schedule/<HH>.json`: the trips a vehicle may be matched to in that hour, with their routes (`buildScheduleFiles`).
+- `trip_buckets/<n>.json`: each trip's stops plus `$days` and `$trips` (window, day flags, route), and the days each onward connection runs (`buildTripBuckets`).
+- `departure_buckets/`, `routes.json`, `parent_child_map.json`, `map-stops.json`.
+- `feed_index/`: lookups a single network's realtime feed needs (Brno `trip_alias_runs.json`, DÚK `station_names.json`, `rail_stops.json`).
+
 ### 🇨🇿 Brno (IDS JMK)
 *Script:* `scripts/build-brno.ts` | *Action:* `update-brno.yml` (Runs every 8 hours)
 
@@ -38,12 +44,14 @@ The Brno transport authority (Kordis) provides a traditional GTFS `.zip` file. B
 This allows the main app to fetch only the exact bytes it needs for a specific stop instantly.
 
 ### 🇨🇿 Prague (PID)
-*Script:* `scripts/build-prague.ts` | *Action:* `update-prague.yml` (Runs every 8 hours)
+*Script:* `scripts/build-prague.ts` | *Action:* `update-prague.yml` (Runs daily)
 
-Unlike Brno, Prague provides excellent real-time APIs (Golemio). However, we need structural "enrichment" data (e.g., mapping platform IDs to specific Metro lines or parent stations) that isn't available in real-time payloads.
-1. Fetches static stops definitions from the PID open data portal.
-2. Formats and shrinks the data into a fast O(1) lookup map, `stops-enrichment.json`, which the `departs-app` Worker reads for departures and vehicle detail.
-3. Fetches every GTFS stop from Golemio (`GOLEMIO_API_KEY` Actions secret), enriches it with PID lines and names, groups platforms into stations and centroids, and writes the final `map-stops.json`.
+Prague's departures, vehicles and trip times come live from Golemio, so this builds only what Golemio lacks, from one download of the PID GTFS:
+1. Fetches the PID stop groups from the PID open data portal and enriches the GTFS stops with their lines and names, then groups platforms into stations and centroids and writes `map-stops.json`.
+2. Writes `routes.json` and the route shapes (`trip_shape_buckets/`, `shape_buckets/`).
+3. Writes held connections and through-running into `connection_buckets/`.
+
+Points of sale are a separate weekly build (`scripts/build-prague-pos.ts`).
 
 ### 🇸🇰 Prešov (DPMP)
 *Script:* `scripts/build-presov.ts` | *Action:* `update-presov.yml` (Runs daily)
@@ -52,7 +60,7 @@ DPMP publishes a monthly GTFS `.zip` via the Mesto Prešov ArcGIS portal. The ou
 1. Strips the monthly `feed_version` prefix from trip and service ids.
 2. Synthesises parent stations by grouping same-named platforms, since the feed has none.
 3. Derives request stops from the `*` stop-name suffix and injects official DPMP line colors.
-4. Emits `trip_windows.json` (with `direction_id`) for yesterday, today and tomorrow, used to match the realtime CSV to trips.
+4. Carries `direction_id` on each trip in `schedule/<HH>.json`, used to match the realtime CSV to trips.
 
 ### 🇨🇿 Ústecký kraj (DÚK)
 *Script:* `scripts/build-duk.ts` | *Action:* `update-duk.yml` (Runs daily)
@@ -104,6 +112,6 @@ npm run build:prague
 | `/presov` | [GTFS – MHD Prešov](https://www.arcgis.com/home/item.html?id=f1033ca6c2f4461d9aba285e1c7cb079) (Dopravný podnik mesta Prešov, a.s.) | CC BY 4.0 | Monthly id prefixes stripped, parent stations synthesised, request stops and line colours added, three-day window chunked to JSON. |
 | `/duk` | [Jízdní řády veřejné linkové dopravy (CIS JŘ, JDF)](https://data.gov.cz/datová-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatové-sady%2F66003008%2F1463646434) (Ministerstvo dopravy ČR) | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) (CC0 equivalent) | Filtered to the kraj's lines, calendars evaluated, stop names matched to Portabo nodes, trips placed on platforms, lines named and coloured; operator and other personal data are not carried over. |
 | `/duk` | [Ústecký kraj open data (Portabo)](https://lkod.portabo.cz/datasets): stops (`cis/GetStations`) | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) | One station per node and one platform per post; platforms on the same point fanned out on the map. |
-| `/duk` | [JrUtil RtView](https://rt.jrutil.konarici.cz/api.html): railway stops (`/api/stops`) | No copyright or database-right restrictions on use, as its API page states | Latest position per SR70 stop, halt suffix dropped, tied to the Portabo rail platform at it (`rail_stops.json`). |
+| `/duk` | [JrUtil RtView](https://rt.jrutil.konarici.cz/api.html): railway stops (`/api/stops`) | No copyright or database-right restrictions on use, as its API page states | Latest position per SR70 stop, halt suffix dropped, tied to the Portabo rail platform at it (`feed_index/rail_stops.json`). |
 
 The CC BY 4.0 sources require attribution and an indication of changes; the Czech open-data sources require neither, but are credited all the same. departs.app shows the same credits in its Settings, next to the realtime feeds it reads directly.

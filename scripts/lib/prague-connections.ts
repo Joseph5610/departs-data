@@ -1,11 +1,10 @@
 import type AdmZip from 'adm-zip';
-import { CHUNKING, CONNECTION_BUCKETS_DIR, connectionBucketId, type LiveConnectionsFile, type LiveContinuationRow, type LiveTripConnections } from './lib/contract.ts';
-import { fetchZip, readTable } from './lib/feed.ts';
-import { getServiceDays, timeToOffsetMs } from './lib/time.ts';
-import { readServiceDates } from './lib/calendar.ts';
-import { readHeldConnections, tripStopKey } from './lib/connections.ts';
-import { outputDir, removeRetired, writeChunks } from './lib/emit.ts';
-import fs from 'node:fs';
+import { CHUNKING, CONNECTION_BUCKETS_DIR, connectionBucketId, type LiveConnectionsFile, type LiveContinuationRow, type LiveTripConnections } from './contract.ts';
+import { readTable } from './feed.ts';
+import { getServiceDays, timeToOffsetMs } from './time.ts';
+import { readServiceDates } from './calendar.ts';
+import { readHeldConnections, tripStopKey } from './connections.ts';
+import { writeChunks } from './emit.ts';
 import path from 'node:path';
 
 /**
@@ -18,9 +17,7 @@ import path from 'node:path';
  * or not, so the Worker never asks for a file that does not exist.
  */
 const CONFIG = {
-    CITY: 'prague',
     TIMEZONE: 'Europe/Prague',
-    GTFS_URL: 'https://data.pid.cz/PID_GTFS.zip',
     /** Today and tomorrow, matching the window of the other networks. */
     DAY_OFFSETS: [0, 1],
     /** Connections held for less than this are planned only and not emitted. */
@@ -37,9 +34,8 @@ const TABLES = {
 
 interface Trip { route_id: string; service_id: string; headsign: string; block_id: string }
 
-async function main(): Promise<void> {
-    const zip: AdmZip = await fetchZip(CONFIG.GTFS_URL, 'GTFS_ZIP');
-
+/** Writes `connection_buckets/` into `dir` from the PID GTFS `build-prague.ts` already downloaded. */
+export function writePragueConnections(zip: AdmZip, dir: string): void {
     const routes = new Map<string, { line: string; type: string }>();
     for (const r of readTable(zip, 'routes.txt', TABLES.routes)) routes.set(r.route_id, { line: r.route_short_name, type: r.route_type });
 
@@ -137,9 +133,6 @@ async function main(): Promise<void> {
     }
 
     const file: LiveConnectionsFile = { days: days.map(d => d.str), trips: out };
-    const dir = outputDir(CONFIG.CITY);
-    fs.mkdirSync(dir, { recursive: true });
-    removeRetired(dir);
     console.log(`Built connections for ${Object.keys(out).length} trips, ${continuations} continuations`);
 
     const buckets = new Map<string, LiveConnectionsFile>();
@@ -148,8 +141,3 @@ async function main(): Promise<void> {
     const largest = writeChunks(path.join(dir, CONNECTION_BUCKETS_DIR), buckets);
     console.log(`Wrote ${buckets.size} connection buckets (largest ${(largest / 1024).toFixed(1)}KB)`);
 }
-
-main().catch((err: unknown) => {
-    console.error(err);
-    process.exit(1);
-});

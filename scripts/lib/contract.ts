@@ -143,10 +143,11 @@ export type DepartureRow = [string, string, string, number, number, 0 | 1] | [st
 
 /**
  * An onward trip that waits for this trip at this stop: `[to_trip_id, to_route_id, headsign,
- * departure_time, min_transfer_s, max_wait_s]`. Every calendar variant is listed; readers keep the
- * one operating on the viewed trip's service day.
+ * departure_time, min_transfer_s, max_wait_s]`, plus the onward trip's `dayFlags` over the bucket's
+ * `$days` once written (`buildTripBuckets`). Every calendar variant is listed; readers keep the one
+ * operating on the viewed trip's service day.
  */
-export type TripConnection = [string, string, string, string, number, number];
+export type TripConnection = [string, string, string, string, number, number] | [string, string, string, string, number, number, number];
 
 /**
  * `[start_mins, end_mins, dayFlags]`, plus `direction_id` for networks whose realtime feed is
@@ -283,6 +284,15 @@ export type LiveFeederRow = [string, string, string, number, number, number];
 /** `[trip_id, line, route_type, headsign, departure_time]` */
 export type LiveContinuationRow = [string, string, string, string, string];
 
+/**
+ * `feed_index/`: lookups from one network's realtime feed identifiers to the timetable, read only by
+ * that network's vehicle mapping: Brno's `trip_alias_runs.json`, DÚK's `station_names.json` and `rail_stops.json`.
+ */
+export const FEED_INDEX_DIR = 'feed_index';
+
+/** Trip ids of older timetable exports -> the current trip, as `TripRunsFile` (Brno). */
+export const TRIP_ALIAS_RUNS_FILE = 'trip_alias_runs.json';
+
 /** Realtime node id -> stop name, for naming a vehicle's destination without the network's whole stop list. */
 export const STATION_NAMES_FILE = 'station_names.json';
 
@@ -292,6 +302,38 @@ export const STATION_NAMES_FILE = 'station_names.json';
  */
 export const RAIL_STOPS_FILE = 'rail_stops.json';
 export type RailStop = [string, number, number] | [string, number, number, string];
+
+/**
+ * One `trip_buckets/` file: each trip's stops by trip id, plus `$days` and `$trips`, so a detail needs
+ * no whole-network table. Mirrors `RawTripBucket` in departs-app `functions/_feeds/gtfs/trip-stops.ts`.
+ */
+export interface TripBucketFile {
+    /** YYYYMMDD service days the `dayFlags` bitmasks refer to. */
+    $days: string[];
+    /** `[start_mins, end_mins, dayFlags, route_id]` per trip in the bucket; route_id is empty when unknown. */
+    $trips: Record<string, [number, number, number, string]>;
+    [tripId: string]: TripStop[] | string[] | Record<string, [number, number, number, string]>;
+}
+
+/**
+ * `schedule/<HH>.json`: every trip a vehicle may be matched to during that hour. Mirrors `GTFS_CONFIG.SCHEDULE_MATCH_WINDOW`
+ * in departs-app `functions/_feeds/gtfs/config.ts`: a trip is a match from `BEFORE_MINS` before its start
+ * until `AFTER_MINS` after its end, so it is written to every hour that span touches. Hours past midnight
+ * fold onto the clock hour, as in `tracks/`.
+ */
+export const SCHEDULE_DIR = 'schedule';
+export const SCHEDULE_MATCH_WINDOW = { BEFORE_MINS: 240, AFTER_MINS: 240 } as const;
+
+/** `[start_mins, end_mins, dayFlags, routeIndex]`, plus `direction_id` where `TripWindow` carries one; `routeIndex` is -1 for a trip without a route. */
+export type ScheduleTrip = [number, number, number, number] | [number, number, number, number, number];
+
+export interface ScheduleFile {
+    /** YYYYMMDD service days the `dayFlags` bitmasks refer to. */
+    days: string[];
+    /** Route ids, referenced by index. */
+    routes: string[];
+    trips: Record<string, ScheduleTrip>;
+}
 
 /** `tracks/<HH>.json`: where each trip running in that hour should be, for matching vehicles by schedule. */
 export const TRACKS_DIR = 'tracks';

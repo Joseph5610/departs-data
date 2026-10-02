@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { COVERAGE_CELL_DEG, COVERAGE_FILE, MAP_STOPS_FILE, RETIRED_OUTPUTS, type CoverageFile, type MapStopCollection, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
+import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, MAP_STOPS_FILE, RETIRED_OUTPUTS, SCHEDULE_DIR, type CoverageFile, type MapStopCollection, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
 import { buildGtfsMapStops } from './map-stops.ts';
 import { writeStopSearch } from './stop-search.ts';
+import { buildScheduleFiles } from './schedule.ts';
 
 const REPO_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -16,6 +17,16 @@ export function writeJson(dir: string, name: string, data: unknown): number {
     const payload = JSON.stringify(data);
     fs.writeFileSync(path.join(dir, name), payload);
     return payload.length;
+}
+
+/**
+ * A `feed_index/` lookup. Also written at the city root until every deployed departs-app reads `feed_index/`;
+ * the root copy then joins `RETIRED_OUTPUTS`.
+ */
+export function writeFeedIndex(dir: string, name: string, data: unknown): number {
+    fs.mkdirSync(path.join(dir, FEED_INDEX_DIR), { recursive: true });
+    writeJson(dir, name, data);
+    return writeJson(path.join(dir, FEED_INDEX_DIR), name, data);
 }
 
 /** Groups entries into chunk files by `chunkIdOf`, preserving insertion order within each chunk. */
@@ -124,4 +135,7 @@ export function writeCityFiles(dir: string, files: CityFiles): void {
     writeJson(dir, 'trip_routes.json', files.tripRoutes);
     const bytes = writeJson(dir, 'trip_windows.json', files.tripWindows);
     console.log(`Wrote trip_windows.json: ${Object.keys(files.tripWindows.trips).length} trips, ${(bytes / 1024).toFixed(0)}KB`);
+    const schedule = buildScheduleFiles(files.tripWindows, files.tripRoutes);
+    const largestSchedule = writeChunks(path.join(dir, SCHEDULE_DIR), schedule);
+    console.log(`Wrote ${schedule.size} schedule files, largest ${(largestSchedule / 1024).toFixed(0)}KB`);
 }

@@ -2,11 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import AdmZip from 'adm-zip';
 import type { DepartureRow, ParentChildMap, RailStop, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, RAIL_STOPS_FILE, STATION_NAMES_FILE, TRACKS_DIR, TRIP_BUCKETS_DIR, tripBucketId } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, RAIL_STOPS_FILE, STATION_NAMES_FILE, TRACKS_DIR, TRIP_BUCKETS_DIR } from './lib/contract.ts';
 import { downloadLargeZip, fetchJson, parseCSV } from './lib/feed.ts';
 import { czechHolidays, formatTime, getServiceDays, type ServiceDay } from './lib/time.ts';
 import { distanceM, fanOutColocated, localXY, round6, type Point } from './lib/geo.ts';
-import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles, writeJson } from './lib/emit.ts';
+import { buildTripBuckets } from './lib/trip-buckets.ts';
+import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
 import { buildTripTracks } from './lib/tracks.ts';
 import {
     CALENDAR, LAYOUTS, NOT_VIA, PASSES, SYMBOL, TRIP_CODE_FIELDS, WEEKDAY_SYMBOLS,
@@ -798,11 +799,11 @@ async function main(): Promise<void> {
     // JDF has no geometry; the app draws the route stop to stop.
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
     writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
-    writeJson(DATA_DIR, STATION_NAMES_FILE, index.names);
+    writeFeedIndex(DATA_DIR, STATION_NAMES_FILE, index.names);
     // A third-party source: when it is down the file already published stays.
     try {
         const railStops = await fetchRailStops(railPosts);
-        writeJson(DATA_DIR, RAIL_STOPS_FILE, railStops);
+        writeFeedIndex(DATA_DIR, RAIL_STOPS_FILE, railStops);
         console.log(`Wrote ${Object.keys(railStops).length} railway stops`);
     } catch (err) {
         console.warn('Railway stops unavailable, keeping the published ones:', err);
@@ -815,7 +816,7 @@ async function main(): Promise<void> {
     writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), departureBuckets);
     console.log(`Wrote ${departureBuckets.size} departure buckets for ${departuresByStop.size} stops`);
 
-    const tripBuckets = chunkBy(tripStops, tripBucketId);
+    const tripBuckets = buildTripBuckets(tripStops, windowsFile, tripRoutes);
     writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), tripBuckets);
     console.log(`Wrote ${tripBuckets.size} trip buckets for ${activeTrips.size} trips`);
 

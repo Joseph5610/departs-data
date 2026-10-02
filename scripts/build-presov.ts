@@ -2,12 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type AdmZip from 'adm-zip';
 import type { ContinuationRow, DepartureRow, ParentChildMap, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, TRIP_BUCKETS_DIR, tripBucketId } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, TRIP_BUCKETS_DIR } from './lib/contract.ts';
 import { fetchJson, fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { clusterByDistance } from './lib/cluster.ts';
 import { readServiceDates } from './lib/calendar.ts';
 import { fanOutColocated, round6 } from './lib/geo.ts';
+import { buildTripBuckets } from './lib/trip-buckets.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
 import { readStops } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
@@ -448,7 +449,7 @@ async function main(): Promise<void> {
             };
         }));
     }
-    const tripBuckets = chunkBy(tripStops, tripBucketId);
+    const tripBuckets = buildTripBuckets(tripStops, windowsFile, tripRoutes);
     writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), tripBuckets);
     console.log(`Wrote ${tripBuckets.size} trip buckets for ${tripsData.size} trips`);
 
