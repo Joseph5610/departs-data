@@ -493,8 +493,9 @@ async function main(): Promise<void> {
                 return on / stops.length;
             };
 
+            // Lissy may number trips by any retained export, so the range spans the legacy ids too.
             let maxTripId = 0;
-            for (const tripId of activeTrips.keys()) {
+            for (const tripId of [...activeTrips.keys(), ...Object.keys(tripAliases)]) {
                 const numId = parseInt(tripId, 10);
                 if (!isNaN(numId) && numId > maxTripId) maxTripId = numId;
             }
@@ -502,29 +503,30 @@ async function main(): Promise<void> {
             for (let i = 0; i <= maxTripId; i += CONFIG.SHAPE_BATCH_SIZE) {
                 console.log(`Fetching shapes from offset ${i} to ${i + CONFIG.SHAPE_BATCH_SIZE}...`);
                 const res = await fetchShapes(shapeToken, i, i + CONFIG.SHAPE_BATCH_SIZE);
-                if (!Array.isArray(res) || res.length === 0) break;
+                if (!Array.isArray(res)) continue;
 
                 for (const item of res) {
                     const shapeIdStr = String(item.shape_id);
                     allShapes.set(shapeIdStr, item.shape as ShapeGeometry);
                     const lines = item.shape as [number, number][][];
                     // Lissy's trip ids come from its own GTFS copy, which may or may not lag this export,
-                    // and ids are recycled - so the raw and aliased readings are both tried against the geometry.
+                    // and ids are recycled - so every reading that fits the geometry takes it; same-route
+                    // trips fit equally, so picking one reading would starve the other.
                     for (const rawTripId of item.gtfs_trips) {
                         const raw = String(rawTripId);
                         const alias = tripAliases[raw];
-                        let bestTrip: string | null = null;
-                        let bestFit = 0;
+                        let matched = false;
                         for (const candidate of alias && alias !== raw ? [raw, alias] : [raw]) {
                             if (!activeTrips.has(candidate)) continue;
                             const fit = shapeFit(lines, candidate);
-                            if (fit > bestFit) { bestFit = fit; bestTrip = candidate; }
+                            if (fit < CONFIG.MIN_SHAPE_FIT) continue;
+                            matched = true;
+                            if (fit > (tripShapeFit.get(candidate) ?? 0)) {
+                                tripShapeFit.set(candidate, fit);
+                                tripShapes[candidate] = shapeIdStr;
+                            }
                         }
-                        if (!bestTrip || bestFit < CONFIG.MIN_SHAPE_FIT) { rejected++; continue; }
-                        if (bestFit > (tripShapeFit.get(bestTrip) ?? 0)) {
-                            tripShapeFit.set(bestTrip, bestFit);
-                            tripShapes[bestTrip] = shapeIdStr;
-                        }
+                        if (!matched) rejected++;
                     }
                 }
             }
