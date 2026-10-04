@@ -1,10 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, MAP_STOPS_FILE, RETIRED_OUTPUTS, SCHEDULE_DIR, type CoverageFile, type MapStopCollection, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
+import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, MAP_STOPS_FILE, RETIRED_OUTPUTS, SCHEDULE_DIR, STOP_INDEX_DIR, type CoverageFile, type MapStopCollection, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
 import { buildGtfsMapStops } from './map-stops.ts';
 import { writeStopSearch } from './stop-search.ts';
 import { buildScheduleFiles } from './schedule.ts';
+import { buildStopIndex } from './stop-index.ts';
 
 const REPO_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -19,13 +20,9 @@ export function writeJson(dir: string, name: string, data: unknown): number {
     return payload.length;
 }
 
-/**
- * A `feed_index/` lookup. Also written at the city root until every deployed departs-app reads `feed_index/`;
- * the root copy then joins `RETIRED_OUTPUTS`.
- */
+/** A `feed_index/` lookup. */
 export function writeFeedIndex(dir: string, name: string, data: unknown): number {
     fs.mkdirSync(path.join(dir, FEED_INDEX_DIR), { recursive: true });
-    writeJson(dir, name, data);
     return writeJson(path.join(dir, FEED_INDEX_DIR), name, data);
 }
 
@@ -131,10 +128,9 @@ export function writeCityFiles(dir: string, files: CityFiles): void {
     writeCoverage(dir, mapStops);
     writeStopSearch(dir, mapStops);
     writeJson(dir, 'parent_child_map.json', files.parentChildMap);
+    const largestStopShard = writeChunks(path.join(dir, STOP_INDEX_DIR), buildStopIndex(files.parentChildMap));
+    console.log(`Wrote ${STOP_INDEX_DIR}/, largest shard ${(largestStopShard / 1024).toFixed(1)}KB`);
     writeJson(dir, 'routes.json', files.routes instanceof Map ? Object.fromEntries(files.routes) : files.routes);
-    writeJson(dir, 'trip_routes.json', files.tripRoutes);
-    const bytes = writeJson(dir, 'trip_windows.json', files.tripWindows);
-    console.log(`Wrote trip_windows.json: ${Object.keys(files.tripWindows.trips).length} trips, ${(bytes / 1024).toFixed(0)}KB`);
     const schedule = buildScheduleFiles(files.tripWindows, files.tripRoutes);
     const largestSchedule = writeChunks(path.join(dir, SCHEDULE_DIR), schedule);
     console.log(`Wrote ${schedule.size} schedule files, largest ${(largestSchedule / 1024).toFixed(0)}KB`);

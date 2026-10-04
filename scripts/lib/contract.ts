@@ -6,7 +6,7 @@
  * files that do not exist, or read fields that are no longer there.
  */
 
-/** Mirrors GTFS_CONFIG in departs-app `functions/_adapters/gtfs/core/config.ts`. */
+/** Mirrors GTFS_CONFIG in departs-app `functions/_feeds/gtfs/config.ts`. */
 export const CHUNKING = {
     /** Files a stop's departures are hashed across (`departure_buckets/`); keeps each near 100KB. */
     DEPARTURE_BUCKET_COUNT: 1024,
@@ -18,6 +18,8 @@ export const CHUNKING = {
     TRIP_SHAPE_BUCKET_COUNT: 512,
     /** Files shape geometry is hashed across (`shape_buckets/`); read by the app. */
     SHAPE_BUCKET_COUNT: 1024,
+    /** Files each stop's station relation is hashed across (`stop_index/`); keeps each near 2KB. */
+    STOP_INDEX_SHARDS: 256,
 } as const;
 
 export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
@@ -26,7 +28,7 @@ export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
  * Outputs no reader uses any more, deleted from a city's directory on every build: the workflows seed
  * staging from the published data, so a file a build merely stops writing would be published forever.
  */
-export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json'] as const;
+export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json', 'trip_windows.json', 'trip_routes.json', 'trip_alias_runs.json', 'station_names.json', 'rail_stops.json'] as const;
 export const TRIP_BUCKETS_DIR = 'trip_buckets';
 export const CONNECTION_BUCKETS_DIR = 'connection_buckets';
 /** Mirrors departs-app `TRIP_SHAPES_CONFIG` in `src/config/constants.ts`. */
@@ -94,6 +96,11 @@ export function departuresBucketId(stopId: string, parentOf: ReadonlyMap<string,
 /** trip_buckets/<bucket>.json */
 export function tripBucketId(tripId: string): string {
     return bucketOf(tripId, CHUNKING.TRIP_BUCKET_COUNT);
+}
+
+/** stop_index/<shard>.json */
+export function stopIndexShardId(stopId: string): string {
+    return bucketOf(stopId, CHUNKING.STOP_INDEX_SHARDS);
 }
 
 /** connection_buckets/<bucket>.json */
@@ -322,6 +329,15 @@ export interface TripBucketFile {
  * fold onto the clock hour, as in `tracks/`.
  */
 export const SCHEDULE_DIR = 'schedule';
+
+/**
+ * `stop_index/<n>.json`: each stop's relation to its station, so a departures request reads the few stops it
+ * names instead of the whole `parent_child_map.json`. Every shard is written, empty ones too.
+ */
+export const STOP_INDEX_DIR = 'stop_index';
+/** `[station]` for a platform, `[null, ...platforms]` for a station. */
+export type StopRelation = [string] | [null, ...string[]];
+export type StopIndexFile = Record<string, StopRelation>;
 export const SCHEDULE_MATCH_WINDOW = { BEFORE_MINS: 240, AFTER_MINS: 240 } as const;
 
 /** `[start_mins, end_mins, dayFlags, routeIndex]`, plus `direction_id` where `TripWindow` carries one; `routeIndex` is -1 for a trip without a route. */

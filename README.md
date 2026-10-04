@@ -29,6 +29,7 @@ Every GTFS-stack city (Brno, Prešov, DÚK) publishes the same files through the
 - `schedule/<HH>.json`: the trips a vehicle may be matched to in that hour, with their routes (`buildScheduleFiles`).
 - `trip_buckets/<n>.json`: each trip's stops plus `$days` and `$trips` (window, day flags, route), and the days each onward connection runs (`buildTripBuckets`).
 - `departure_buckets/`, `routes.json`, `parent_child_map.json`, `map-stops.json`.
+- `stop_index/<n>.json`: each stop's station or platforms, so a departures request reads only the stops it names (`buildStopIndex`).
 - `feed_index/`: lookups a single network's realtime feed needs (Brno `trip_alias_runs.json`, DÚK `station_names.json`, `rail_stops.json`).
 
 ### 🇨🇿 Brno (IDS JMK)
