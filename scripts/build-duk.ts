@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import AdmZip from 'adm-zip';
-import type { DepartureRow, ParentChildMap, RailStop, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, RAIL_STOPS_FILE, STATION_NAMES_FILE, TRACKS_DIR, TRIP_BUCKETS_DIR } from './lib/contract.ts';
-import { downloadLargeZip, fetchJson, parseCSV } from './lib/feed.ts';
+import type { DepartureRow, ParentChildMap, RailCall, RailRun, RailTripsFile, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, RAIL_TRIP_BUCKETS, RAIL_TRIPS_DIR, STATION_NAMES_FILE, TRACKS_DIR, TRIP_BUCKETS_DIR } from './lib/contract.ts';
+import { downloadLargeZip, fetchJson, parseCSV, readTable } from './lib/feed.ts';
 import { czechHolidays, formatTime, getServiceDays, type ServiceDay } from './lib/time.ts';
 import { distanceM, fanOutColocated, localXY, round6, type Point } from './lib/geo.ts';
 import { buildTripBuckets } from './lib/trip-buckets.ts';
@@ -22,6 +22,9 @@ import {
  * (the ids the DÚK realtime feed reports), matched to JDF stops by name. Trip ids are
  * `<spoj>-<line>-<timetable>`, which departs-app `DukTripMatcher` parses to map a realtime
  * `CISLineID` + `RouteID` onto them.
+ *
+ * JDF has no trains, so their routes come from Spojenka's national GTFS (non-commercial use only),
+ * by train number, which is how the realtime feed reports a train.
  */
 const CONFIG = {
     CITY: 'duk',
@@ -29,13 +32,15 @@ const CONFIG = {
     /** Bus lines, and urban rail (trolleybuses, trams, funiculars) which CIS JŘ exports separately. */
     JDF_URLS: ['https://portal.cisjr.cz/pub/JDF/JDF.zip', 'https://portal.cisjr.cz/pub/draha/mestske/JDF.zip'],
     STATIONS_URL: 'https://tabule.portabo.cz/api/v1-tabule/cis/GetStations',
-    /** JrUtil's railway stops (SR70), the ids its realtime train routes are given in. */
-    RAIL_STOPS_URL: 'https://rt.jrutil.konarici.cz/api/stops?stopIdLike=-SR70ST-%25',
-    RAIL_STOP_PREFIX: '-SR70ST-',
-    /** JrUtil marks a halt, as opposed to a station, with a trailing " z" or " nz". */
-    RAIL_HALT_SUFFIX: / n?z$/,
-    /** A rail post this close to a railway stop is that stop's platform. */
+    /** Spojenka's merged national timetable; republished daily around 04:35 local time. */
+    RAIL_GTFS_URL: 'https://www.spojenka.cz/jrdata/jizdnirady-gtfs.zip',
+    RAIL_ROUTE_TYPE: '2',
+    /** Zone ids of DÚK tariff stops, as Spojenka prefixes them. */
+    RAIL_DUK_ZONE: /^U\d+$/,
+    /** A rail post this close to a station is that station's platform. */
     RAIL_PLATFORM_RADIUS_M: 300,
+    /** Otherwise the nearest platform of any kind this close is, so the station still opens a board. */
+    RAIL_NEAREST_PLATFORM_M: 150,
     DOWNLOAD_TIMEOUT_S: 600,
     DOWNLOAD_ATTEMPTS: 4,
     JDF_CACHE_MAX_AGE_MS: 12 * 3_600_000,
@@ -206,39 +211,141 @@ async function fetchNodes(): Promise<NodeIndex> {
     return { nodes, byName, bySuffix, byAltName, byAltSuffix, names };
 }
 
+interface PublishedPlatform extends Point { id: string; isRail: boolean }
+
+/** The published platform a train station opens: a rail post at it, else the nearest platform close by. */
+function stationPlatform(station: Point, platforms: readonly PublishedPlatform[]): string | undefined {
+    let rail: string | undefined;
+    let railDistance: number = CONFIG.RAIL_PLATFORM_RADIUS_M;
+    let nearest: string | undefined;
+    let nearestDistance: number = CONFIG.RAIL_NEAREST_PLATFORM_M;
+    for (const platform of platforms) {
+        if (Math.abs(platform.lat - station.lat) > 0.01 || Math.abs(platform.lon - station.lon) > 0.015) continue;
+        const d = distanceM(station, platform);
+        if (platform.isRail && d < railDistance) { railDistance = d; rail = platform.id; }
+        if (d < nearestDistance) { nearestDistance = d; nearest = platform.id; }
+    }
+    return rail ?? nearest;
+}
+
+/** Whether a GTFS service runs on `day`, from `calendar.txt` and its `calendar_dates.txt` exceptions. */
+type GtfsCalendar = Map<string, { weekdays: boolean[]; from: string; to: string }>;
+function serviceRuns(calendar: GtfsCalendar, exceptions: Map<string, Map<string, string>>, serviceId: string, day: ServiceDay): boolean {
+    const exception = exceptions.get(serviceId)?.get(day.str);
+    if (exception) return exception === '1';
+    const c = calendar.get(serviceId);
+    return Boolean(c && c.from <= day.str && day.str <= c.to && c.weekdays[day.weekday]);
+}
+
 /**
- * Railway stops for train routes, each tied to the published rail platform at it where there is one,
- * so the app can open that platform. A stop's position is its latest in JrUtil's validity history.
+ * Trains calling at a DÚK station or tariff stop on `days`, by train number. stop_times is too large
+ * to parse whole, so only the rows of the trains kept are; Spojenka puts trip_id first.
  */
-async function fetchRailStops(railPosts: { id: string; lat: number; lon: number }[]): Promise<Record<string, RailStop>> {
-    const res = await fetch(CONFIG.RAIL_STOPS_URL);
-    if (!res.ok) throw new Error(`Rail stops fetch failed: ${res.status}`);
-    const rows = parseCSV(Buffer.from(await res.arrayBuffer()));
+function buildRailTrips(zip: AdmZip, days: ServiceDay[], platforms: readonly PublishedPlatform[]): Map<string, RailTripsFile> {
+    const routeIds = new Set(readTable(zip, 'routes.txt', { required: ['route_id', 'route_type'] })
+        .filter(r => r.route_type === CONFIG.RAIL_ROUTE_TYPE).map(r => r.route_id));
 
-    const latest = new Map<string, { range: string; name: string; lat: number; lon: number }>();
-    for (const row of rows) {
-        const id = row.id, lat = Number(row.lat), lon = Number(row.lon);
-        if (!id?.startsWith(CONFIG.RAIL_STOP_PREFIX) || !row.name || !Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-        const range = row.validdaterange ?? '';
-        const known = latest.get(id);
-        if (!known || range > known.range) latest.set(id, { range, name: row.name.replace(CONFIG.RAIL_HALT_SUFFIX, ''), lat, lon });
+    const calendar: GtfsCalendar = new Map();
+    for (const r of readTable(zip, 'calendar.txt', { required: ['service_id', 'start_date', 'end_date', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] })) {
+        calendar.set(r.service_id, { from: r.start_date, to: r.end_date, weekdays: [r.sunday, r.monday, r.tuesday, r.wednesday, r.thursday, r.friday, r.saturday].map(v => v === '1') });
+    }
+    const exceptions = new Map<string, Map<string, string>>();
+    for (const r of readTable(zip, 'calendar_dates.txt', { required: ['service_id', 'date', 'exception_type'], fileOptional: true })) {
+        let byDate = exceptions.get(r.service_id);
+        if (!byDate) { byDate = new Map(); exceptions.set(r.service_id, byDate); }
+        byDate.set(r.date, r.exception_type);
     }
 
-    const [west, south, east, north] = CONFIG.POST_BOUNDS;
-    const stops: Record<string, RailStop> = {};
-    for (const [id, stop] of latest) {
-        let platform: string | undefined;
-        if (stop.lon >= west! && stop.lon <= east! && stop.lat >= south! && stop.lat <= north!) {
-            let nearest: number = CONFIG.RAIL_PLATFORM_RADIUS_M;
-            for (const post of railPosts) {
-                const d = distanceM(stop, post);
-                if (d < nearest) { nearest = d; platform = post.id; }
-            }
+    const trains = new Map<string, { numbers: string[]; flags: number }>();
+    for (const t of readTable(zip, 'trips.txt', { required: ['route_id', 'trip_id', 'service_id', 'trip_short_name'] })) {
+        if (!routeIds.has(t.route_id) || !t.trip_short_name) continue;
+        let flags = 0;
+        days.forEach((day, i) => { if (serviceRuns(calendar, exceptions, t.service_id, day)) flags |= 1 << i; });
+        if (flags) trains.set(t.trip_id, { numbers: t.trip_short_name.split('/'), flags });
+    }
+
+    const stopRows = readTable(zip, 'stops.txt', { required: ['stop_id', 'stop_name', 'stop_lat', 'stop_lon'], optional: ['parent_station', 'zone_id'] });
+    const stopById = new Map(stopRows.map(r => [r.stop_id, r]));
+    const stationOf = (stopId: string) => {
+        const stop = stopById.get(stopId);
+        return stop?.parent_station && stopById.has(stop.parent_station) ? stopById.get(stop.parent_station)! : stop;
+    };
+    const isDukStop = (stopId: string) => (stopById.get(stopId)?.zone_id ?? '').split(',').some(z => CONFIG.RAIL_DUK_ZONE.test(z));
+
+    const entry = zip.getEntry('stop_times.txt');
+    if (!entry) throw new Error('stop_times.txt missing from rail GTFS');
+    const data = entry.getData();
+    let pos = data.indexOf(0x0a) + 1;
+    const header = data.toString('utf8', 0, pos).replace(/^\uFEFF/, '').trim().split(',');
+    if (header[0] !== 'trip_id') throw new Error(`stop_times.txt must start with trip_id, found ${header.join(',')}`);
+    const col = (name: string) => {
+        const i = header.indexOf(name);
+        if (i < 0) throw new Error(`stop_times.txt is missing ${name}`);
+        return i;
+    };
+    const [stopCol, arrivalCol, departureCol, sequenceCol] = ['stop_id', 'arrival_time', 'departure_time', 'stop_sequence'].map(col) as [number, number, number, number];
+    const callsOf = new Map<string, string[][]>();
+    while (pos < data.length) {
+        let end = data.indexOf(0x0a, pos);
+        if (end < 0) end = data.length;
+        const comma = data.indexOf(0x2c, pos);
+        if (comma > pos && comma < end && trains.has(data.toString('utf8', pos, comma))) {
+            const line = data.toString('utf8', pos, end).trim();
+            const fields = line.includes('"') ? Object.values(parseCSV(Buffer.from(`${header.join(',')}\n${line}`))[0] ?? {}) : line.split(',');
+            let calls = callsOf.get(fields[0]!);
+            if (!calls) { calls = []; callsOf.set(fields[0]!, calls); }
+            calls.push(fields);
         }
-        const at: [string, number, number] = [stop.name, round6(stop.lat), round6(stop.lon)];
-        stops[id.slice(CONFIG.RAIL_STOP_PREFIX.length)] = platform ? [...at, platform] : at;
+        pos = end + 1;
     }
-    return stops;
+
+    const stationIds = new Map<string, string | undefined>();
+    const platformOf = (station: { stop_id: string; stop_lat: string; stop_lon: string }) => {
+        if (!stationIds.has(station.stop_id)) stationIds.set(station.stop_id, stationPlatform({ lat: Number(station.stop_lat), lon: Number(station.stop_lon) }, platforms));
+        return stationIds.get(station.stop_id);
+    };
+
+    const buckets = new Map<string, RailTripsFile>();
+    const stopIndexes = new Map<string, Map<string, number>>();
+    const runKeys = new Map<string, RailRun>();
+    for (const [tripId, { numbers, flags }] of trains) {
+        const rows = (callsOf.get(tripId) ?? []).sort((a, b) => Number(a[sequenceCol]) - Number(b[sequenceCol]));
+        const stations = rows.map(r => stationOf(r[stopCol]!));
+        if (rows.length < 2 || stations.some(s => !s)) continue;
+        if (!rows.some((r, i) => isDukStop(r[stopCol]!) || platformOf(stations[i]!))) continue;
+
+        for (const number of numbers) {
+            const bucketId = String(Number(number) % RAIL_TRIP_BUCKETS);
+            if (bucketId === 'NaN') continue;
+            let bucket = buckets.get(bucketId);
+            let indexes = stopIndexes.get(bucketId);
+            if (!bucket || !indexes) {
+                bucket = { $days: days.map(d => d.str), $stops: [], trains: {} };
+                indexes = new Map();
+                buckets.set(bucketId, bucket);
+                stopIndexes.set(bucketId, indexes);
+            }
+            const calls: RailCall[] = rows.map((r, i) => {
+                const station = stations[i]!;
+                let index = indexes!.get(station.stop_id);
+                if (index === undefined) {
+                    const platform = platformOf(station);
+                    const at: [string, number, number] = [station.stop_name, round6(Number(station.stop_lat)), round6(Number(station.stop_lon))];
+                    index = bucket!.$stops.push(platform ? [...at, platform] : at) - 1;
+                    indexes!.set(station.stop_id, index);
+                }
+                return [index, i === 0 ? '' : r[arrivalCol]!, i === rows.length - 1 ? '' : r[departureCol]!];
+            });
+            // A train's sections and calendar variants are separate trips; identical runs share one entry.
+            const key = `${number}|${JSON.stringify(calls)}`;
+            const known = runKeys.get(key);
+            if (known) { known[0] |= flags; continue; }
+            const run: RailRun = [flags, calls];
+            runKeys.set(key, run);
+            (bucket.trains[number] ??= []).push(run);
+        }
+    }
+    return buckets;
 }
 
 interface JdfStop { name: string; district: string }
@@ -768,7 +875,7 @@ async function main(): Promise<void> {
     }
 
     const features: StopFeature[] = [];
-    const railPosts: { id: string; lat: number; lon: number }[] = [];
+    const publishedPlatforms: PublishedPlatform[] = [];
     const parentChildMap: ParentChildMap = {};
     for (const node of servedNodes.values()) {
         const parentId = `${CONFIG.STATION_PREFIX}${node.id}`;
@@ -789,7 +896,7 @@ async function main(): Promise<void> {
             });
             parentChildMap[parentId]!.push(id);
             const post = Number(platform.post);
-            if (post >= CONFIG.FIRST_UNNUMBERED_POST && post < CONFIG.FERRY_POST_START) railPosts.push({ id, lat: platform.lat, lon: platform.lon });
+            publishedPlatforms.push({ id, lat: platform.lat, lon: platform.lon, isRail: post >= CONFIG.FIRST_UNNUMBERED_POST && post < CONFIG.FERRY_POST_START });
         }
     }
 
@@ -800,13 +907,20 @@ async function main(): Promise<void> {
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
     writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
     writeFeedIndex(DATA_DIR, STATION_NAMES_FILE, index.names);
-    // A third-party source: when it is down the file already published stays.
+    // A third-party source: when it is down the trains already published stay.
     try {
-        const railStops = await fetchRailStops(railPosts);
-        writeFeedIndex(DATA_DIR, RAIL_STOPS_FILE, railStops);
-        console.log(`Wrote ${Object.keys(railStops).length} railway stops`);
+        const railZip = downloadLargeZip(CONFIG.RAIL_GTFS_URL, 'spojenka-gtfs', {
+            timeoutS: CONFIG.DOWNLOAD_TIMEOUT_S,
+            attempts: CONFIG.DOWNLOAD_ATTEMPTS,
+            cacheDir: process.env.JDF_CACHE_DIR,
+            cacheMaxAgeMs: CONFIG.JDF_CACHE_MAX_AGE_MS,
+        });
+        const railTrips = buildRailTrips(railZip, days, publishedPlatforms);
+        const largest = writeChunks(path.join(DATA_DIR, RAIL_TRIPS_DIR), railTrips);
+        const trainCount = [...railTrips.values()].reduce((n, b) => n + Object.keys(b.trains).length, 0);
+        console.log(`Wrote ${trainCount} trains in ${railTrips.size} rail buckets, largest ${(largest / 1024).toFixed(0)}KB`);
     } catch (err) {
-        console.warn('Railway stops unavailable, keeping the published ones:', err);
+        console.warn('Rail timetable unavailable, keeping the published trains:', err);
     }
     console.log(`Wrote ${servedNodes.size} stations and ${Object.keys(routes).length} routes`);
 

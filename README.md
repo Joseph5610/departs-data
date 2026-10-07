@@ -30,7 +30,8 @@ Every GTFS-stack city (Brno, Prešov, DÚK) publishes the same files through the
 - `trip_buckets/<n>.json`: each trip's stops plus `$days` and `$trips` (window, day flags, route), and the days each onward connection runs (`buildTripBuckets`).
 - `departure_buckets/`, `routes.json`, `parent_child_map.json`, `map-stops.json`.
 - `stop_index/<n>.json`: each stop's station or platforms, so a departures request reads only the stops it names (`buildStopIndex`).
-- `feed_index/`: lookups a single network's realtime feed needs (Brno `trip_alias_runs.json`, DÚK `station_names.json`, `rail_stops.json`).
+- `feed_index/`: lookups a single network's realtime feed needs (Brno `trip_alias_runs.json`, DÚK `station_names.json`).
+- `rail_trips/<n>.json` (DÚK): trains by train number, with their stations and the Portabo platform each opens.
 
 ### 🇨🇿 Brno (IDS JMK)
 *Script:* `scripts/build-brno.ts` | *Action:* `update-brno.yml` (Runs every 8 hours)
@@ -103,7 +104,7 @@ npm run build:prague
 
 **Scripts** (`/scripts`, workflows): MIT License, see [LICENSE](LICENSE).
 
-**Data** (`/brno`, `/duk`, `/prague`, `/presov`, served at `https://data.departs.app`): adapted from the sources below and published under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), except the Lissy route shapes (see below). When you reuse it, credit the original sources as listed and departs.app as the adapter, and state your own changes. The data are provided as is, without warranty; their providers do not endorse departs.app or this repository.
+**Data** (`/brno`, `/duk`, `/prague`, `/presov`, served at `https://data.departs.app`): adapted from the sources below and published under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), except the Lissy route shapes and the DÚK train timetables (see below). When you reuse it, credit the original sources as listed and departs.app as the adapter, and state your own changes. The data are provided as is, without warranty; their providers do not endorse departs.app or this repository.
 
 | Output | Source (credit) | Licence | Changes made here |
 | --- | --- | --- | --- |
@@ -113,6 +114,6 @@ npm run build:prague
 | `/presov` | [GTFS – MHD Prešov](https://www.arcgis.com/home/item.html?id=f1033ca6c2f4461d9aba285e1c7cb079) (Dopravný podnik mesta Prešov, a.s.) | CC BY 4.0 | Monthly id prefixes stripped, parent stations synthesised, request stops and line colours added, three-day window chunked to JSON. |
 | `/duk` | [Jízdní řády veřejné linkové dopravy (CIS JŘ, JDF)](https://data.gov.cz/datová-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatové-sady%2F66003008%2F1463646434) (Ministerstvo dopravy ČR) | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) (CC0 equivalent) | Filtered to the kraj's lines, calendars evaluated, stop names matched to Portabo nodes, trips placed on platforms, lines named and coloured; operator and other personal data are not carried over. |
 | `/duk` | [Ústecký kraj open data (Portabo)](https://lkod.portabo.cz/datasets): stops (`cis/GetStations`) | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) | One station per node and one platform per post; platforms on the same point fanned out on the map. |
-| `/duk` | [JrUtil RtView](https://rt.jrutil.konarici.cz/api.html): railway stops (`/api/stops`) | No copyright or database-right restrictions on use, as its API page states | Latest position per SR70 stop, halt suffix dropped, tied to the Portabo rail platform at it (`feed_index/rail_stops.json`). |
+| `/duk` | [Spojenka – Data jízdních řádů](https://www.spojenka.cz/jrdata) (GTFS) | Free for non-commercial use only, without warranty, as its publisher states; not covered by this repository's CC BY 4.0 | Trains calling in the kraj on three days, keyed by train number, stations tied to the nearest Portabo platform (`rail_trips/`). |
 
 The CC BY 4.0 sources require attribution and an indication of changes; the Czech open-data sources require neither, but are credited all the same. departs.app shows the same credits in its Settings, next to the realtime feeds it reads directly.

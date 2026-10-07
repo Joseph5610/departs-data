@@ -89,7 +89,7 @@ export function downloadLargeZip(url: string, name: string, opts: LargeZipOption
         for (let attempt = 1; ; attempt++) {
             try {
                 // `-C -` resumes what a timed-out attempt got.
-                execFileSync('curl', ['-sSf', '-C', '-', '--max-time', String(opts.timeoutS), '-o', target, url], { stdio: 'inherit' });
+                execFileSync('curl', ['-sSfL', '-C', '-', '--max-time', String(opts.timeoutS), '-o', target, url], { stdio: 'inherit' });
                 break;
             } catch (err) {
                 if (attempt >= opts.attempts) throw err;

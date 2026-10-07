@@ -28,7 +28,7 @@ export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
  * Outputs no reader uses any more, deleted from a city's directory on every build: the workflows seed
  * staging from the published data, so a file a build merely stops writing would be published forever.
  */
-export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json', 'trip_windows.json', 'trip_routes.json', 'trip_alias_runs.json', 'station_names.json', 'rail_stops.json'] as const;
+export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json', 'trip_windows.json', 'trip_routes.json', 'trip_alias_runs.json', 'station_names.json', 'rail_stops.json', 'feed_index/rail_stops.json'] as const;
 export const TRIP_BUCKETS_DIR = 'trip_buckets';
 export const CONNECTION_BUCKETS_DIR = 'connection_buckets';
 /** Mirrors departs-app `TRIP_SHAPES_CONFIG` in `src/config/constants.ts`. */
@@ -293,7 +293,7 @@ export type LiveContinuationRow = [string, string, string, string, string];
 
 /**
  * `feed_index/`: lookups from one network's realtime feed identifiers to the timetable, read only by
- * that network's vehicle mapping: Brno's `trip_alias_runs.json`, DÚK's `station_names.json` and `rail_stops.json`.
+ * that network's vehicle mapping: Brno's `trip_alias_runs.json`, DÚK's `station_names.json`.
  */
 export const FEED_INDEX_DIR = 'feed_index';
 
@@ -304,11 +304,24 @@ export const TRIP_ALIAS_RUNS_FILE = 'trip_alias_runs.json';
 export const STATION_NAMES_FILE = 'station_names.json';
 
 /**
- * Railway stops by SR70 number, for trains whose route comes from a realtime source rather than the
- * timetable: `[name, lat, lon]`, plus the network's own platform id where one lies at the station.
+ * `rail_trips/<n>.json`: DÚK trains by train number, for the vehicles the feed reports with a train
+ * number instead of a timetable trip. Bucketed by `Number(train) % RAIL_TRIP_BUCKETS`. Mirrors
+ * departs-app `functions/_feeds/duk/railTrips.ts`.
  */
-export const RAIL_STOPS_FILE = 'rail_stops.json';
+export const RAIL_TRIPS_DIR = 'rail_trips';
+export const RAIL_TRIP_BUCKETS = 32;
+/** `[name, lat, lon]`, plus the network's platform id where one lies at the station. */
 export type RailStop = [string, number, number] | [string, number, number, string];
+/** `[stop index into $stops, arrival, departure]`; service-day `HH:MM:SS` that pass 24:00:00 after midnight, empty at the run's ends. */
+export type RailCall = [number, string, string];
+/** `[dayFlags over $days, calls]` */
+export type RailRun = [number, RailCall[]];
+export interface RailTripsFile {
+    /** YYYYMMDD service days the `dayFlags` bitmasks refer to. */
+    $days: string[];
+    $stops: RailStop[];
+    trains: Record<string, RailRun[]>;
+}
 
 /**
  * One `trip_buckets/` file: each trip's stops by trip id, plus `$days` and `$trips`, so a detail needs
