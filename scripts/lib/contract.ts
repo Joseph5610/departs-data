@@ -372,7 +372,7 @@ export interface ScheduleFile {
 export const STOP_TIMES_DIR = 'stop_times';
 
 /** A trip is in an hour's slice when it runs in it, starts up to `EARLY_MINS` after it, or ended up to `LATE_MINS` before it. */
-export const STOP_TIMES_WINDOW = { EARLY_MINS: 30, LATE_MINS: 30 } as const;
+export const STOP_TIMES_WINDOW = { EARLY_MINS: 30, LATE_MINS: 90 } as const;
 
 export interface StopTimeSliceFile {
     /** Stop ids, referenced by index. */
