@@ -364,6 +364,25 @@ export interface ScheduleFile {
     trips: Record<string, ScheduleTrip>;
 }
 
+/**
+ * `stop_times/<HH>.json`: the timetable of every trip a vehicle may be running in that hour, for departs-app to
+ * estimate delays the realtime feed does not report (`useStopTimeSlice`, `StopTimeSlice` in its
+ * `src/types/vehicles.ts`). Hours past midnight fold onto the clock hour.
+ */
+export const STOP_TIMES_DIR = 'stop_times';
+
+/** A trip is in an hour's slice when it runs in it, starts up to `EARLY_MINS` after it, or ended up to `LATE_MINS` before it. */
+export const STOP_TIMES_WINDOW = { EARLY_MINS: 30, LATE_MINS: 30 } as const;
+
+export interface StopTimeSliceFile {
+    /** Stop ids, referenced by index. */
+    stops: string[];
+    /** `[lon, lat]` of each stop in `stops`. */
+    coords: [number, number][];
+    /** Repeats `[stopIndex, arrMin, dwellMin]` per call; `arrMin` is service-day minutes for the first call and minutes since the previous departure after it. */
+    trips: Record<string, number[]>;
+}
+
 /** `tracks/<HH>.json`: where each trip running in that hour should be, for matching vehicles by schedule. */
 export const TRACKS_DIR = 'tracks';
 

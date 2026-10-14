@@ -3,13 +3,14 @@ import path from 'node:path';
 import https from 'node:https';
 import type AdmZip from 'adm-zip';
 import type { DepartureRow, FeederRow, ParentChildMap, RouteInfo, ShapeGeometry, StopFeature, TripConnection, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, toTripRuns, TRIP_ALIAS_RUNS_FILE, TRIP_BUCKETS_DIR } from './lib/contract.ts';
+import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, STOP_TIMES_DIR, toTripRuns, TRIP_ALIAS_RUNS_FILE, TRIP_BUCKETS_DIR } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToMinutes, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { distanceToLinesM, fanOutColocated } from './lib/geo.ts';
 import { readServiceDates } from './lib/calendar.ts';
 import { readHeldConnections, tripStopKey } from './lib/connections.ts';
 import { buildTripBuckets } from './lib/trip-buckets.ts';
+import { buildStopTimeSlices } from './lib/stop-times.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
 import { readStops } from './lib/stops.ts';
 import { writeShapeBuckets } from './lib/shapes.ts';
@@ -470,6 +471,11 @@ async function main(): Promise<void> {
     const tripBuckets = buildTripBuckets(tripStops, windowsFile, tripRoutes);
     writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), tripBuckets);
     console.log(`Wrote ${tripBuckets.size} trip buckets for ${tripsData.size} trips`);
+
+    // The realtime feed reports no delay; the app estimates it from these and the vehicle positions.
+    const stopTimeSlices = buildStopTimeSlices(tripStops, windowsFile);
+    const largestSlice = writeChunks(path.join(DATA_DIR, STOP_TIMES_DIR), stopTimeSlices);
+    console.log(`Wrote ${stopTimeSlices.size} stop time slices, largest ${(largestSlice / 1024).toFixed(0)}KB`);
 
     // --- SHAPES: the feed ships none, so geometry comes from the Lissy API ---
     const shapeToken = process.env.LISSY_API_TOKEN;
