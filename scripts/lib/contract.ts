@@ -28,7 +28,7 @@ export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
  * Outputs no reader uses any more, deleted from a city's directory on every build: the workflows seed
  * staging from the published data, so a file a build merely stops writing would be published forever.
  */
-export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json', 'trip_windows.json', 'trip_routes.json', 'trip_alias_runs.json', 'station_names.json', 'rail_stops.json', 'feed_index/rail_stops.json'] as const;
+export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json', 'trip_windows.json', 'trip_routes.json', 'trip_alias_runs.json', 'station_names.json', 'rail_stops.json', 'feed_index/rail_stops.json'] as const;
 export const TRIP_BUCKETS_DIR = 'trip_buckets';
 export const CONNECTION_BUCKETS_DIR = 'connection_buckets';
 /** Mirrors departs-app `TRIP_SHAPES_CONFIG` in `src/config/constants.ts`. */
@@ -201,6 +201,10 @@ export interface StopFeature {
         zone_id: string | null;
         is_drop_off_only?: true | undefined;
         lines: RouteInfo[];
+        /** Further ids the network uses for this same platform (PID). */
+        aliases?: string[] | undefined;
+        /** PID `stop_icons` codes of the modes a rider can change to here. */
+        interchanges?: string[] | undefined;
     };
 }
 
@@ -238,6 +242,54 @@ export interface MapStopCollection {
 }
 
 export const MAP_STOPS_FILE = 'map-stops.json';
+
+/** `<city>/stops.json`: every city's stations, platforms and entrances in one shape (see `StopsFile`). */
+export const STOPS_FILE = 'stops.json';
+export const STOPS_FILE_VERSION = 1;
+
+/** `[lon, lat]`, rounded to 5 decimals. */
+export type Position = [number, number];
+
+export interface Station {
+    /** The station's id in map-stops.json, so links and favorites keep resolving. */
+    id: string;
+    name: string;
+    pos: Position;
+}
+
+export interface Platform {
+    id: string;
+    /** Further stop ids the network uses for this same platform (PID `U1000Z1P` beside `U1000Z1`). */
+    aliases?: string[];
+    station: string;
+    pos: Position;
+    code?: string;
+    /** For a platform without a code: the stop most of its trips call at next. */
+    direction?: string;
+    /** Fare zones; a pole on a zone boundary belongs to several. */
+    zones?: string[];
+    /** Keys into the city's `routes.json` of the routes riders can board here. */
+    routes: string[];
+    /** No route picks up here. */
+    alightOnly?: true;
+    /** PID `stop_icons` codes of the modes a rider can change to here (`Ma`, `Ra`, `Ap`, ...). */
+    interchanges?: string[];
+}
+
+export interface Entrance {
+    id: string;
+    station: string;
+    name: string;
+    pos: Position;
+}
+
+/** The one relation is `Platform.station` / `Entrance.station`; a station's platforms and lines are derived from it. */
+export interface StopsFile {
+    version: typeof STOPS_FILE_VERSION;
+    stations: Station[];
+    platforms: Platform[];
+    entrances: Entrance[];
+}
 
 /**
  * `<city>/coverage.json`: where the network has stops, as stop counts per grid cell keyed

@@ -1,4 +1,4 @@
-import type { MapStopCollection, MapStopFeature, MapStopProperties } from './contract.ts';
+import type { MapStopCollection, MapStopFeature, MapStopProperties, StopFeature } from './contract.ts';
 import { getVehicleColor } from './pid-colors.ts';
 
 /** One PID GTFS `stops.txt` row as a point feature, as far as the build reads it. */
@@ -32,8 +32,10 @@ export function buildPragueMapStops(
     rawStops: readonly GtfsStopFeature[],
     enrichmentMap: Readonly<Record<string, PidEnrichment>>,
     interchanges: ReadonlyMap<string, ReadonlySet<string>>
-): MapStopCollection {
-    return { type: 'FeatureCollection', features: processStops(enrichStops(rawStops, enrichmentMap, interchanges)) };
+): { mapStops: MapStopCollection; stationOf: Map<string, string> } {
+    const stationOf = new Map<string, string>();
+    const features = processStops(enrichStops(rawStops, enrichmentMap, interchanges), stationOf);
+    return { mapStops: { type: 'FeatureCollection', features }, stationOf };
 }
 
 /** PID's documented `stop_icons` order: metro, rail, funicular, ferry, airport, tram, trolleybus, bus. */
@@ -120,11 +122,14 @@ function buildStructuralHierarchy(allStops: MapStopFeature[]): HierarchyContext 
 interface EnrichmentContext {
     groups: Map<string, MapStopFeature>;
     nameGroups: Map<string, MapStopFeature[]>;
+    /** A station feature's published id (its platforms' ids, comma-joined) -> its GTFS station id. */
+    stationFeatureIds: Map<string, string>;
 }
 
 function enrichPublicStops(ctx: HierarchyContext): EnrichmentContext {
     const groups = new Map<string, MapStopFeature>();
     const nameGroups = new Map<string, MapStopFeature[]>();
+    const stationFeatureIds = new Map<string, string>();
 
     for (const f of ctx.publicStops) {
         const p = f.properties;
@@ -229,6 +234,7 @@ function enrichPublicStops(ctx: HierarchyContext): EnrichmentContext {
                     stop_id: childrenList.length > 0 ? childrenList.join(',') : stopId
                 }
             });
+            stationFeatureIds.set(childrenList.length > 0 ? childrenList.join(',') : stopId, stopId);
             continue;
         }
 
@@ -251,10 +257,10 @@ function enrichPublicStops(ctx: HierarchyContext): EnrichmentContext {
         }
     }
 
-    return { groups, nameGroups };
+    return { groups, nameGroups, stationFeatureIds };
 }
 
-function generateVirtualCentroids(ctx: EnrichmentContext): MapStopFeature[] {
+function generateVirtualCentroids(ctx: EnrichmentContext, stationOf: Map<string, string>): MapStopFeature[] {
     const features: MapStopFeature[] = [];
 
     for (const f of ctx.groups.values()) {
@@ -282,6 +288,7 @@ function generateVirtualCentroids(ctx: EnrichmentContext): MapStopFeature[] {
         
         const allMetroNames = Array.from(aggMetroSet).sort();
         const centroidId = `centroid-${baseFeature.properties.stop_id}`;
+        for (const f of groupFeatures) stationOf.set(f.properties.stop_id, centroidId);
 
         features.push({
             type: "Feature", id: centroidId,
@@ -297,6 +304,10 @@ function generateVirtualCentroids(ctx: EnrichmentContext): MapStopFeature[] {
         });
     }
 
+    for (const [published, stationId] of ctx.stationFeatureIds) {
+        const centroid = stationOf.get(stationId);
+        if (centroid) stationOf.set(published, centroid);
+    }
     return features;
 }
 
@@ -314,10 +325,55 @@ function generateVirtualCentroids(ctx: EnrichmentContext): MapStopFeature[] {
  * 3. Centroid generation (creating virtual `is_centroid` nodes for UI map labels).
  *
  * @param allStops Raw GTFS stop features
+ * @param stationOf Filled with each grouped stop's centroid id
  * @returns Grouped, enriched, and centroid-injected features
  */
-function processStops(allStops: MapStopFeature[]): MapStopFeature[] {
+function processStops(allStops: MapStopFeature[], stationOf: Map<string, string>): MapStopFeature[] {
     const hierarchyCtx = buildStructuralHierarchy(allStops);
     const enrichmentCtx = enrichPublicStops(hierarchyCtx);
-    return generateVirtualCentroids(enrichmentCtx);
+    return generateVirtualCentroids(enrichmentCtx, stationOf);
+}
+
+
+/**
+ * The stations and platforms of `buildPragueMapStops` as the shared `StopFeature`s every city's stops file
+ * is built from: centroids are the stations, and each platform (a merged id list split into id and
+ * aliases) and entrance names its centroid. `routeIdsOf` holds each GTFS stop's `routes.json` ids.
+ */
+export function pidStopFeatures(
+    mapStops: MapStopCollection,
+    stationOf: ReadonlyMap<string, string>,
+    routeIdsOf: ReadonlyMap<string, readonly string[]>,
+): { features: StopFeature[]; stopRoutes: Map<string, string[]> } {
+    const features: StopFeature[] = [];
+    const stopRoutes = new Map<string, string[]>();
+    for (const { geometry, properties: p } of mapStops.features) {
+        const base = { stop_name: p.stop_name, platform_code: p.platform_code ?? null, zone_id: p.zone_id, lines: [] };
+        if (p.is_centroid) {
+            features.push({ type: 'Feature', geometry, properties: { ...base, stop_id: p.stop_id, platform_code: null, location_type: 1, parent_station: null } });
+            continue;
+        }
+        if (p.location_type === 2) {
+            const station = p.parent_station ? stationOf.get(p.parent_station) ?? null : null;
+            features.push({ type: 'Feature', geometry, properties: { ...base, stop_id: p.stop_id, location_type: 2, parent_station: station } });
+            continue;
+        }
+        const [id, ...aliases] = p.stop_id.split(',') as [string, ...string[]];
+        // A merged platform shows its first member's lines; a station feature the union of its platforms'.
+        const members = p.location_type === 1 ? [id, ...aliases] : [id];
+        stopRoutes.set(id, members.flatMap(m => routeIdsOf.get(m) ?? []));
+        features.push({
+            type: 'Feature',
+            geometry,
+            properties: {
+                ...base,
+                stop_id: id,
+                location_type: 0,
+                parent_station: stationOf.get(p.stop_id) ?? stationOf.get(id) ?? null,
+                aliases: aliases.length ? aliases : undefined,
+                interchanges: p.interchanges,
+            },
+        });
+    }
+    return { features, stopRoutes };
 }

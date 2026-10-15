@@ -391,7 +391,7 @@ async function main(): Promise<void> {
     safetyCheck(departuresByStop.size, tripsData.size, CONFIG.MIN_DEPARTURE_STOPS, CONFIG.MIN_ACTIVE_TRIPS);
 
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
-    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
+    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: tripsData.values() });
     console.log(`Wrote ${features.length} stops`);
 
     const tripAliases = generateAliases(DATA_DIR, courseOf, activeTrips, days[0]!.str);

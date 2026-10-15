@@ -1,12 +1,13 @@
 import fs from 'node:fs';
 import type AdmZip from 'adm-zip';
 import path from 'node:path';
-import { outputDir, removeRetired, writeCoverage, writeJson } from './lib/emit.ts';
+import { outputDir, removeRetired, writeCoverage, writeJson, writeStopsFile } from './lib/emit.ts';
 import { MAP_STOPS_FILE, type RouteInfo } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { readStops } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
-import { buildPragueMapStops, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
+import { buildPragueMapStops, pidStopFeatures, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
+import { gtfsStopsFile } from './lib/stops-file.ts';
 import { writeStopSearch } from './lib/stop-search.ts';
 import { writePragueConnections } from './lib/prague-connections.ts';
 
@@ -37,7 +38,7 @@ const CONFIG = {
     DEFAULT_ROUTE_COLOR: '#888888',
 } as const;
 
-interface PidLine { name: string; type: string; exitOnly?: boolean }
+interface PidLine { id: number; name: string; type: string; exitOnly?: boolean }
 interface PidStop { gtfsIds?: string[]; lines?: PidLine[]; mainTrafficType?: string }
 interface PidGroup { stops?: PidStop[]; fullName?: string; name?: string; mainTrafficType?: string; avgLat?: number; avgLon?: number }
 
@@ -57,9 +58,12 @@ async function main(): Promise<void> {
     console.log(`[SYNC] Received ${data.stopGroups?.length ?? 0} stop groups.`);
 
     const enrichmentMap: Record<string, PidEnrichment & Record<string, unknown>> = {};
+    const routeIdsOf = new Map<string, string[]>();
     for (const g of data.stopGroups ?? []) {
         for (const s of g.stops ?? []) {
             for (const id of s.gtfsIds ?? []) {
+                // PID line ids are the PID GTFS route ids `routes.json` is keyed by, without their `L`.
+                routeIdsOf.set(id, (s.lines ?? []).map(l => `L${l.id}`));
                 enrichmentMap[id] = {
                     l: (s.lines ?? []).map(l => ({ n: l.name, t: l.type, e: l.exitOnly ? 1 : 0 })),
                     n: g.fullName || g.name,
@@ -81,14 +85,16 @@ async function main(): Promise<void> {
     removeRetired(dataDir);
 
     const zip = await fetchZip(CONFIG.GTFS_URL, 'GTFS_ZIP');
-    writePragueRoutes(zip, dataDir);
+    const routes = writePragueRoutes(zip, dataDir);
 
     const gtfsStops = readGtfsStops(zip);
-    const mapStops = buildPragueMapStops(gtfsStops, enrichmentMap, readStopInterchanges(zip));
+    const { mapStops, stationOf } = buildPragueMapStops(gtfsStops, enrichmentMap, readStopInterchanges(zip));
     writeJson(dataDir, MAP_STOPS_FILE, mapStops);
     writeCoverage(dataDir, mapStops);
     writeStopSearch(dataDir, mapStops);
     console.log(`[SYNC] SUCCESS: Saved ${mapStops.features.length} map stops to ${path.join(dataDir, MAP_STOPS_FILE)}`);
+    const { features, stopRoutes } = pidStopFeatures(mapStops, stationOf, routeIdsOf);
+    writeStopsFile(dataDir, gtfsStopsFile(features, stopRoutes, new Map(), routes), routes);
 
     writePragueShapes(zip, dataDir);
     writePragueConnections(zip, dataDir);
@@ -157,7 +163,7 @@ function isNightRoute(name: string): boolean {
  * populated) for everything except substitute/night lines, which need the same override the Worker's
  * heuristic already applied.
  */
-function writePragueRoutes(zip: AdmZip, dataDir: string): void {
+function writePragueRoutes(zip: AdmZip, dataDir: string): Record<string, RouteInfo> {
     const routes: Record<string, RouteInfo> = {};
     for (const r of readTable(zip, 'routes.txt', ROUTES_TABLE)) {
         const isSubstitute = r.is_substitute_transport === '1' || r.route_short_name.toUpperCase().startsWith('X');
@@ -176,6 +182,7 @@ function writePragueRoutes(zip: AdmZip, dataDir: string): void {
     }
     writeJson(dataDir, 'routes.json', routes);
     console.log(`[SYNC] SUCCESS: Saved ${count} routes to ${path.join(dataDir, 'routes.json')}`);
+    return routes;
 }
 
 const STOP_ICONS_TABLE = { required: ['stop_id'], optional: ['stop_icons'] } as const;

@@ -363,7 +363,7 @@ async function main(): Promise<void> {
     }
 
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
-    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
+    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: tripsData.values() });
     console.log(`Wrote ${stations.length} stations over ${platforms.length} platforms`);
 
     // --- CONTINUATIONS: the feed has no block_id, so match the named line leaving the same stop ---

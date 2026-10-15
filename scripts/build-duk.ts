@@ -877,6 +877,8 @@ async function main(): Promise<void> {
     const features: StopFeature[] = [];
     const publishedPlatforms: PublishedPlatform[] = [];
     const parentChildMap: ParentChildMap = {};
+    /** Every platform of a node serves the node's routes: JDF places trips at a node, not a post. */
+    const platformRoutes = new Map<string, Set<string>>();
     for (const node of servedNodes.values()) {
         const parentId = `${CONFIG.STATION_PREFIX}${node.id}`;
         features.push({
@@ -895,6 +897,7 @@ async function main(): Promise<void> {
                 properties: { stop_id: id, stop_name: node.name, platform_code: platformCode, location_type: 0, parent_station: parentId, zone_id: node.zone_id, is_drop_off_only: lines.length === 0 || undefined, lines },
             });
             parentChildMap[parentId]!.push(id);
+            platformRoutes.set(id, stopRoutes.get(node.id) ?? new Set());
             const post = Number(platform.post);
             publishedPlatforms.push({ id, lat: platform.lat, lon: platform.lon, isRail: post >= CONFIG.FIRST_UNNUMBERED_POST && post < CONFIG.FERRY_POST_START });
         }
@@ -905,7 +908,7 @@ async function main(): Promise<void> {
 
     // JDF has no geometry; the app draws the route stop to stop.
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
-    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile });
+    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, stopRoutes: platformRoutes, tripCalls: tripStops.values() });
     writeFeedIndex(DATA_DIR, STATION_NAMES_FILE, index.names);
     // A third-party source: when it is down the trains already published stay.
     try {

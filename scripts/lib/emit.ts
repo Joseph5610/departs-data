@@ -1,11 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, MAP_STOPS_FILE, RETIRED_OUTPUTS, SCHEDULE_DIR, STOP_INDEX_DIR, type CoverageFile, type MapStopCollection, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
+import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, MAP_STOPS_FILE, RETIRED_OUTPUTS, SCHEDULE_DIR, STOP_INDEX_DIR, STOPS_FILE, type CoverageFile, type StopsFile, type MapStopCollection, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
 import { buildGtfsMapStops } from './map-stops.ts';
 import { writeStopSearch } from './stop-search.ts';
 import { buildScheduleFiles } from './schedule.ts';
 import { buildStopIndex } from './stop-index.ts';
+import { platformDirections } from './directions.ts';
+import { gtfsStopsFile, routeOf, validateStopsFile, type RouteLookup } from './stops-file.ts';
 
 const REPO_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -64,14 +66,10 @@ export function writeChunks(dir: string, chunks: Map<string, unknown>, prune: 'a
 }
 
 /** The distinct routes serving a stop, deduplicated by name and sorted as the UI lists them. */
-export type RouteLookup = ReadonlyMap<string, RouteInfo> | Record<string, RouteInfo>;
-
 export function linesOf(routeIds: Iterable<string> | undefined, routes: RouteLookup): RouteInfo[] {
-    const lookup = (id: string): RouteInfo | undefined =>
-        routes instanceof Map ? routes.get(id) : (routes as Record<string, RouteInfo>)[id];
     const seen = new Map<string, RouteInfo>();
     for (const id of routeIds ?? []) {
-        const route = lookup(id);
+        const route = routeOf(routes, id);
         if (route && !seen.has(route.name)) seen.set(route.name, route);
     }
     return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
@@ -95,6 +93,17 @@ export interface CityFiles {
     routes: RouteLookup;
     tripRoutes: Record<string, string>;
     tripWindows: TripWindowsFile;
+    /** Each platform's boardable route ids. */
+    stopRoutes: ReadonlyMap<string, Iterable<string>>;
+    /** Each active trip's calls in stop order, from which platforms without a code get their direction. */
+    tripCalls: Iterable<readonly { stop_id: string }[]>;
+}
+
+/** Validates and writes `stops.json`. */
+export function writeStopsFile(dir: string, file: StopsFile, routes: RouteLookup): void {
+    validateStopsFile(file, routes);
+    const bytes = writeJson(dir, STOPS_FILE, file);
+    console.log(`Wrote ${STOPS_FILE}: ${file.stations.length} stations, ${file.platforms.length} platforms, ${file.entrances.length} entrances, ${(bytes / 1024).toFixed(0)}KB`);
 }
 
 /** Writes the grid of where the network has stops; station centroids are left out so a station counts once per platform. */
@@ -125,6 +134,8 @@ export function writeCityFiles(dir: string, files: CityFiles): void {
         throw new Error(`No station centroids in ${MAP_STOPS_FILE}. Aborting before publishing stops the app cannot group.`);
     }
     writeJson(dir, MAP_STOPS_FILE, mapStops);
+    const directions = platformDirections(files.features, files.tripCalls);
+    writeStopsFile(dir, gtfsStopsFile(files.features, files.stopRoutes, directions, files.routes), files.routes);
     writeCoverage(dir, mapStops);
     writeStopSearch(dir, mapStops);
     writeJson(dir, 'parent_child_map.json', files.parentChildMap);
