@@ -14,6 +14,7 @@ import { buildStopTimeSlices } from './lib/stop-times.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
 import { readStops } from './lib/stops.ts';
 import { writeShapeBuckets } from './lib/shapes.ts';
+import { stableStationIds, withStationIds } from './lib/station-ids.ts';
 
 /**
  * Brno (IDS JMK / KORDIS) static GTFS build.
@@ -24,6 +25,8 @@ import { writeShapeBuckets } from './lib/shapes.ts';
  */
 const CONFIG = {
     CITY: 'brno',
+    /** Published station id: the KORDIS node (`U1271`), as the `N…` part of `U1271N2879` is renumbered by re-exports. */
+    STATION_ID: (feedId: string): string => /^(U\d+)N\d+$/.exec(feedId)?.[1] ?? feedId,
     TIMEZONE: 'Europe/Prague',
     GTFS_URL: 'https://kordis-jmk.cz/gtfs/gtfs.zip',
     SHAPES_URL: 'https://dexter.fit.vutbr.cz/lissy/api/shapes/getTodayShapes',
@@ -391,7 +394,9 @@ async function main(): Promise<void> {
     safetyCheck(departuresByStop.size, tripsData.size, CONFIG.MIN_DEPARTURE_STOPS, CONFIG.MIN_ACTIVE_TRIPS);
 
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
-    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: tripsData.values() });
+    const stationIds = stableStationIds(parentChildMap, CONFIG.STATION_ID);
+    const servedParentChildMap = withStationIds(parentChildMap, stationIds);
+    writeCityFiles(DATA_DIR, { features, parentChildMap: servedParentChildMap, stationIds, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: tripsData.values() });
     console.log(`Wrote ${features.length} stops`);
 
     const tripAliases = generateAliases(DATA_DIR, courseOf, activeTrips, days[0]!.str);
@@ -420,7 +425,7 @@ async function main(): Promise<void> {
     console.log(`Attached feeders to ${feederRows} departures`);
 
     sortDepartures(departuresByStop);
-    const parentOf = parentIndex(parentChildMap);
+    const parentOf = parentIndex(servedParentChildMap);
     const departureBuckets = chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf));
     writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), departureBuckets);
     console.log(`Wrote ${departureBuckets.size} departure buckets for ${departuresByStop.size} stops`);

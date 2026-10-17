@@ -12,6 +12,7 @@ import { buildTripBuckets } from './lib/trip-buckets.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
 import { readStops } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
+import { stableStationIds, withStationIds } from './lib/station-ids.ts';
 
 /**
  * Prešov (DPMP) static GTFS build.
@@ -23,6 +24,9 @@ import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
  */
 const CONFIG = {
     CITY: 'presov',
+    /** Published station id: `U` and its lowest platform id, as the feed has no stations and names may change. */
+    STATION_ID: (feedId: string, platforms: readonly string[]): string =>
+        platforms.length ? `U${Math.min(...platforms.map(Number))}` : feedId,
     TIMEZONE: 'Europe/Bratislava',
     ARCGIS_ITEM_URL: 'https://www.arcgis.com/sharing/rest/content/items/f1033ca6c2f4461d9aba285e1c7cb079',
 
@@ -363,7 +367,9 @@ async function main(): Promise<void> {
     }
 
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
-    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: tripsData.values() });
+    const stationIds = stableStationIds(parentChildMap, CONFIG.STATION_ID);
+    const servedParentChildMap = withStationIds(parentChildMap, stationIds);
+    writeCityFiles(DATA_DIR, { features, parentChildMap: servedParentChildMap, stationIds, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: tripsData.values() });
     console.log(`Wrote ${stations.length} stations over ${platforms.length} platforms`);
 
     // --- CONTINUATIONS: the feed has no block_id, so match the named line leaving the same stop ---
@@ -422,7 +428,7 @@ async function main(): Promise<void> {
 
     // --- DEPARTURES ---
     sortDepartures(departuresByStop);
-    const parentOf = parentIndex(parentChildMap);
+    const parentOf = parentIndex(servedParentChildMap);
     const departureBuckets = chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf));
     writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), departureBuckets);
     console.log(`Wrote ${departureBuckets.size} departure buckets for ${departuresByStop.size} stops`);

@@ -89,7 +89,10 @@ export function safetyCheck(stops: number, trips: number, minStops: number, minT
 
 export interface CityFiles {
     features: StopFeature[];
+    /** Keyed by the published station ids (`withStationIds`); `features` keep the feed's, for `map-stops.json`. */
     parentChildMap: ParentChildMap;
+    /** Each station's published id where it is not its feed id (`stableStationIds`). */
+    stationIds?: ReadonlyMap<string, string>;
     routes: RouteLookup;
     tripRoutes: Record<string, string>;
     tripWindows: TripWindowsFile;
@@ -135,7 +138,7 @@ export function writeCityFiles(dir: string, files: CityFiles): void {
     }
     writeJson(dir, MAP_STOPS_FILE, mapStops);
     const directions = platformDirections(files.features, files.tripCalls);
-    writeStopsFile(dir, gtfsStopsFile(files.features, files.stopRoutes, directions, files.routes), files.routes);
+    writeStopsFile(dir, gtfsStopsFile(files.features, files.stopRoutes, directions, files.routes, files.stationIds), files.routes);
     writeCoverage(dir, mapStops);
     writeStopSearch(dir, mapStops);
     writeJson(dir, 'parent_child_map.json', files.parentChildMap);

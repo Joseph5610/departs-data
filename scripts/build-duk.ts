@@ -8,6 +8,7 @@ import { czechHolidays, formatTime, getServiceDays, type ServiceDay } from './li
 import { distanceM, fanOutColocated, localXY, round6, type Point } from './lib/geo.ts';
 import { buildTripBuckets } from './lib/trip-buckets.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
+import { stableStationIds, withStationIds } from './lib/station-ids.ts';
 import { buildTripTracks } from './lib/tracks.ts';
 import {
     CALENDAR, LAYOUTS, NOT_VIA, PASSES, SYMBOL, TRIP_CODE_FIELDS, WEEKDAY_SYMBOLS,
@@ -63,6 +64,8 @@ const CONFIG = {
 
     /** Station ids; platforms are `<node>-<post>` and departures chunks are keyed by the bare node. */
     STATION_PREFIX: 'centroid-',
+    /** Published station id: the bare CIS node (`952`) its platforms `<node>-<post>` share. */
+    STATION_ID: (feedId: string, platforms: readonly string[]): string => platforms[0]?.split('-')[0] ?? feedId,
     /** Portabo's catch-all platform, which only repeats another platform's position. */
     VIRTUAL_POST: 999,
     /** Posts from here on are Portabo's rail and ferry stops, not numbered bus platforms. */
@@ -908,7 +911,9 @@ async function main(): Promise<void> {
 
     // JDF has no geometry; the app draws the route stop to stop.
     const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
-    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, stopRoutes: platformRoutes, tripCalls: tripStops.values() });
+    const stationIds = stableStationIds(parentChildMap, CONFIG.STATION_ID);
+    const servedParentChildMap = withStationIds(parentChildMap, stationIds);
+    writeCityFiles(DATA_DIR, { features, parentChildMap: servedParentChildMap, stationIds, routes, tripRoutes, tripWindows: windowsFile, stopRoutes: platformRoutes, tripCalls: tripStops.values() });
     writeFeedIndex(DATA_DIR, STATION_NAMES_FILE, index.names);
     // A third-party source: when it is down the trains already published stay.
     try {
@@ -928,7 +933,7 @@ async function main(): Promise<void> {
     console.log(`Wrote ${servedNodes.size} stations and ${Object.keys(routes).length} routes`);
 
     sortDepartures(departuresByStop);
-    const parentOf = parentIndex(parentChildMap);
+    const parentOf = parentIndex(servedParentChildMap);
     const departureBuckets = chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf));
     writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), departureBuckets);
     console.log(`Wrote ${departureBuckets.size} departure buckets for ${departuresByStop.size} stops`);

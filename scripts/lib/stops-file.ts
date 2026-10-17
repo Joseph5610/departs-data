@@ -33,14 +33,17 @@ function withServedStations(file: StopsFile): StopsFile {
 
 /**
  * A GTFS city's stops file from its stop features. `stopRoutes` holds each platform's boardable route ids,
- * `directions` the direction of platforms without a code (`platformDirections`).
+ * `directions` the direction of platforms without a code (`platformDirections`), `stationIds` the published
+ * id of each station whose feed id is not (`stableStationIds`).
  */
 export function gtfsStopsFile(
     features: readonly StopFeature[],
     stopRoutes: ReadonlyMap<string, Iterable<string>>,
     directions: ReadonlyMap<string, string>,
     routes: RouteLookup,
+    stationIds: ReadonlyMap<string, string> = new Map(),
 ): StopsFile {
+    const stationId = (feedId: string) => stationIds.get(feedId) ?? feedId;
     const stations: Station[] = [];
     const platforms: Platform[] = [];
     const entrances: Entrance[] = [];
@@ -49,16 +52,16 @@ export function gtfsStopsFile(
         const p = f.properties;
         const pos = toPosition(...f.geometry.coordinates);
         if (p.location_type === 1) {
-            stations.push({ id: p.stop_id, name: p.stop_name, pos });
+            stations.push({ id: stationId(p.stop_id), name: p.stop_name, pos });
         } else if (!p.parent_station) {
             orphans++;
         } else if (p.location_type === 2) {
-            entrances.push({ id: p.stop_id, station: p.parent_station, name: p.stop_name, pos });
+            entrances.push({ id: p.stop_id, station: stationId(p.parent_station), name: p.stop_name, pos });
         } else {
             platforms.push({
                 id: p.stop_id,
                 aliases: p.aliases,
-                station: p.parent_station,
+                station: stationId(p.parent_station),
                 pos,
                 code: p.platform_code ?? undefined,
                 direction: p.platform_code ? undefined : directions.get(p.stop_id),
