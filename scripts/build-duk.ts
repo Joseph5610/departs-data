@@ -60,6 +60,14 @@ const CONFIG = {
         'UL|odkvet': 'Ústí n.L.,Neštěmice,Květ',
         'UL|strekovnadr': 'Ústí n.L.,Střekov,žel.st.',
         'CV|jirkovnoveervenice': 'Nové Ervěnice',
+        'CV|drouzkoviceobecniurad': 'Droužkovice,ObÚ',
+        'CV|duljzizka': 'Chomutov,Důl J.Žižky',
+        'CV|5kvetnauskstatku': 'Kadaň,5.května u školního statku',
+        'DC|ul17listopadu': 'Děčín,17.listopadu',
+        'DC|ul28rijna': 'Děčín,28.října',
+        'UL|mojzirsidliste': 'Ústí n.L.,Mojžíř,sídl.',
+        'UL|chlumecprejezd': 'Chlumec,žel.přejezd',
+        'UL|svadovnadr': 'Svádov,žel.st.',
     } as Record<string, string>,
 
     /** Station ids; platforms are `<node>-<post>` and departures chunks are keyed by the bare node. */
