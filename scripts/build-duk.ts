@@ -53,8 +53,8 @@ const CONFIG = {
     LINE_PREFIXES: ['51', '52', '55', '56', '57', '58', '59'],
     /** LinExt transport-system code of DÚK, which also covers regional lines licensed outside the kraj. */
     DUK_SYSTEM_CODE: '30421',
-    /** Public names JDF does not carry, by CIS line number; otherwise LinExt or the last three digits. Must match the Portabo board's line name, which the app links departures by. */
-    LINE_NAMES: { '558001': 'MHD' } as Record<string, string>,
+    /** Public names JDF does not carry, by CIS line number; otherwise LinExt or the last three digits. */
+    LINE_NAMES: { '595901': 'LD', '558001': 'MHD' } as Record<string, string>,
     /** JDF stop names that differ from Portabo's, as `district|match key` to the Portabo name. */
     STOP_ALIASES: {
         'UL|odkvet': 'Ústí n.L.,Neštěmice,Květ',
@@ -121,8 +121,7 @@ const CONFIG = {
     USTI_CITY: {
         LINE_PREFIX: '595',
         NIGHT_LINES: ['41', '42', '43', '46'],
-        /** 901 is the Větruše cable car. */
-        TOURIST_LINES: ['901', '20', '21'],
+        TOURIST_LINES: ['LD', '20', '21'],
         COLORS: { bus: '#4AB280', trolleybus: '#212855', night: '#D10C15', tourist: '#F7C914' },
     },
 
