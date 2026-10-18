@@ -5,7 +5,7 @@ import type { DepartureRow, ParentChildMap, RailCall, RailRun, RailTripsFile, Ro
 import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, RAIL_TRIP_BUCKETS, RAIL_TRIPS_DIR, STATION_NAMES_FILE, TRACKS_DIR, TRIP_BUCKETS_DIR } from './lib/contract.ts';
 import { downloadLargeZip, fetchJson, parseCSV, readTable } from './lib/feed.ts';
 import { czechHolidays, formatTime, getServiceDays, type ServiceDay } from './lib/time.ts';
-import { distanceM, fanOutColocated, localXY, round6, type Point } from './lib/geo.ts';
+import { distanceM, fanOutColocated, round6, type Point } from './lib/geo.ts';
 import { buildTripBuckets } from './lib/trip-buckets.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
 import { stableStationIds, withStationIds } from './lib/station-ids.ts';
@@ -82,8 +82,6 @@ const CONFIG = {
     FERRY_POST_START: 200,
     /** Platforms Portabo puts on the exact same point are fanned out on a circle this wide, as for Brno. */
     STACKED_PLATFORM_OFFSET_DEG: 0.00012,
-    /** Detour, in metres, that outweighs a platform being left of the direction of travel. */
-    LEFT_SIDE_PENALTY_M: 500,
     /** [w, s, e, n] around the kraj and its cross-border termini; Portabo parks unknown platforms in Tallinn. */
     POST_BOUNDS: [12.0, 49.8, 15.5, 51.3],
     /** A name match further than this from the rest of its line is a namesake elsewhere. */
@@ -658,44 +656,8 @@ function findImplausibleStops(timetable: Timetable, resolved: Map<string, Node>)
     return suspects;
 }
 
-interface ResolvedStopTime { stopId: string; arrival: number; departure: number; symbols: Set<string>; node: Node | null; name: string; platform?: NodePlatform | null }
+interface ResolvedStopTime { stopId: string; arrival: number; departure: number; symbols: Set<string>; node: Node | null; name: string }
 interface ActiveTrip { routeId: string; headsign: string; wheelchair: number; stopTimes: ResolvedStopTime[]; dates: ServiceDay[] }
-
-/**
- * Estimates the platform each located stop call uses, for drawing the trip's route; JDF names the
- * stop, not the platform. Traffic keeps right, so the platform right of the direction of travel
- * wins, then the one closest to the line between the neighbouring calls.
- */
-function assignPlatforms(trip: ActiveTrip, platformsOf: Map<string, NodePlatform[]>, routeType: string | undefined): void {
-    const located = trip.stopTimes.filter(st => st.node);
-    const isFerry = routeType === CONFIG.ROUTE_TYPES.P;
-    located.forEach((st, i) => {
-        const all = platformsOf.get(st.node!.id) ?? [];
-        const ofMode = all.filter(p => (Number(p.post) >= CONFIG.FERRY_POST_START) === isFerry && (isFerry || Number(p.post) < CONFIG.FIRST_UNNUMBERED_POST));
-        const platforms = ofMode.length ? ofMode : all;
-        if (platforms.length <= 1) {
-            st.platform = platforms[0] ?? null;
-            return;
-        }
-        const prev = i > 0 ? (located[i - 1]!.platform ?? located[i - 1]!.node) : null;
-        const next = i < located.length - 1 ? located[i + 1]!.node : null;
-        const from = localXY(st.node!, prev ?? st.node!);
-        const to = localXY(st.node!, next ?? st.node!);
-        const dir = { x: to.x - from.x, y: to.y - from.y };
-        const hasDirection = Math.hypot(dir.x, dir.y) > 0;
-
-        let best: NodePlatform | null = null;
-        let bestScore = Infinity;
-        for (const platform of platforms) {
-            const p = localXY(st.node!, platform);
-            const isLeft = hasDirection && dir.x * p.y - dir.y * p.x > 0;
-            const detour = (prev ? distanceM(prev, platform) : 0) + (next ? distanceM(platform, next) : 0);
-            const score = detour + (isLeft ? CONFIG.LEFT_SIDE_PENALTY_M : 0);
-            if (score < bestScore) { bestScore = score; best = platform; }
-        }
-        st.platform = best;
-    });
-}
 
 /** Served stops of a trip in travel order, with times made monotonic across midnight. */
 function tripStopTimes(trip: JdfTrip, isReversed: boolean): { stopId: string; arrival: number; departure: number; symbols: Set<string> }[] {
@@ -832,7 +794,6 @@ async function main(): Promise<void> {
         const fanned = fanOutColocated(node.platforms, CONFIG.STACKED_PLATFORM_OFFSET_DEG);
         platformsOf.set(node.id, node.platforms.map((p, i) => ({ post: p.post, lon: fanned[i]![0], lat: fanned[i]![1] })));
     }
-    for (const t of activeTrips.values()) assignPlatforms(t, platformsOf, routes[t.routeId]?.type);
 
     // --- DEPARTURES, TRIPS, WINDOWS ---
     const departuresByStop = new Map<string, DepartureRow[]>();
@@ -867,13 +828,14 @@ async function main(): Promise<void> {
             }
         });
 
+        // A call is published at its station: JDF names no platform and a guess from geometry is right only half the time.
         // An empty stop_id marks an unlocated stop; the app renders it without a map point or link.
         tripStops.set(tripId, t.stopTimes.map((st): TripStop => ({
-            stop_id: st.platform ? `${st.node!.id}-${st.platform.post}` : '',
+            stop_id: st.node?.id ?? '',
             name: st.name,
             arrival_time: formatTime(st.arrival),
             departure_time: formatTime(st.departure),
-            ...(st.platform ? { lat: round6(st.platform.lat), lon: round6(st.platform.lon) } : {}),
+            ...(st.node ? { lat: round6(st.node.lat), lon: round6(st.node.lon) } : {}),
             is_passed: false,
             zone_id: st.node?.zone_id ?? null,
             is_request_stop: st.symbols.has(SYMBOL.REQUEST_STOP),
