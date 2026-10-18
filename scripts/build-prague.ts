@@ -6,6 +6,7 @@ import { MAP_STOPS_FILE, type RouteInfo } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { readStops } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
+import { buildNetwork, writeNetwork, type NetworkMode } from './lib/network.ts';
 import { buildPragueMapStops, pidStopFeatures, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
 import { gtfsStopsFile } from './lib/stops-file.ts';
 import { writeStopSearch } from './lib/stop-search.ts';
@@ -36,6 +37,8 @@ const CONFIG = {
     SHAPE_DIST_DECIMALS: 3,
     /** PID's static feed populates `route_color` for every route (verified); this only guards a future gap. */
     DEFAULT_ROUTE_COLOR: '#888888',
+    /** Drawn on the map at all times: each metro line in its colour; the three lines total about 65 km. */
+    NETWORK_MODES: [{ routeTypes: ['1'], style: 'lines', minKm: 40 }] satisfies NetworkMode[],
 } as const;
 
 interface PidLine { id: number; name: string; type: string; exitOnly?: boolean }
@@ -96,7 +99,7 @@ async function main(): Promise<void> {
     const { features, stopRoutes } = pidStopFeatures(mapStops, stationOf, routeIdsOf);
     writeStopsFile(dataDir, gtfsStopsFile(features, stopRoutes, new Map(), routes), routes);
 
-    writePragueShapes(zip, dataDir);
+    writePragueShapes(zip, dataDir, routes);
     writePragueConnections(zip, dataDir);
 }
 
@@ -203,16 +206,18 @@ function readStopInterchanges(zip: AdmZip): Map<string, Set<string>> {
     return interchanges;
 }
 
-const TRIPS_TABLE = { required: ['trip_id', 'shape_id'] } as const;
+const TRIPS_TABLE = { required: ['trip_id', 'route_id', 'shape_id'] } as const;
 
-/** Every trip's shape, with distances along it so the app can split the line at the vehicle. */
-function writePragueShapes(zip: AdmZip, dataDir: string): void {
+/** Every trip's shape, with distances along it so the app can split the line at the vehicle, and the network drawn from them. */
+function writePragueShapes(zip: AdmZip, dataDir: string, routes: Readonly<Record<string, RouteInfo>>): void {
     const tripShapes: Record<string, string> = {};
     const needed = new Set<string>();
+    const shapedTrips: { routeId: string; shapeId: string }[] = [];
     for (const t of readTable(zip, 'trips.txt', TRIPS_TABLE)) {
         if (!t.shape_id) continue;
         tripShapes[t.trip_id] = t.shape_id;
         needed.add(t.shape_id);
+        shapedTrips.push({ routeId: t.route_id, shapeId: t.shape_id });
     }
     const tripCount = Object.keys(tripShapes).length;
     if (tripCount < CONFIG.MIN_SHAPED_TRIPS) {
@@ -222,6 +227,7 @@ function writePragueShapes(zip: AdmZip, dataDir: string): void {
     const shapes = readGtfsShapes(zip, needed, { coordDecimals: CONFIG.SHAPE_COORD_DECIMALS, distDecimals: CONFIG.SHAPE_DIST_DECIMALS });
     const largest = writeShapeBuckets(dataDir, tripShapes, shapes);
     console.log(`[SYNC] SUCCESS: Saved ${shapes.size} shapes for ${tripCount} trips (largest file ${(largest / 1024).toFixed(0)}KB)`);
+    writeNetwork(dataDir, buildNetwork(shapedTrips, routes, shapes, CONFIG.NETWORK_MODES));
 }
 
 main().catch((err: unknown) => {

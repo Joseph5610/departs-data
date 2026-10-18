@@ -50,7 +50,7 @@ This allows the main app to fetch only the exact bytes it needs for a specific s
 
 Prague's departures, vehicles and trip times come live from Golemio, so this builds only what Golemio lacks, from one download of the PID GTFS:
 1. Fetches the PID stop groups from the PID open data portal and enriches the GTFS stops with their lines and names, then groups platforms into stations and centroids and writes `map-stops.json`.
-2. Writes `routes.json` and the route shapes (`trip_shape_buckets/`, `shape_buckets/`).
+2. Writes `routes.json`, the route shapes (`trip_shape_buckets/`, `shape_buckets/`) and `network.json`, the metro lines the app draws on the map at all times.
 3. Writes held connections and through-running into `connection_buckets/`.
 
 Points of sale are a separate weekly build (`scripts/build-prague-pos.ts`).
@@ -110,7 +110,7 @@ npm run build:prague
 | --- | --- | --- | --- |
 | `/prague` | [PID open data](https://pid.cz/o-systemu/opendata/), stop list (ROPID) | CC BY 4.0 | Stops reduced to an id → station, line and zone lookup (`stops-enrichment.json`). |
 | `/brno` | [Jízdní řád IDS JMK ve formátu GTFS](https://data.brno.cz/datasets/379d2e9a7907460c8ca7fda1f3e84328) (Statutární město Brno, KORDIS JMK) | CC BY 4.0 | Filtered to a rolling 48-hour window, restructured into per-stop and per-trip JSON chunks, parent stations and platforms grouped. |
-| `/brno` | Route shapes from the Lissy API (FIT VUT Brno); the [Lissy](https://github.com/Jorgen98/Lissy) tool itself is GPL-3.0 | Used and redistributed with the author's explicit permission; not covered by this repository's CC BY 4.0 | Attached to trips as simplified shapes. |
+| `/brno` | Route shapes from the Lissy API (FIT VUT Brno); the [Lissy](https://github.com/Jorgen98/Lissy) tool itself is GPL-3.0 | Used and redistributed with the author's explicit permission; not covered by this repository's CC BY 4.0 | Attached to trips as simplified shapes, and merged into the tram network in `network.json`. |
 | `/presov` | [GTFS – MHD Prešov](https://www.arcgis.com/home/item.html?id=f1033ca6c2f4461d9aba285e1c7cb079) (Dopravný podnik mesta Prešov, a.s.) | CC BY 4.0 | Monthly id prefixes stripped, parent stations synthesised, request stops and line colours added, three-day window chunked to JSON. |
 | `/duk` | [Jízdní řády veřejné linkové dopravy (CIS JŘ, JDF)](https://data.gov.cz/datová-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatové-sady%2F66003008%2F1463646434) (Ministerstvo dopravy ČR) | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) (CC0 equivalent) | Filtered to the kraj's lines, calendars evaluated, stop names matched to Portabo nodes, trips placed on platforms, lines named and coloured; operator and other personal data are not carried over. |
 | `/duk` | [Ústecký kraj open data (Portabo)](https://lkod.portabo.cz/datasets): stops (`cis/GetStations`) | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) | One station per node and one platform per post; platforms on the same point fanned out on the map. |

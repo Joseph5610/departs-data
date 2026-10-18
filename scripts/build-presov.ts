@@ -12,6 +12,7 @@ import { buildTripBuckets } from './lib/trip-buckets.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles } from './lib/emit.ts';
 import { readStops } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
+import { buildNetwork, writeNetwork, type NetworkMode } from './lib/network.ts';
 import { stableStationIds, withStationIds } from './lib/station-ids.ts';
 
 /**
@@ -38,6 +39,8 @@ const CONFIG = {
     /** Radial separation for platforms sharing exact coordinates (~12 m). */
     COLOCATED_OFFSET_DEG: 0.00012,
     SHAPE_COORD_DECIMALS: 5,
+    /** Drawn on the map at all times: the trolleybus wires as one network, about 26 km. */
+    NETWORK_MODES: [{ routeTypes: ['11', '800'], style: 'merged', minKm: 15 }] satisfies NetworkMode[],
 
     /** Official DPMP network map scheme (dpmp.sk line network map, valid from 8. 1. 2025). */
     ROUTE_COLORS: {
@@ -463,6 +466,8 @@ async function main(): Promise<void> {
     const shapeGeometry = readGtfsShapes(zip, neededShapes, { coordDecimals: CONFIG.SHAPE_COORD_DECIMALS });
     const largestShapeFile = writeShapeBuckets(DATA_DIR, tripShapes, shapeGeometry);
     console.log(`Wrote ${shapeGeometry.size} shapes into hashed buckets (largest ${(largestShapeFile / 1024).toFixed(0)}KB)`);
+    const shapedTrips = Object.entries(tripShapes).map(([tripId, shapeId]) => ({ routeId: activeTrips.get(tripId)!.route_id, shapeId }));
+    writeNetwork(DATA_DIR, buildNetwork(shapedTrips, routes, shapeGeometry, CONFIG.NETWORK_MODES));
 
     if (modified) fs.writeFileSync(lastModifiedPath, modified);
     console.log('Done!');

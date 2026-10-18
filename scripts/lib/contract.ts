@@ -124,6 +124,24 @@ export type ShapePoint = [number, number] | [number, number, number];
 /** A shape as line segments; GTFS shapes have one, Lissy's may have several. */
 export type ShapeGeometry = ShapePoint[][];
 
+/** `<city>/network.json`: the backbone lines the app draws on the map at all times. */
+export const NETWORK_FILE = 'network.json';
+
+/**
+ * A piece of the network. Lines drawn one by one (metro) carry their route's id, name and colour;
+ * merged modes (trams, trolleybuses) carry only `route_type` and are coloured by mode in the app.
+ */
+export interface NetworkFeature {
+    type: 'Feature';
+    geometry: { type: 'LineString'; coordinates: [number, number][] };
+    properties: { route_type: number; route_id?: string; name?: string; route_color?: string };
+}
+
+export interface NetworkFile {
+    type: 'FeatureCollection';
+    features: NetworkFeature[];
+}
+
 /**
  * A trip that this departure waits for: `[feeder_trip_id, feeder_route_id, feeder_arrival_ms,
  * min_transfer_s, max_wait_s]`. The variant running on the departure's day is resolved at build time.

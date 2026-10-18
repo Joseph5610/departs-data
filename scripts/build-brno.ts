@@ -14,6 +14,7 @@ import { buildStopTimeSlices } from './lib/stop-times.ts';
 import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
 import { readStops } from './lib/stops.ts';
 import { writeShapeBuckets } from './lib/shapes.ts';
+import { buildNetwork, writeNetwork, type NetworkMode } from './lib/network.ts';
 import { stableStationIds, withStationIds } from './lib/station-ids.ts';
 
 /**
@@ -42,6 +43,8 @@ const CONFIG = {
     SHAPE_STOP_RADIUS_M: 150,
     /** Share of a trip's stops that must lie on a shape before the shape is attached to it. */
     MIN_SHAPE_FIT: 0.9,
+    /** Drawn on the map at all times: the tram tracks as one network, about 70 km. */
+    NETWORK_MODES: [{ routeTypes: ['0'], style: 'merged', minKm: 40 }] satisfies NetworkMode[],
     DEFAULT_ROUTE_COLOR: '#007DA8',
     /** KORDIS run identifier per trip, the only id stable across exports. */
     COURSE_FILE: 'trip_courses.json',
@@ -547,6 +550,8 @@ async function main(): Promise<void> {
             const largestBucket = writeShapeBuckets(DATA_DIR, tripShapes, allShapes, 'stale');
             console.log(`Largest shape bucket: ${(largestBucket / 1024).toFixed(0)}KB`);
             console.log(`Wrote shapes for ${Object.keys(tripShapes).length} trips (${rejected} Lissy trip ids matched no trip's stops)`);
+            const shapedTrips = Object.entries(tripShapes).map(([tripId, shapeId]) => ({ routeId: activeTrips.get(tripId)!.route_id, shapeId }));
+            writeNetwork(DATA_DIR, buildNetwork(shapedTrips, routes, allShapes, CONFIG.NETWORK_MODES));
         } catch (e) {
             console.error('Failed to fetch or process shapes, skipping shape generation.', e);
         }
