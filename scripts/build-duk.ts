@@ -1,14 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import AdmZip from 'adm-zip';
-import type { DepartureRow, ParentChildMap, RailCall, RailRun, RailTripsFile, RouteInfo, StopFeature, TripStop, TripWindow, TripWindowsFile } from './lib/contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, RAIL_TRIP_BUCKETS, RAIL_TRIPS_DIR, STATION_NAMES_FILE, TRACKS_DIR, TRIP_BUCKETS_DIR } from './lib/contract.ts';
+import type { ParentChildMap, RailCall, RailRun, RailTripsFile, RouteInfo, StopFeature, TripStop } from './lib/contract.ts';
+import { RAIL_TRIP_BUCKETS, RAIL_TRIPS_DIR, STATION_NAMES_FILE, TRACKS_DIR } from './lib/contract.ts';
 import { downloadLargeZip, fetchJson, parseCSV, readTable } from './lib/feed.ts';
 import { czechHolidays, formatTime, getServiceDays, type ServiceDay } from './lib/time.ts';
 import { distanceM, fanOutColocated, localXY, round6, type Point } from './lib/geo.ts';
-import { buildTripBuckets } from './lib/trip-buckets.ts';
-import { chunkBy, linesOf, outputDir, safetyCheck, sortDepartures, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
-import { stableStationIds, withStationIds } from './lib/station-ids.ts';
+import { readServiceDates } from './lib/calendar.ts';
+import { buildDepartures, tripWindows, writeDepartures, writeTrips, type Boarding, type WindowedTrip } from './lib/timetable.ts';
+import { linesOf, outputDir, safetyCheck, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
 import { buildTripTracks } from './lib/tracks.ts';
 import {
     CALENDAR, LAYOUTS, NOT_VIA, PASSES, SYMBOL, TRIP_CODE_FIELDS, WEEKDAY_SYMBOLS,
@@ -62,10 +62,6 @@ const CONFIG = {
         'CV|jirkovnoveervenice': 'Nové Ervěnice',
     } as Record<string, string>,
 
-    /** Station ids; platforms are `<node>-<post>` and departures chunks are keyed by the bare node. */
-    STATION_PREFIX: 'centroid-',
-    /** Published station id: the bare CIS node (`952`) its platforms `<node>-<post>` share. */
-    STATION_ID: (feedId: string, platforms: readonly string[]): string => platforms[0]?.split('-')[0] ?? feedId,
     /** Portabo's catch-all platform, which only repeats another platform's position. */
     VIRTUAL_POST: 999,
     /** Posts from here on are Portabo's rail and ferry stops, not numbered bus platforms. */
@@ -231,15 +227,6 @@ function stationPlatform(station: Point, platforms: readonly PublishedPlatform[]
     return rail ?? nearest;
 }
 
-/** Whether a GTFS service runs on `day`, from `calendar.txt` and its `calendar_dates.txt` exceptions. */
-type GtfsCalendar = Map<string, { weekdays: boolean[]; from: string; to: string }>;
-function serviceRuns(calendar: GtfsCalendar, exceptions: Map<string, Map<string, string>>, serviceId: string, day: ServiceDay): boolean {
-    const exception = exceptions.get(serviceId)?.get(day.str);
-    if (exception) return exception === '1';
-    const c = calendar.get(serviceId);
-    return Boolean(c && c.from <= day.str && day.str <= c.to && c.weekdays[day.weekday]);
-}
-
 /**
  * Trains calling at a DÚK station or tariff stop on `days`, by train number. stop_times is too large
  * to parse whole, so only the rows of the trains kept are; Spojenka puts trip_id first.
@@ -248,22 +235,14 @@ function buildRailTrips(zip: AdmZip, days: ServiceDay[], platforms: readonly Pub
     const routeIds = new Set(readTable(zip, 'routes.txt', { required: ['route_id', 'route_type'] })
         .filter(r => r.route_type === CONFIG.RAIL_ROUTE_TYPE).map(r => r.route_id));
 
-    const calendar: GtfsCalendar = new Map();
-    for (const r of readTable(zip, 'calendar.txt', { required: ['service_id', 'start_date', 'end_date', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] })) {
-        calendar.set(r.service_id, { from: r.start_date, to: r.end_date, weekdays: [r.sunday, r.monday, r.tuesday, r.wednesday, r.thursday, r.friday, r.saturday].map(v => v === '1') });
-    }
-    const exceptions = new Map<string, Map<string, string>>();
-    for (const r of readTable(zip, 'calendar_dates.txt', { required: ['service_id', 'date', 'exception_type'], fileOptional: true })) {
-        let byDate = exceptions.get(r.service_id);
-        if (!byDate) { byDate = new Map(); exceptions.set(r.service_id, byDate); }
-        byDate.set(r.date, r.exception_type);
-    }
+    if (!zip.getEntry('calendar.txt')) throw new Error('calendar.txt missing from rail GTFS');
+    const serviceDates = readServiceDates(zip, days);
 
     const trains = new Map<string, { numbers: string[]; flags: number }>();
     for (const t of readTable(zip, 'trips.txt', { required: ['route_id', 'trip_id', 'service_id', 'trip_short_name'] })) {
         if (!routeIds.has(t.route_id) || !t.trip_short_name) continue;
         let flags = 0;
-        days.forEach((day, i) => { if (serviceRuns(calendar, exceptions, t.service_id, day)) flags |= 1 << i; });
+        days.forEach((day, i) => { if (serviceDates.get(t.service_id)?.has(day)) flags |= 1 << i; });
         if (flags) trains.set(t.trip_id, { numbers: t.trip_short_name.split('/'), flags });
     }
 
@@ -652,6 +631,10 @@ function findImplausibleStops(timetable: Timetable, resolved: Map<string, Node>)
 interface ResolvedStopTime { stopId: string; arrival: number; departure: number; symbols: Set<string>; node: Node | null; name: string; platform?: NodePlatform | null }
 interface ActiveTrip { routeId: string; headsign: string; wheelchair: number; stopTimes: ResolvedStopTime[]; dates: ServiceDay[] }
 
+/** A JDF trip's window, in the shared rule: from leaving its first stop until leaving its last. */
+const jdfWindow = (t: ActiveTrip): WindowedTrip =>
+    ({ dates: t.dates, startMin: t.stopTimes[0]!.departure, endMin: t.stopTimes[t.stopTimes.length - 1]!.departure });
+
 /**
  * Estimates the platform each located stop call uses, for drawing the trip's route; JDF names the
  * stop, not the platform. Traffic keeps right, so the platform right of the direction of travel
@@ -826,36 +809,20 @@ async function main(): Promise<void> {
     for (const t of activeTrips.values()) assignPlatforms(t, platformsOf, routes[t.routeId]?.type);
 
     // --- DEPARTURES, TRIPS, WINDOWS ---
-    const departuresByStop = new Map<string, DepartureRow[]>();
+    const boardings: Boarding[] = [];
     const stopRoutes = new Map<string, Set<string>>();
     const tripStops = new Map<string, TripStop[]>();
     const tripRoutes: Record<string, string> = {};
-    const tripWindows: Record<string, TripWindow> = {};
-    const dayPos = new Map(days.map((d, i) => [d.str, i]));
 
     for (const [tripId, t] of activeTrips) {
         tripRoutes[tripId] = t.routeId;
 
-        let flags = 0;
-        for (const d of t.dates) flags |= 1 << dayPos.get(d.str)!;
-        const first = t.stopTimes[0]!;
-        const last = t.stopTimes[t.stopTimes.length - 1]!;
-        tripWindows[tripId] = [first.departure, last.arrival, flags];
-
         t.stopTimes.forEach((st, i) => {
-            const isLast = i === t.stopTimes.length - 1;
-            const isRequestStop = st.symbols.has(SYMBOL.REQUEST_STOP);
-            if (isLast || !st.node) return;
-
+            if (i === t.stopTimes.length - 1 || !st.node) return;
             let set = stopRoutes.get(st.node.id);
             if (!set) { set = new Set(); stopRoutes.set(st.node.id, set); }
             set.add(t.routeId);
-
-            let deps = departuresByStop.get(st.node.id);
-            if (!deps) { deps = []; departuresByStop.set(st.node.id, deps); }
-            for (const day of t.dates) {
-                deps.push([tripId, t.routeId, t.headsign, day.midnight + st.departure * 60_000, t.wheelchair, isRequestStop ? 1 : 0]);
-            }
+            boardings.push({ tripId, stopId: st.node.id, offsetMs: st.departure * 60_000, isRequestStop: st.symbols.has(SYMBOL.REQUEST_STOP) });
         });
 
         // An empty stop_id marks an unlocated stop; the app renders it without a map point or link.
@@ -871,6 +838,9 @@ async function main(): Promise<void> {
         })));
     }
 
+    const departuresByStop = buildDepartures(boardings, tripId => activeTrips.get(tripId)!);
+    const windowsFile = tripWindows([...activeTrips].map(([tripId, t]) => [tripId, jdfWindow(t)]), days);
+
     // --- STOPS: one station per Portabo node that any active trip serves ---
     const servedNodes = new Map<string, Node>();
     for (const t of activeTrips.values()) {
@@ -883,7 +853,8 @@ async function main(): Promise<void> {
     /** Every platform of a node serves the node's routes: JDF places trips at a node, not a post. */
     const platformRoutes = new Map<string, Set<string>>();
     for (const node of servedNodes.values()) {
-        const parentId = `${CONFIG.STATION_PREFIX}${node.id}`;
+        // A station is its bare CIS node (`952`), which its platforms `<node>-<post>` and the departures chunks share.
+        const parentId = node.id;
         features.push({
             type: 'Feature',
             geometry: { type: 'Point', coordinates: [round6(node.lon), round6(node.lat)] },
@@ -910,10 +881,7 @@ async function main(): Promise<void> {
     safetyCheck(departuresByStop.size, activeTrips.size, CONFIG.MIN_DEPARTURE_STOPS, CONFIG.MIN_ACTIVE_TRIPS);
 
     // JDF has no geometry; the app draws the route stop to stop.
-    const windowsFile: TripWindowsFile = { days: days.map(d => d.str), trips: tripWindows };
-    const stationIds = stableStationIds(parentChildMap, CONFIG.STATION_ID);
-    const servedParentChildMap = withStationIds(parentChildMap, stationIds);
-    writeCityFiles(DATA_DIR, { features, parentChildMap: servedParentChildMap, stationIds, routes, tripRoutes, tripWindows: windowsFile, stopRoutes: platformRoutes, tripCalls: tripStops.values() });
+    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, stopRoutes: platformRoutes, tripCalls: [...tripStops.values()].map(stops => stops.map(stop => stop.stop_id)) });
     writeFeedIndex(DATA_DIR, STATION_NAMES_FILE, index.names);
     // A third-party source: when it is down the trains already published stay.
     try {
@@ -932,17 +900,10 @@ async function main(): Promise<void> {
     }
     console.log(`Wrote ${servedNodes.size} stations and ${Object.keys(routes).length} routes`);
 
-    sortDepartures(departuresByStop);
-    const parentOf = parentIndex(servedParentChildMap);
-    const departureBuckets = chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf));
-    writeChunks(path.join(DATA_DIR, DEPARTURE_BUCKETS_DIR), departureBuckets);
-    console.log(`Wrote ${departureBuckets.size} departure buckets for ${departuresByStop.size} stops`);
+    writeDepartures(DATA_DIR, departuresByStop, parentChildMap);
+    writeTrips(DATA_DIR, tripStops, windowsFile, tripRoutes);
 
-    const tripBuckets = buildTripBuckets(tripStops, windowsFile, tripRoutes);
-    writeChunks(path.join(DATA_DIR, TRIP_BUCKETS_DIR), tripBuckets);
-    console.log(`Wrote ${tripBuckets.size} trip buckets for ${activeTrips.size} trips`);
-
-    const tracks = buildTripTracks(tripStops, tripWindows);
+    const tracks = buildTripTracks(tripStops, windowsFile.trips);
     const largestTrack = writeChunks(path.join(DATA_DIR, TRACKS_DIR), tracks);
     console.log(`Wrote ${tracks.size} track files, largest ${(largestTrack / 1024).toFixed(0)}KB`);
     console.log('Done!');

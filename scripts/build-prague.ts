@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import type AdmZip from 'adm-zip';
-import path from 'node:path';
-import { outputDir, removeRetired, writeCoverage, writeJson, writeStopsFile } from './lib/emit.ts';
+import { outputDir, removeRetired, writeStopsAndRoutes } from './lib/emit.ts';
 import type { RouteInfo } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { readStops } from './lib/stops.ts';
@@ -9,7 +8,6 @@ import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
 import { buildNetwork, writeNetwork, type NetworkMode } from './lib/network.ts';
 import { buildPragueStops, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
 import { gtfsStopsFile } from './lib/stops-file.ts';
-import { writeStopSearch } from './lib/stop-search.ts';
 import { writePragueConnections } from './lib/prague-connections.ts';
 
 /**
@@ -87,14 +85,11 @@ async function main(): Promise<void> {
     removeRetired(dataDir);
 
     const zip = await fetchZip(CONFIG.GTFS_URL, 'GTFS_ZIP');
-    const routes = writePragueRoutes(zip, dataDir);
+    const routes = readPragueRoutes(zip);
 
     const gtfsStops = readGtfsStops(zip);
     const { features, stopRoutes } = buildPragueStops(gtfsStops, enrichmentMap, readStopInterchanges(zip), routeIdsOf);
-    const stops = gtfsStopsFile(features, stopRoutes, new Map(), routes);
-    writeStopsFile(dataDir, stops, routes);
-    writeCoverage(dataDir, stops);
-    writeStopSearch(dataDir, stops, routes, { stationsByPlatforms: true });
+    writeStopsAndRoutes(dataDir, gtfsStopsFile(features, stopRoutes, new Map(), routes), routes, { stationsByPlatforms: true });
 
     writePragueShapes(zip, dataDir, routes);
     writePragueConnections(zip, dataDir);
@@ -157,13 +152,10 @@ function isNightRoute(name: string): boolean {
 }
 
 /**
- * Every route's display branding (name, type, color) - the same `RouteInfo` shape Brno/Prešov/DÚK
- * already publish, so the frontend can join a vehicle's `route_short_name` to a color for any of the
- * four cities the same way. PID's static feed carries a real hex per route (verified: all ~900 rows
- * populated) for everything except substitute/night lines, which need the same override the Worker's
- * heuristic already applied.
+ * Every route's branding (name, GTFS type, colour), published by `writeStopsAndRoutes` like every city's.
+ * PID's feed has a colour per route except for substitute and night lines, which get their own.
  */
-function writePragueRoutes(zip: AdmZip, dataDir: string): Record<string, RouteInfo> {
+function readPragueRoutes(zip: AdmZip): Record<string, RouteInfo> {
     const routes: Record<string, RouteInfo> = {};
     for (const r of readTable(zip, 'routes.txt', ROUTES_TABLE)) {
         const isSubstitute = r.is_substitute_transport === '1' || r.route_short_name.toUpperCase().startsWith('X');
@@ -180,8 +172,7 @@ function writePragueRoutes(zip: AdmZip, dataDir: string): Record<string, RouteIn
     if (count < CONFIG.MIN_ROUTES) {
         throw new Error(`Suspiciously low number of routes (${count}). Aborting save to protect existing data.`);
     }
-    writeJson(dataDir, 'routes.json', routes);
-    console.log(`[SYNC] SUCCESS: Saved ${count} routes to ${path.join(dataDir, 'routes.json')}`);
+    console.log(`[SYNC] Read ${count} routes.`);
     return routes;
 }
 

@@ -2,6 +2,7 @@ import { NETWORK_FILE, type NetworkFeature, type NetworkFile, type RouteInfo, ty
 import { localXY, type Point } from './geo.ts';
 import { writeJson } from './emit.ts';
 import { routeOf, type RouteLookup } from './stops-file.ts';
+import { appRouteType, type AppRouteType } from './route-types.ts';
 
 /** How one GTFS route type is drawn: each route as its own coloured line, or every route merged into one track network. */
 export interface NetworkMode {
@@ -50,7 +51,7 @@ export function buildNetwork(
         const routeIds = [...tripsByShape.keys()].filter(id => types.has(routeOf(routes, id)?.type ?? '')).sort();
         const modeFeatures = mode.style === 'lines'
             ? routeIds.flatMap(id => routeLine(id, routeOf(routes, id)!, tripsByShape.get(id)!, shapes))
-            : mergedTrack(routeIds.flatMap(id => usualShapes(tripsByShape.get(id)!, shapes)), Number(mode.routeTypes[0]));
+            : mergedTrack(routeIds.flatMap(id => usualShapes(tripsByShape.get(id)!, shapes)), appRouteType(mode.routeTypes[0]!));
         const km = modeFeatures.reduce((sum, f) => sum + lengthM(f.geometry.coordinates), 0) / 1000;
         if (km < mode.minKm) {
             throw new Error(`Network for route types ${mode.routeTypes.join(',')} is only ${km.toFixed(1)} km (expected >= ${mode.minKm}). Aborting save to protect existing data.`);
@@ -90,7 +91,7 @@ function routeLine(routeId: string, route: RouteInfo, counts: ReadonlyMap<string
     return [{
         type: 'Feature',
         geometry: { type: 'LineString', coordinates: best.coords.map(round) },
-        properties: { route_type: Number(route.type), route_id: routeId, name: route.name, route_color: route.route_color },
+        properties: { route_type: appRouteType(route.type), route_id: routeId, name: route.name, route_color: route.route_color },
     }];
 }
 
@@ -98,7 +99,7 @@ function routeLine(routeId: string, route: RouteInfo, counts: ReadonlyMap<string
  * Every stretch of track drawn once: shapes are walked longest first, and only the parts further than
  * MERGE_DISTANCE_M from track already drawn are added, each joined at its ends onto the track it leaves.
  */
-function mergedTrack(shapes: readonly { lines: Coord[][] }[], routeType: number): NetworkFeature[] {
+function mergedTrack(shapes: readonly { lines: Coord[][] }[], routeType: AppRouteType): NetworkFeature[] {
     const lines = shapes.flatMap(s => s.lines).map(densify).sort((a, b) => b.length - a.length);
     const origin: Point = lines.length ? { lon: lines[0]![0]![0], lat: lines[0]![0]![1] } : { lon: 0, lat: 0 };
     const grid = new TrackGrid(origin);

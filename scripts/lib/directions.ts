@@ -6,7 +6,7 @@ import type { StopFeature } from './contract.ts';
  * (the same station's other side) is skipped, and a platform no trip leaves from gets none.
  * `trips` are each trip's calls in stop order.
  */
-export function platformDirections(features: readonly StopFeature[], trips: Iterable<readonly { stop_id: string }[]>): Map<string, string> {
+export function platformDirections(features: readonly StopFeature[], trips: Iterable<readonly string[]>): Map<string, string> {
     const nameOf = new Map(features.map(f => [f.properties.stop_id, f.properties.stop_name]));
     const needsDirection = new Set(features
         .filter(f => f.properties.location_type === 0 && !f.properties.platform_code && f.properties.parent_station)
@@ -15,12 +15,12 @@ export function platformDirections(features: readonly StopFeature[], trips: Iter
     const counts = new Map<string, Map<string, number>>();
     for (const calls of trips) {
         for (let i = 0; i < calls.length - 1; i++) {
-            const stopId = calls[i]!.stop_id;
+            const stopId = calls[i]!;
             if (!needsDirection.has(stopId)) continue;
             const here = nameOf.get(stopId);
             let next: string | undefined;
             for (let j = i + 1; j < calls.length && !next; j++) {
-                const name = nameOf.get(calls[j]!.stop_id);
+                const name = nameOf.get(calls[j]!);
                 if (name && name !== here) next = name;
             }
             if (!next) continue;

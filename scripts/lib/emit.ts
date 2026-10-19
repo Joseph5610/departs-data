@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, RETIRED_OUTPUTS, SCHEDULE_DIR, STOP_INDEX_DIR, STOPS_FILE, type CoverageFile, type StopsFile, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
-import { writeStopSearch } from './stop-search.ts';
+import { writeStopSearch, type StopSearchOptions } from './stop-search.ts';
+import { publishedRoutes } from './route-types.ts';
 import { buildScheduleFiles } from './schedule.ts';
 import { buildStopIndex } from './stop-index.ts';
 import { platformDirections } from './directions.ts';
@@ -97,19 +98,19 @@ export interface CityFiles {
     tripWindows: TripWindowsFile;
     /** Each platform's boardable route ids. */
     stopRoutes: ReadonlyMap<string, Iterable<string>>;
-    /** Each active trip's calls in stop order, from which platforms without a code get their direction. */
-    tripCalls: Iterable<readonly { stop_id: string }[]>;
+    /** Each active trip's stop ids in stop order, from which platforms without a code get their direction. */
+    tripCalls: Iterable<readonly string[]>;
 }
 
 /** Validates and writes `stops.json`. */
-export function writeStopsFile(dir: string, file: StopsFile, routes: RouteLookup): void {
+function writeStopsFile(dir: string, file: StopsFile, routes: RouteLookup): void {
     validateStopsFile(file, routes);
     const bytes = writeJson(dir, STOPS_FILE, file);
     console.log(`Wrote ${STOPS_FILE}: ${file.stations.length} stations, ${file.platforms.length} platforms, ${file.entrances.length} entrances, ${(bytes / 1024).toFixed(0)}KB`);
 }
 
 /** Writes the grid of where the network has stops, counting each platform. */
-export function writeCoverage(dir: string, file: StopsFile): void {
+function writeCoverage(dir: string, file: StopsFile): void {
     const cells: Record<string, number> = {};
     for (const { pos: [lng, lat] } of file.platforms) {
         const key = `${Math.floor(lng / COVERAGE_CELL_DEG)}|${Math.floor(lat / COVERAGE_CELL_DEG)}`;
@@ -125,19 +126,28 @@ export function removeRetired(dir: string): void {
     for (const name of RETIRED_OUTPUTS) fs.rmSync(path.join(dir, name), { recursive: true, force: true });
 }
 
-/** Writes the root JSON files every city adapter reads. */
+/**
+ * What every city publishes about its stops and routes, in one place: `stops.json`, the coverage grid, the stop
+ * search index and sitemap, and `routes.json` with app vehicle types instead of GTFS codes.
+ */
+export function writeStopsAndRoutes(dir: string, stops: StopsFile, routes: RouteLookup, search: StopSearchOptions = {}): void {
+    writeStopsFile(dir, stops, routes);
+    writeCoverage(dir, stops);
+    const published = publishedRoutes(routes);
+    writeStopSearch(dir, stops, published, search);
+    writeJson(dir, 'routes.json', published);
+}
+
+/** Writes the root JSON files every GTFS city adapter reads. */
 export function writeCityFiles(dir: string, files: CityFiles): void {
     fs.mkdirSync(dir, { recursive: true });
     removeRetired(dir);
     const directions = platformDirections(files.features, files.tripCalls);
     const stops = gtfsStopsFile(files.features, files.stopRoutes, directions, files.routes, files.stationIds);
-    writeStopsFile(dir, stops, files.routes);
-    writeCoverage(dir, stops);
-    writeStopSearch(dir, stops, files.routes);
+    writeStopsAndRoutes(dir, stops, files.routes);
     writeJson(dir, 'parent_child_map.json', files.parentChildMap);
     const largestStopShard = writeChunks(path.join(dir, STOP_INDEX_DIR), buildStopIndex(files.parentChildMap));
     console.log(`Wrote ${STOP_INDEX_DIR}/, largest shard ${(largestStopShard / 1024).toFixed(1)}KB`);
-    writeJson(dir, 'routes.json', files.routes instanceof Map ? Object.fromEntries(files.routes) : files.routes);
     const schedule = buildScheduleFiles(files.tripWindows, files.tripRoutes);
     const largestSchedule = writeChunks(path.join(dir, SCHEDULE_DIR), schedule);
     console.log(`Wrote ${schedule.size} schedule files, largest ${(largestSchedule / 1024).toFixed(0)}KB`);

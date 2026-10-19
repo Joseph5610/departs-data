@@ -28,7 +28,7 @@ export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
  * Outputs no reader uses any more, deleted from a city's directory on every build: the workflows seed
  * staging from the published data, so a file a build merely stops writing would be published forever.
  */
-export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json', 'trip_windows.json', 'trip_routes.json', 'trip_alias_runs.json', 'station_names.json', 'rail_stops.json', 'feed_index/rail_stops.json', 'map-stops.json'] as const;
+export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json', 'trip_windows.json', 'trip_routes.json', 'trip_alias_runs.json', 'station_names.json', 'rail_stops.json', 'feed_index/rail_stops.json', 'map-stops.json', '.last_modified'] as const;
 export const TRIP_BUCKETS_DIR = 'trip_buckets';
 export const CONNECTION_BUCKETS_DIR = 'connection_buckets';
 /** Mirrors departs-app `TRIP_SHAPES_CONFIG` in `src/config/constants.ts`. */
@@ -134,7 +134,8 @@ export const NETWORK_FILE = 'network.json';
 export interface NetworkFeature {
     type: 'Feature';
     geometry: { type: 'LineString'; coordinates: [number, number][] };
-    properties: { route_type: number; route_id?: string; name?: string; route_color?: string };
+    /** `route_type` is an app type (`tram`), never a GTFS code. */
+    properties: { route_type: string; route_id?: string; name?: string; route_color?: string };
 }
 
 export interface NetworkFile {

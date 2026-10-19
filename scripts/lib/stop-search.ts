@@ -49,13 +49,13 @@ export function writeStopSearch(dir: string, file: StopsFile, routes: RouteLooku
     for (const s of file.stations) {
         const platforms = platformsOf.get(s.id) ?? [];
         const id = stationsByPlatforms ? platforms.map(platformIds).join(',') : s.id;
-        const lines = linesOf(platforms.flatMap(p => p.routes), routes);
+        const lines = linesOf(platforms.flatMap(p => p.routes), routes)
         rows.push({ line: '', station: true, pos: s.pos, detail: [id, s.name, null, 1, s.pos[0], s.pos[1], lines] });
     }
     for (const p of file.platforms) {
         const id = platformIds(p);
         const name = nameOf.get(p.station) ?? '';
-        const lines = linesOf(p.routes, routes);
+        const lines = linesOf(p.routes, routes)
         const station = stationIndex.get(p.station)!;
         rows.push({ line: `${field(foldName(name))}\t${field(id.toLowerCase())}`, station: false, pos: p.pos, detail: [id, name, p.code ?? null, 0, p.pos[0], p.pos[1], lines, station] });
     }

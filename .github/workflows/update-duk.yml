@@ -38,6 +38,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Unit tests
+        run: npm test
+
       # The build reads some of its own previous output back (alias chains) and leaves files it
       # did not regenerate in place, so stage a copy of what is published rather than an empty dir.
       - name: Seed staging from published data

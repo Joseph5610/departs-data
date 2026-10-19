@@ -13,7 +13,7 @@ Scripts and published data live on separate branches.
 **`master`** — the pipeline:
 
 - `/scripts` - TypeScript build scripts, run directly by Node (no build step).
-- `/scripts/lib` - Shared pipeline code: chunk contract, service-day calendar, geometry, feed readers, output writers.
+- `/scripts/lib` - Shared pipeline code: the published-file contract, feed readers, service-day calendar, the timetable pipeline (`timetable.ts`), stop, route and search writers, geometry.
 - `/.github/workflows` - CI/CD pipelines that run the scripts on scheduled intervals.
 
 **`data`** — the published output, served at `https://data.departs.app` via GitHub Pages:
@@ -25,25 +25,25 @@ there by hand or branch from it.
 
 ## 🏙 City Data Pipelines
 
-Every GTFS-stack city (Brno, Prešov, DÚK) publishes the same files through the shared writers in `scripts/lib`:
-- `schedule/<HH>.json`: the trips a vehicle may be matched to in that hour, with their routes (`buildScheduleFiles`).
-- `trip_buckets/<n>.json`: each trip's stops plus `$days` and `$trips` (window, day flags, route), and the days each onward connection runs (`buildTripBuckets`).
-- `departure_buckets/`, `routes.json`, `parent_child_map.json`, `stops.json`.
-- `stop_index/<n>.json`: each stop's station or platforms, so a departures request reads only the stops it names (`buildStopIndex`).
+Every city publishes its stops and routes through one writer (`writeStopsAndRoutes`): `stops.json`, `routes.json`, the coverage grid, the stop search index (`stop_search.*`, `stop_details/`) and `sitemap_stops.txt`. Route types are published as the app's vehicle types (`tram`, `metro`, `bus`...), never GTFS codes; `appRouteType` in `lib/route-types.ts` is the one translation. Shapes and `network.json` go through `writeShapeBuckets` and `buildNetwork` for every city that has them.
+
+Brno, Prešov and DÚK also publish a timetable through the shared pipeline in `lib/timetable.ts`: GTFS feeds are read by `readGtfsTimetable`, and every city's trips go through the same rules for who boards, trip windows (a trip lasts until it leaves its last stop) and buckets:
+- `departure_buckets/`: each stop's departures, a station's platforms in their station's bucket (`writeDepartures`).
+- `trip_buckets/<n>.json`: each trip's stops plus `$days` and `$trips` (window, day flags, route), and the days each onward connection runs (`writeTrips`).
+- `schedule/<HH>.json`: the trips a vehicle may be matched to in that hour, with their routes (`writeCityFiles`).
+- `parent_child_map.json` and `stop_index/<n>.json`: each stop's station or platforms, so a departures request reads only the stops it names (`writeCityFiles`).
 - `feed_index/`: lookups a single network's realtime feed needs (Brno `trip_alias_runs.json`, DÚK `station_names.json`).
 - `rail_trips/<n>.json` (DÚK): trains by train number, with their stations and the Portabo platform each opens.
 
 ### 🇨🇿 Brno (IDS JMK)
-*Script:* `scripts/build-brno.ts` | *Action:* `update-brno.yml` (Runs every 8 hours)
+*Script:* `scripts/build-brno.ts` | *Action:* `update-brno.yml` (Runs daily)
 
-The Brno transport authority (Kordis) provides a traditional GTFS `.zip` file. Because parsing millions of rows inside a Cloudflare Worker at runtime is impossible, we process it ahead of time:
-1. Downloads the latest `gtfs.zip` (only if the ETag changed).
-2. Parses `routes`, `stops`, `trips`, `calendar`, and `stop_times`.
-3. Pre-calculates a rolling 48-hour window of all scheduled departures.
-4. Chunks the massive datasets into tiny `[stop_id].json` and `[trip_id].json` files.
-5. Writes `stops.json`, the stations with their platforms (every GTFS city does this through `writeCityFiles`).
-
-This allows the main app to fetch only the exact bytes it needs for a specific stop instantly.
+KORDIS publishes a GTFS `.zip`; parsing it inside a Cloudflare Worker is impossible, so it is processed ahead of time:
+1. Reads the timetable for today and tomorrow through the shared pipeline, with KORDIS's held connections attached to departures (the feeders a departure waits for) and to trip stops (the onward trips that wait).
+2. Uses the feed's own stations, published under a stable id (`U1271`), since KORDIS renumbers their `N…` part.
+3. Maps trip ids of older exports onto current trips by run (`feed_index/trip_alias_runs.json`), keeping two exports of run ids in `trip_courses.json` as build state.
+4. Writes hourly `stop_times/` slices, from which the app estimates delays the realtime feed lacks.
+5. Fetches route shapes from the Lissy API (needs `LISSY_API_TOKEN`) and draws the tram network in `network.json`.
 
 ### 🇨🇿 Prague (PID)
 *Script:* `scripts/build-prague.ts` | *Action:* `update-prague.yml` (Runs daily)
@@ -61,8 +61,10 @@ Points of sale are a separate weekly build (`scripts/build-prague-pos.ts`).
 DPMP publishes a monthly GTFS `.zip` via the Mesto Prešov ArcGIS portal. The output mirrors Brno's file set, with a few feed-specific steps:
 1. Strips the monthly `feed_version` prefix from trip and service ids.
 2. Synthesises parent stations by grouping same-named platforms, since the feed has none.
+   Each station is published as `U` and its lowest platform id.
 3. Derives request stops from the `*` stop-name suffix and injects official DPMP line colors.
-4. Carries `direction_id` on each trip in `schedule/<HH>.json`, used to match the realtime CSV to trips.
+4. Reads continuations (`line → headsign`) from stop headsigns and matches them to the trip leaving the terminus.
+5. Carries `direction_id` on each trip in `schedule/<HH>.json`, used to match the realtime CSV to trips.
 
 ### 🇨🇿 Ústecký kraj (DÚK)
 *Script:* `scripts/build-duk.ts` | *Action:* `update-duk.yml` (Runs daily)
@@ -73,32 +75,29 @@ The kraj currently publishes no GTFS, so timetables come from the national CIS J
 3. On each day applies only a line's most recently started timetables, since CIS files every change as a new timetable valid to the licence end; where those share a trip number, a detour wins.
 4. Uses Portabo nodes (the ids the DÚK realtime feed reports) as stops, matched to JDF stops by name, since JDF has no coordinates or national stop ids. Bare names on city lines (JDF type A/B) are treated as streets of the line's town and only match near the rest of the line; matches forcing an implausible detour are rejected and the line re-resolved without them.
 5. Names trips `<spoj>-<line>-<timetable>` so the app maps realtime `CISLineID` + `RouteID` onto them. No shapes are produced.
-6. Emits one station (`centroid-<node>`) per Portabo node and one platform (`<node>-<post>`) per post, exactly as `GetStations` lists them, except the virtual post 999 where a node has real ones; posts on the exact same point are fanned out on a ~12 m circle as for Brno, and rail/ferry posts (90+) carry no platform number. Departures are not built per platform: the app takes them from Portabo's live board of each post. Departures chunks stay keyed by the bare node and carry the platform each trip is expected at.
+6. Emits one station (published as the bare node, `952`) per Portabo node and one platform (`<node>-<post>`) per post, exactly as `GetStations` lists them, except the virtual post 999 where a node has real ones; posts on the exact same point are fanned out on a ~12 m circle as for Brno, and rail/ferry posts (90+) carry no platform number. Departures are not built per platform: the app takes them from Portabo's live board of each post. Departures chunks stay keyed by the bare node and carry the platform each trip is expected at.
 7. Names lines by `LinExt` (X, XU28), a small override table (LD, MHD) or the last three digits, and colours Ústí city lines as DPmÚL does.
 8. Draws each trip through an estimated platform per stop (right of the direction of travel), since JDF names only the stop.
 
-Trains are published only as NeTEx (`ftp.cisjr.cz/netex/`) and are not built yet. Stops Portabo lacks or places at a placeholder position (most Most/Litvínov city stops) stay in trip timelines with an empty `stop_id` and no coordinates.
+Trains come from Spojenka's GTFS into `rail_trips/` (by train number); the CIS JŘ export carries no trains. Stops Portabo lacks or places at a placeholder position (most Most/Litvínov city stops) stay in trip timelines with an empty `stop_id` and no coordinates.
 
 ## 🚀 Local Development
 
 To run the pipelines locally:
 
 ```bash
-# Install dependencies
 npm install
+npm run typecheck
+npm test              # unit tests of the shared pipeline (scripts/**/*.test.ts)
 
-# Run Brno GTFS processing
-npm run build:brno
-
-# Run Prešov GTFS processing
+npm run build:brno    # LISSY_API_TOKEN for shapes and network.json
 npm run build:presov
-
-# Run Ústecký kraj JDF processing
 npm run build:duk
-
-# Run Prague enrichment sync
 npm run build:prague
+npm run build:prague-pos
 ```
+
+A build writes into the repository's city folder unless `OUT_DIR` points elsewhere. To compare two versions of the scripts on the same input, pin it: `GTFS_ZIP` (a downloaded feed zip, Brno and Prešov), `STATIONS_JSON` (Portabo stations, DÚK), `JDF_CACHE_DIR` (keeps the JDF and Spojenka downloads) and `BUILD_NOW` (epoch ms the service days are counted from).
 
 ## 📄 License
 
@@ -108,7 +107,7 @@ npm run build:prague
 
 | Output | Source (credit) | Licence | Changes made here |
 | --- | --- | --- | --- |
-| `/prague` | [PID open data](https://pid.cz/o-systemu/opendata/), stop list (ROPID) | CC BY 4.0 | Stops reduced to an id → station, line and zone lookup (`stops-enrichment.json`). |
+| `/prague` | [PID open data](https://pid.cz/o-systemu/opendata/): GTFS and stop list (ROPID) | CC BY 4.0 | Stops grouped into stations and merged platforms; routes, shapes, the metro network and held connections extracted from the GTFS. |
 | `/brno` | [Jízdní řád IDS JMK ve formátu GTFS](https://data.brno.cz/datasets/379d2e9a7907460c8ca7fda1f3e84328) (Statutární město Brno, KORDIS JMK) | CC BY 4.0 | Filtered to a rolling 48-hour window, restructured into per-stop and per-trip JSON chunks, parent stations and platforms grouped. |
 | `/brno` | Route shapes from the Lissy API (FIT VUT Brno); the [Lissy](https://github.com/Jorgen98/Lissy) tool itself is GPL-3.0 | Used and redistributed with the author's explicit permission; not covered by this repository's CC BY 4.0 | Attached to trips as simplified shapes, and merged into the tram network in `network.json`. |
 | `/presov` | [GTFS – MHD Prešov](https://www.arcgis.com/home/item.html?id=f1033ca6c2f4461d9aba285e1c7cb079) (Dopravný podnik mesta Prešov, a.s.) | CC BY 4.0 | Monthly id prefixes stripped, parent stations synthesised, request stops and line colours added, three-day window chunked to JSON. |
