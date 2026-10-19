@@ -2,12 +2,12 @@ import fs from 'node:fs';
 import type AdmZip from 'adm-zip';
 import path from 'node:path';
 import { outputDir, removeRetired, writeCoverage, writeJson, writeStopsFile } from './lib/emit.ts';
-import { MAP_STOPS_FILE, type RouteInfo } from './lib/contract.ts';
+import type { RouteInfo } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { readStops } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
 import { buildNetwork, writeNetwork, type NetworkMode } from './lib/network.ts';
-import { buildPragueMapStops, pidStopFeatures, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
+import { buildPragueStops, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
 import { gtfsStopsFile } from './lib/stops-file.ts';
 import { writeStopSearch } from './lib/stop-search.ts';
 import { writePragueConnections } from './lib/prague-connections.ts';
@@ -15,8 +15,7 @@ import { writePragueConnections } from './lib/prague-connections.ts';
 /**
  * Prague (PID) static data.
  *
- * Writes `map-stops.json`, the final map stop list built from the PID GTFS stops enriched with PID's
- * lines and names, the route shapes the app reads directly, and the held connections and
+ * Writes `stops.json`, built from the PID GTFS stops enriched with PID's lines and names, the route shapes the app reads directly, and the held connections and
  * through-running Golemio lacks (`connection_buckets/`), all from one download of the PID GTFS.
  */
 const CONFIG = {
@@ -91,13 +90,11 @@ async function main(): Promise<void> {
     const routes = writePragueRoutes(zip, dataDir);
 
     const gtfsStops = readGtfsStops(zip);
-    const { mapStops, stationOf } = buildPragueMapStops(gtfsStops, enrichmentMap, readStopInterchanges(zip));
-    writeJson(dataDir, MAP_STOPS_FILE, mapStops);
-    writeCoverage(dataDir, mapStops);
-    writeStopSearch(dataDir, mapStops);
-    console.log(`[SYNC] SUCCESS: Saved ${mapStops.features.length} map stops to ${path.join(dataDir, MAP_STOPS_FILE)}`);
-    const { features, stopRoutes } = pidStopFeatures(mapStops, stationOf, routeIdsOf);
-    writeStopsFile(dataDir, gtfsStopsFile(features, stopRoutes, new Map(), routes), routes);
+    const { features, stopRoutes } = buildPragueStops(gtfsStops, enrichmentMap, readStopInterchanges(zip), routeIdsOf);
+    const stops = gtfsStopsFile(features, stopRoutes, new Map(), routes);
+    writeStopsFile(dataDir, stops, routes);
+    writeCoverage(dataDir, stops);
+    writeStopSearch(dataDir, stops, routes, { stationsByPlatforms: true });
 
     writePragueShapes(zip, dataDir, routes);
     writePragueConnections(zip, dataDir);
@@ -107,7 +104,7 @@ const isDigit = (c: string) => c >= '0' && c <= '9';
 
 /**
  * The order Golemio lists stops in (letters before digits, case ignored, then case), which decides
- * the order of merged stop ids and the member a centroid is named after. Published ids are stored in
+ * the order of merged stop ids and the member a station is named after. Published ids are stored in
  * users' favorites and links, so this must not change.
  */
 function compareStopIds(a: string, b: string): number {

@@ -1,8 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, MAP_STOPS_FILE, RETIRED_OUTPUTS, SCHEDULE_DIR, STOP_INDEX_DIR, STOPS_FILE, type CoverageFile, type StopsFile, type MapStopCollection, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
-import { buildGtfsMapStops } from './map-stops.ts';
+import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, RETIRED_OUTPUTS, SCHEDULE_DIR, STOP_INDEX_DIR, STOPS_FILE, type CoverageFile, type StopsFile, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
 import { writeStopSearch } from './stop-search.ts';
 import { buildScheduleFiles } from './schedule.ts';
 import { buildStopIndex } from './stop-index.ts';
@@ -89,7 +88,7 @@ export function safetyCheck(stops: number, trips: number, minStops: number, minT
 
 export interface CityFiles {
     features: StopFeature[];
-    /** Keyed by the published station ids (`withStationIds`); `features` keep the feed's, for `map-stops.json`. */
+    /** Keyed by the published station ids (`withStationIds`); `features` keep the feed's. */
     parentChildMap: ParentChildMap;
     /** Each station's published id where it is not its feed id (`stableStationIds`). */
     stationIds?: ReadonlyMap<string, string>;
@@ -109,12 +108,10 @@ export function writeStopsFile(dir: string, file: StopsFile, routes: RouteLookup
     console.log(`Wrote ${STOPS_FILE}: ${file.stations.length} stations, ${file.platforms.length} platforms, ${file.entrances.length} entrances, ${(bytes / 1024).toFixed(0)}KB`);
 }
 
-/** Writes the grid of where the network has stops; station centroids are left out so a station counts once per platform. */
-export function writeCoverage(dir: string, mapStops: MapStopCollection): void {
+/** Writes the grid of where the network has stops, counting each platform. */
+export function writeCoverage(dir: string, file: StopsFile): void {
     const cells: Record<string, number> = {};
-    for (const f of mapStops.features) {
-        if (f.properties.is_centroid) continue;
-        const [lng, lat] = f.geometry.coordinates;
+    for (const { pos: [lng, lat] } of file.platforms) {
         const key = `${Math.floor(lng / COVERAGE_CELL_DEG)}|${Math.floor(lat / COVERAGE_CELL_DEG)}`;
         cells[key] = (cells[key] ?? 0) + 1;
     }
@@ -128,19 +125,15 @@ export function removeRetired(dir: string): void {
     for (const name of RETIRED_OUTPUTS) fs.rmSync(path.join(dir, name), { recursive: true, force: true });
 }
 
-/** Writes the root JSON files every city adapter reads, plus the final map stop list. */
+/** Writes the root JSON files every city adapter reads. */
 export function writeCityFiles(dir: string, files: CityFiles): void {
     fs.mkdirSync(dir, { recursive: true });
     removeRetired(dir);
-    const mapStops = buildGtfsMapStops(files.features);
-    if (!mapStops.features.some((f) => f.properties.is_centroid)) {
-        throw new Error(`No station centroids in ${MAP_STOPS_FILE}. Aborting before publishing stops the app cannot group.`);
-    }
-    writeJson(dir, MAP_STOPS_FILE, mapStops);
     const directions = platformDirections(files.features, files.tripCalls);
-    writeStopsFile(dir, gtfsStopsFile(files.features, files.stopRoutes, directions, files.routes, files.stationIds), files.routes);
-    writeCoverage(dir, mapStops);
-    writeStopSearch(dir, mapStops);
+    const stops = gtfsStopsFile(files.features, files.stopRoutes, directions, files.routes, files.stationIds);
+    writeStopsFile(dir, stops, files.routes);
+    writeCoverage(dir, stops);
+    writeStopSearch(dir, stops, files.routes);
     writeJson(dir, 'parent_child_map.json', files.parentChildMap);
     const largestStopShard = writeChunks(path.join(dir, STOP_INDEX_DIR), buildStopIndex(files.parentChildMap));
     console.log(`Wrote ${STOP_INDEX_DIR}/, largest shard ${(largestStopShard / 1024).toFixed(1)}KB`);

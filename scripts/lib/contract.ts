@@ -28,7 +28,7 @@ export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
  * Outputs no reader uses any more, deleted from a city's directory on every build: the workflows seed
  * staging from the published data, so a file a build merely stops writing would be published forever.
  */
-export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json', 'trip_windows.json', 'trip_routes.json', 'trip_alias_runs.json', 'station_names.json', 'rail_stops.json', 'feed_index/rail_stops.json'] as const;
+export const RETIRED_OUTPUTS = ['departures', 'trips', 'shape_chunks', 'trip_shapes.json', 'stops-enrichment.json', 'connections.json', 'trip_aliases.json', 'trip_windows.json', 'trip_routes.json', 'trip_alias_runs.json', 'station_names.json', 'rail_stops.json', 'feed_index/rail_stops.json', 'map-stops.json'] as const;
 export const TRIP_BUCKETS_DIR = 'trip_buckets';
 export const CONNECTION_BUCKETS_DIR = 'connection_buckets';
 /** Mirrors departs-app `TRIP_SHAPES_CONFIG` in `src/config/constants.ts`. */
@@ -228,39 +228,6 @@ export interface StopFeature {
 
 export type ParentChildMap = Record<string, string[]>;
 
-/** Mirrors `AppStopProperties` in departs-app `functions/_core/types.ts`: one stop as the map renders it. */
-export interface MapStopProperties {
-    stop_id: string;
-    stop_name: string;
-    platform_code?: string | null;
-    location_type: number;
-    parent_station: string | null;
-    zone_id: string | null;
-    is_centroid?: boolean;
-    is_drop_off_only?: true | undefined;
-    is_train?: 0 | 1;
-    metro_lines?: Array<{ name: string; route_color: string }> | undefined;
-    /** PID `stop_icons` codes of the modes a rider can change to here (`Ma`, `Ra`, `Ap`, ...). */
-    interchanges?: string[];
-    all_ids?: string[];
-    lines?: RouteInfo[];
-}
-
-export interface MapStopFeature {
-    type: 'Feature';
-    id?: string;
-    geometry: { type: 'Point'; coordinates: [number, number] };
-    properties: MapStopProperties;
-}
-
-/** `<city>/map-stops.json`: the final stop list, served unchanged by departs-app's `/api/<city>/stops`. */
-export interface MapStopCollection {
-    type: 'FeatureCollection';
-    features: MapStopFeature[];
-}
-
-export const MAP_STOPS_FILE = 'map-stops.json';
-
 /** `<city>/stops.json`: every city's stations, platforms and entrances in one shape (see `StopsFile`). */
 export const STOPS_FILE = 'stops.json';
 export const STOPS_FILE_VERSION = 1;
@@ -269,7 +236,7 @@ export const STOPS_FILE_VERSION = 1;
 export type Position = [number, number];
 
 export interface Station {
-    /** The station's id in map-stops.json, so links and favorites keep resolving. */
+    /** Opaque and stable across the feed's re-exports (`stableStationIds`), so links and favorites keep resolving. */
     id: string;
     name: string;
     pos: Position;
@@ -328,8 +295,8 @@ export const STOP_SEARCH_BIN_FILE = 'stop_search.bin';
 export const STOP_DETAILS_DIR = 'stop_details';
 /** Stops per `stop_details` file; mirrors `STOP_SEARCH_CONFIG.DETAILS_BLOCK` in departs-app. */
 export const STOP_DETAILS_BLOCK = 256;
-/** `[stop_id, stop_name, platform_code, location_type, lon, lat, lines]` */
-export type StopDetail = [string, string, string | null, number, number, number, RouteInfo[]];
+/** `[stop_id, stop_name, platform_code, location_type, lon, lat, lines]`, a platform's followed by its station's index in the search index. */
+export type StopDetail = [string, string, string | null, number, number, number, RouteInfo[]] | [string, string, string | null, number, number, number, RouteInfo[], number];
 /** `<city>/sitemap_stops.txt`: the stop ids departs-app's sitemap links. */
 export const SITEMAP_STOPS_FILE = 'sitemap_stops.txt';
 

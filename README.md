@@ -18,7 +18,7 @@ Scripts and published data live on separate branches.
 
 **`data`** — the published output, served at `https://data.departs.app` via GitHub Pages:
 
-- `/brno`, `/prague`, `/presov`, `/duk` - Chunked JSON per network. Each has a `map-stops.json`: the final map stop list the app loads directly and `/api/<city>/stops` passes through unchanged.
+- `/brno`, `/prague`, `/presov`, `/duk` - Chunked JSON per network. Each has a `stops.json`: its stations, platforms and entrances in one format the app loads directly.
 
 The `data` branch holds a single commit, which each workflow amends and force-pushes. Don't commit
 there by hand or branch from it.
@@ -28,7 +28,7 @@ there by hand or branch from it.
 Every GTFS-stack city (Brno, Prešov, DÚK) publishes the same files through the shared writers in `scripts/lib`:
 - `schedule/<HH>.json`: the trips a vehicle may be matched to in that hour, with their routes (`buildScheduleFiles`).
 - `trip_buckets/<n>.json`: each trip's stops plus `$days` and `$trips` (window, day flags, route), and the days each onward connection runs (`buildTripBuckets`).
-- `departure_buckets/`, `routes.json`, `parent_child_map.json`, `map-stops.json`.
+- `departure_buckets/`, `routes.json`, `parent_child_map.json`, `stops.json`.
 - `stop_index/<n>.json`: each stop's station or platforms, so a departures request reads only the stops it names (`buildStopIndex`).
 - `feed_index/`: lookups a single network's realtime feed needs (Brno `trip_alias_runs.json`, DÚK `station_names.json`).
 - `rail_trips/<n>.json` (DÚK): trains by train number, with their stations and the Portabo platform each opens.
@@ -41,7 +41,7 @@ The Brno transport authority (Kordis) provides a traditional GTFS `.zip` file. B
 2. Parses `routes`, `stops`, `trips`, `calendar`, and `stop_times`.
 3. Pre-calculates a rolling 48-hour window of all scheduled departures.
 4. Chunks the massive datasets into tiny `[stop_id].json` and `[trip_id].json` files.
-5. Writes `map-stops.json`, the final stop list with stations as centroids (every GTFS city does this through `writeCityFiles`).
+5. Writes `stops.json`, the stations with their platforms (every GTFS city does this through `writeCityFiles`).
 
 This allows the main app to fetch only the exact bytes it needs for a specific stop instantly.
 
@@ -49,7 +49,7 @@ This allows the main app to fetch only the exact bytes it needs for a specific s
 *Script:* `scripts/build-prague.ts` | *Action:* `update-prague.yml` (Runs daily)
 
 Prague's departures, vehicles and trip times come live from Golemio, so this builds only what Golemio lacks, from one download of the PID GTFS:
-1. Fetches the PID stop groups from the PID open data portal and enriches the GTFS stops with their lines and names, then groups platforms into stations and centroids and writes `map-stops.json`.
+1. Fetches the PID stop groups from the PID open data portal and enriches the GTFS stops with their lines and names, then groups platforms into stations and writes `stops.json`.
 2. Writes `routes.json`, the route shapes (`trip_shape_buckets/`, `shape_buckets/`) and `network.json`, the metro lines the app draws on the map at all times.
 3. Writes held connections and through-running into `connection_buckets/`.
 

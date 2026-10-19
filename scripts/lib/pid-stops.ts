@@ -1,5 +1,4 @@
-import type { MapStopCollection, MapStopFeature, MapStopProperties, StopFeature } from './contract.ts';
-import { getVehicleColor } from './pid-colors.ts';
+import type { StopFeature } from './contract.ts';
 
 /** One PID GTFS `stops.txt` row as a point feature, as far as the build reads it. */
 export interface GtfsStopFeature {
@@ -21,21 +20,28 @@ export interface PidEnrichment {
     n: string | undefined;
 }
 
-/**
- * Builds Prague's final map stop list from the PID GTFS stops and the PID enrichment.
- *
- * Ported from departs-app `functions/_adapters/golemio/services/stops/` (`StopsMapper.map` and
- * `grouping.ts`), which did this per request; the output must stay identical to what
- * `/api/prague/stops` returned.
- */
-export function buildPragueMapStops(
-    rawStops: readonly GtfsStopFeature[],
-    enrichmentMap: Readonly<Record<string, PidEnrichment>>,
-    interchanges: ReadonlyMap<string, ReadonlySet<string>>
-): { mapStops: MapStopCollection; stationOf: Map<string, string> } {
-    const stationOf = new Map<string, string>();
-    const features = processStops(enrichStops(rawStops, enrichmentMap, interchanges), stationOf);
-    return { mapStops: { type: 'FeatureCollection', features }, stationOf };
+/** A GTFS stop with PID's name and whether a PID line boards there. */
+interface PidStop {
+    id: string;
+    name: string;
+    coordinates: [number, number];
+    locationType: number;
+    parentStation: string | null;
+    platformCode: string | null;
+    zoneId: string | null;
+    served: boolean;
+    interchanges: string[] | undefined;
+}
+
+/** A published platform or entrance: the GTFS stops merged into it, the first id leading. */
+interface Grouped {
+    kind: 'platform' | 'entrance';
+    ids: string[];
+    base: PidStop;
+    coordinates: [number, number];
+    interchanges: string[] | undefined;
+    /** The GTFS station a structural station's platform feature stands for; its routes are all its platforms'. */
+    gtfsStation?: string;
 }
 
 /** PID's documented `stop_icons` order: metro, rail, funicular, ferry, airport, tram, trolleybus, bus. */
@@ -47,333 +53,179 @@ const orderInterchanges = (codes: ReadonlySet<string>): string[] | undefined => 
     return [...codes].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
 };
 
-/** Union of the features' interchanges, in PID order. */
-const mergeInterchanges = (features: readonly MapStopFeature[]): string[] | undefined =>
-    orderInterchanges(new Set(features.flatMap(f => f.properties.interchanges ?? [])));
+/** Union of the given interchanges, in PID order. */
+const mergeInterchanges = (lists: ReadonlyArray<readonly string[] | undefined>): string[] | undefined =>
+    orderInterchanges(new Set(lists.flatMap(l => l ?? [])));
 
-/** Drops exit-only stops and attaches PID lines and names. */
+/** A PID pole's GTFS id, `U<node>Z<pole>` with an optional variant suffix (`U1040Z1P`). */
+const POLE_ID = /^U(\d+)Z(\d+)/;
+
+/**
+ * A station's published id, after PID's own id of its lowest-numbered pole (`1040/1` -> `U1040-1`): PID
+ * keeps pole ids unique and unchanged, while its stop groups have no id of their own. Undefined without a pole.
+ */
+function stationIdOf(platformIds: readonly string[]): string | undefined {
+    let best: { node: string; pole: number } | undefined;
+    for (const id of platformIds) {
+        const match = POLE_ID.exec(id);
+        if (!match) continue;
+        const pole = Number(match[2]);
+        if (!best || pole < best.pole) best = { node: match[1]!, pole };
+    }
+    return best && `U${best.node}-${best.pole}`;
+}
+
+const mean = (points: ReadonlyArray<readonly [number, number]>): [number, number] => {
+    let sumLng = 0, sumLat = 0;
+    for (const [lng, lat] of points) { sumLng += lng; sumLat += lat; }
+    return [sumLng / points.length, sumLat / points.length];
+};
+
+/** Drops exit-only stops and attaches PID names and whether a line boards. */
 function enrichStops(
     rawStops: readonly GtfsStopFeature[],
     enrichmentMap: Readonly<Record<string, PidEnrichment>>,
     interchanges: ReadonlyMap<string, ReadonlySet<string>>
-): MapStopFeature[] {
-    return rawStops
-        .filter(f => {
-            const enrichment = enrichmentMap[f.properties.stop_id];
-            if (!enrichment) return true;
-            return enrichment.l && enrichment.l.some(l => l.e === 0);
-        })
-        .map(f => {
-            const enrichment = enrichmentMap[f.properties.stop_id];
-            const lines: NonNullable<MapStopProperties['lines']> = enrichment
-                ? enrichment.l.map(l => ({ name: l.n, type: l.t, route_color: getVehicleColor(l.t, l.n) }))
-                : [];
-            return {
-                type: 'Feature' as const,
-                geometry: f.geometry,
-                properties: {
-                    stop_id: f.properties.stop_id,
-                    stop_name: enrichment?.n || f.properties.stop_name || '',
-                    location_type: f.properties.location_type,
-                    parent_station: f.properties.parent_station ?? null,
-                    platform_code: f.properties.platform_code ?? null,
-                    zone_id: f.properties.zone_id ?? null,
-                    lines,
-                    interchanges: orderInterchanges(interchanges.get(f.properties.stop_id) ?? new Set())
-                }
-            };
-        });
-}
-
-interface HierarchyContext {
-    stationAnchors: Map<string, MapStopFeature>;
-    stationChildrenFeatures: Map<string, MapStopFeature[]>;
-    publicStops: MapStopFeature[];
-}
-
-function buildStructuralHierarchy(allStops: MapStopFeature[]): HierarchyContext {
-    const ctx: HierarchyContext = {
-        stationAnchors: new Map(),
-        stationChildrenFeatures: new Map(),
-        publicStops: []
-    };
-    
-    for (const f of allStops) {
-        const p = f.properties;
-        const type = Number(p.location_type);
-        if (type !== 2 && !p.zone_id && !p.parent_station) continue;
-        
-        ctx.publicStops.push(f);
-        
-        if (type === 1) {
-            ctx.stationAnchors.set(p.stop_id, f);
-        } else if (p.parent_station) {
-            let features = ctx.stationChildrenFeatures.get(p.parent_station);
-            if (!features) {
-                features = [];
-                ctx.stationChildrenFeatures.set(p.parent_station, features);
-            }
-            features.push(f);
-        }
-    }
-    return ctx;
-}
-
-interface EnrichmentContext {
-    groups: Map<string, MapStopFeature>;
-    nameGroups: Map<string, MapStopFeature[]>;
-    /** A station feature's published id (its platforms' ids, comma-joined) -> its GTFS station id. */
-    stationFeatureIds: Map<string, string>;
-}
-
-function enrichPublicStops(ctx: HierarchyContext): EnrichmentContext {
-    const groups = new Map<string, MapStopFeature>();
-    const nameGroups = new Map<string, MapStopFeature[]>();
-    const stationFeatureIds = new Map<string, string>();
-
-    for (const f of ctx.publicStops) {
-        const p = f.properties;
-        const type = Number(p.location_type);
-        const stopId = p.stop_id;
-        const lines: NonNullable<MapStopProperties['lines']> = p.lines ?? [];
-        
-        let isTrain = 0;
-        const metroSet = new Set<string>();
-        
-        for (const l of lines) {
-            const t = String(l.type);
-            if (t === 'metro') {
-                metroSet.add(l.name);
-            } else if (t === 'train' || t === 'rail') {
-                isTrain = 1;
-            }
-        }
-        
-        const metroLines = Array.from(metroSet).sort();
-        const stopName = p.stop_name;
-
-        const enrichedProperties: MapStopProperties = {
-            stop_id: stopId,
-            stop_name: stopName,
-            platform_code: p.platform_code ?? null,
-            location_type: type,
-            parent_station: p.parent_station ?? null,
-            zone_id: p.zone_id ?? null,
-            is_train: isTrain as 0 | 1,
-            metro_lines: metroLines.length > 0 ? metroLines.map(name => ({ name, route_color: getVehicleColor('metro', name) })) : undefined,
-            lines: lines.map(l => ({ name: l.name, type: l.type, route_color: getVehicleColor(String(l.type), l.name) })),
-            interchanges: p.interchanges
-        };
-
-        const nodeIdMatch = stopId.match(/^([A-Za-z]*\d+)/);
-        const nodeId = nodeIdMatch ? nodeIdMatch[1] : stopId;
-        const enrichedFeature: MapStopFeature = { type: 'Feature', geometry: f.geometry, properties: enrichedProperties };
-
-        // Group non-station stops with same name/node into a centroid cluster
-        if ((type === 0 || type === 1 || isNaN(type)) && p.stop_name) {
-            const centroidKey = `${stopName}_${nodeId}`;
-            let ng = nameGroups.get(centroidKey);
-            if (!ng) {
-                ng = [];
-                nameGroups.set(centroidKey, ng);
-            }
-            ng.push(enrichedFeature);
-        }
-
-        // Structural Station (Type 1): Merge all child lines/colors into the parent node
-        if (type === 1) {
-            const childFeatures = ctx.stationChildrenFeatures.get(stopId) || [];
-            // The station id is its departure-board id: served platforms only, never pathway nodes or track sectors.
-            const platforms: MapStopFeature[] = [];
-            const served: MapStopFeature[] = [];
-            for (const c of childFeatures) {
-                if (Number(c.properties.location_type) !== 0) continue;
-                platforms.push(c);
-                if ((c.properties.lines?.length ?? 0) > 0) served.push(c);
-            }
-            const departurePlatforms = served.length > 0 ? served : platforms;
-            const childrenList = departurePlatforms.map(c => c.properties.stop_id);
-            
-            const uniqueLinesMap = new Map<string, { name: string, type: string, route_color: string }>();
-            let aggIsTrain = 0;
-            const aggMetroSet = new Set<string>();
-
-            for (const cf of childFeatures) {
-                for (const l of (cf.properties.lines ?? [])) {
-                    const key = `${l.name}_${l.type}`;
-                    if (!uniqueLinesMap.has(key)) {
-                        uniqueLinesMap.set(key, { name: l.name, type: l.type, route_color: getVehicleColor(String(l.type), l.name) });
-                    }
-                    const t = String(l.type);
-                    if (t === 'metro') {
-                        aggMetroSet.add(l.name);
-                    } else if (t === 'train' || t === 'rail') {
-                        aggIsTrain = 1;
-                    }
-                }
-            }
-            
-            const aggregatedMetroLines = Array.from(aggMetroSet).sort();
-
-            let finalGeometry = enrichedFeature.geometry;
-            if (childFeatures.length > 0) {
-                let sumLng = 0, sumLat = 0;
-                for (const child of childFeatures) { sumLng += child.geometry.coordinates[0]; sumLat += child.geometry.coordinates[1]; }
-                finalGeometry = { type: "Point", coordinates: [sumLng / childFeatures.length, sumLat / childFeatures.length] };
-            }
-
-            groups.set(`metro_station_${stopId}`, {
-                type: 'Feature', geometry: finalGeometry,
-                properties: {
-                    ...enrichedProperties,
-                    lines: Array.from(uniqueLinesMap.values()),
-                    metro_lines: aggregatedMetroLines.map(name => ({ name, route_color: getVehicleColor('metro', name) })),
-                    is_train: (aggIsTrain || isTrain) as 0 | 1,
-                    interchanges: mergeInterchanges(departurePlatforms),
-                    location_type: 1,
-                    stop_id: childrenList.length > 0 ? childrenList.join(',') : stopId
-                }
-            });
-            stationFeatureIds.set(childrenList.length > 0 ? childrenList.join(',') : stopId, stopId);
-            continue;
-        }
-
-        if (type === 2) {
-            groups.set(`entrance_${stopId}`, { type: 'Feature', geometry: f.geometry, properties: { ...enrichedProperties, location_type: 2 } });
-            continue;
-        }
-
-        if (type === 0 || isNaN(type)) {
-            if (p.parent_station && ctx.stationAnchors.has(p.parent_station)) continue;
-            if (!p.stop_name) continue;
-            const key = `stop_${stopName.toLowerCase()}_${nodeId}_${p.platform_code || ''}`;
-            const existing = groups.get(key);
-            if (!existing) {
-                groups.set(key, { type: 'Feature', geometry: f.geometry, properties: { ...enrichedProperties, all_ids: [stopId] } });
-            } else {
-                existing.properties.all_ids = [...(existing.properties.all_ids || []), stopId];
-                existing.properties.interchanges = mergeInterchanges([existing, enrichedFeature]);
-            }
-        }
-    }
-
-    return { groups, nameGroups, stationFeatureIds };
-}
-
-function generateVirtualCentroids(ctx: EnrichmentContext, stationOf: Map<string, string>): MapStopFeature[] {
-    const features: MapStopFeature[] = [];
-
-    for (const f of ctx.groups.values()) {
-        const allIds = f.properties.all_ids;
-        const finalId = allIds && allIds.length > 0 ? allIds.join(',') : f.properties.stop_id;
-        features.push({ ...f, properties: { ...f.properties, stop_id: finalId } });
-    }
-
-    for (const groupFeatures of ctx.nameGroups.values()) {
-        const station = groupFeatures.find(f => Number(f.properties.location_type) === 1);
-        const baseFeature = station ?? groupFeatures[0];
-        if (!baseFeature) continue;
-        let sumLng = 0, sumLat = 0;
-        let aggIsTrain = 0;
-        const aggMetroSet = new Set<string>();
-        
-        for (const f of groupFeatures) { 
-            sumLng += f.geometry.coordinates[0]; 
-            sumLat += f.geometry.coordinates[1];
-            if (f.properties.is_train === 1) aggIsTrain = 1;
-            for (const m of (f.properties.metro_lines || [])) {
-                aggMetroSet.add(m.name);
-            }
-        }
-        
-        const allMetroNames = Array.from(aggMetroSet).sort();
-        const centroidId = `centroid-${baseFeature.properties.stop_id}`;
-        for (const f of groupFeatures) stationOf.set(f.properties.stop_id, centroidId);
-
-        features.push({
-            type: "Feature", id: centroidId,
-            geometry: { type: "Point", coordinates: [sumLng / groupFeatures.length, sumLat / groupFeatures.length] },
-            properties: {
-                ...baseFeature.properties,
-                metro_lines: allMetroNames.map(name => ({ name, route_color: getVehicleColor('metro', name) })),
-                is_train: aggIsTrain as 0 | 1,
-                interchanges: undefined,
-                is_centroid: true,
-                stop_id: centroidId
-            }
+): PidStop[] {
+    const stops: PidStop[] = [];
+    for (const { geometry, properties: p } of rawStops) {
+        const enrichment = enrichmentMap[p.stop_id];
+        if (enrichment && !enrichment.l?.some(l => l.e === 0)) continue;
+        stops.push({
+            id: p.stop_id,
+            name: enrichment?.n || p.stop_name || '',
+            coordinates: geometry.coordinates,
+            locationType: Number(p.location_type),
+            parentStation: p.parent_station ?? null,
+            platformCode: p.platform_code ?? null,
+            zoneId: p.zone_id ?? null,
+            served: (enrichment?.l.length ?? 0) > 0,
+            interchanges: orderInterchanges(interchanges.get(p.stop_id) ?? new Set()),
         });
     }
-
-    for (const [published, stationId] of ctx.stationFeatureIds) {
-        const centroid = stationOf.get(stationId);
-        if (centroid) stationOf.set(published, centroid);
-    }
-    return features;
+    return stops;
 }
 
 /**
- * Processes and groups raw GTFS stop features into structural parent stations and logical centroids.
- * 
- * GTFS Location Types:
- * - 0: Stop/Platform
- * - 1: Station
- * - 2: Entrance/Exit
+ * Prague's stops as the shared `StopFeature`s every city's stops file is built from, with each platform's
+ * `routes.json` ids (`routeIdsOf` holds each GTFS stop's).
  *
- * Algorithm:
- * 1. Two-phase structural grouping (identifying Type 1 parents and Type 2 entrances).
- * 2. Logical enrichment (computing aggregated lines, colors, train presence).
- * 3. Centroid generation (creating virtual `is_centroid` nodes for UI map labels).
- *
- * @param allStops Raw GTFS stop features
- * @param stationOf Filled with each grouped stop's centroid id
- * @returns Grouped, enriched, and centroid-injected features
+ * PID's GTFS gives only metro and rail stations a `parent_station`, so the stations here are made by
+ * grouping stops of the same name and node (`U1000`). Poles sharing a name, node and platform code merge
+ * into one platform, its other GTFS ids becoming aliases; a GTFS station becomes one platform of its served
+ * platforms' ids, which its own children leave to it.
  */
-function processStops(allStops: MapStopFeature[], stationOf: Map<string, string>): MapStopFeature[] {
-    const hierarchyCtx = buildStructuralHierarchy(allStops);
-    const enrichmentCtx = enrichPublicStops(hierarchyCtx);
-    return generateVirtualCentroids(enrichmentCtx, stationOf);
-}
-
-
-/**
- * The stations and platforms of `buildPragueMapStops` as the shared `StopFeature`s every city's stops file
- * is built from: centroids are the stations, and each platform (a merged id list split into id and
- * aliases) and entrance names its centroid. `routeIdsOf` holds each GTFS stop's `routes.json` ids.
- */
-export function pidStopFeatures(
-    mapStops: MapStopCollection,
-    stationOf: ReadonlyMap<string, string>,
+export function buildPragueStops(
+    rawStops: readonly GtfsStopFeature[],
+    enrichmentMap: Readonly<Record<string, PidEnrichment>>,
+    interchanges: ReadonlyMap<string, ReadonlySet<string>>,
     routeIdsOf: ReadonlyMap<string, readonly string[]>,
 ): { features: StopFeature[]; stopRoutes: Map<string, string[]> } {
+    const stops = enrichStops(rawStops, enrichmentMap, interchanges)
+        .filter(s => s.locationType === 2 || s.zoneId || s.parentStation);
+
+    const gtfsStations = new Set<string>();
+    const childrenOf = new Map<string, PidStop[]>();
+    for (const s of stops) {
+        if (s.locationType === 1) gtfsStations.add(s.id);
+        else if (s.parentStation) {
+            let children = childrenOf.get(s.parentStation);
+            if (!children) { children = []; childrenOf.set(s.parentStation, children); }
+            children.push(s);
+        }
+    }
+
+    const grouped = new Map<string, Grouped>();
+    const nameGroups = new Map<string, PidStop[]>();
+    for (const s of stops) {
+        const node = /^([A-Za-z]*\d+)/.exec(s.id)?.[1] ?? s.id;
+
+        if ((s.locationType === 0 || s.locationType === 1 || isNaN(s.locationType)) && s.name) {
+            const key = `${s.name}_${node}`;
+            let group = nameGroups.get(key);
+            if (!group) { group = []; nameGroups.set(key, group); }
+            group.push(s);
+        }
+
+        if (s.locationType === 1) {
+            const children = childrenOf.get(s.id) ?? [];
+            // The station's departure-board ids: served platforms only, never pathway nodes or track sectors.
+            const platforms = children.filter(c => c.locationType === 0);
+            const served = platforms.filter(c => c.served);
+            const departurePlatforms = served.length > 0 ? served : platforms;
+            grouped.set(`station_${s.id}`, {
+                kind: 'platform',
+                ids: departurePlatforms.length > 0 ? departurePlatforms.map(c => c.id) : [s.id],
+                base: s,
+                coordinates: children.length > 0 ? mean(children.map(c => c.coordinates)) : s.coordinates,
+                interchanges: mergeInterchanges(departurePlatforms.map(c => c.interchanges)),
+                gtfsStation: s.id,
+            });
+        } else if (s.locationType === 2) {
+            grouped.set(`entrance_${s.id}`, { kind: 'entrance', ids: [s.id], base: s, coordinates: s.coordinates, interchanges: s.interchanges });
+        } else if (s.locationType === 0 || isNaN(s.locationType)) {
+            if (s.parentStation && gtfsStations.has(s.parentStation)) continue;
+            if (!s.name) continue;
+            const key = `stop_${s.name.toLowerCase()}_${node}_${s.platformCode || ''}`;
+            const existing = grouped.get(key);
+            if (!existing) {
+                grouped.set(key, { kind: 'platform', ids: [s.id], base: s, coordinates: s.coordinates, interchanges: s.interchanges });
+            } else {
+                existing.ids.push(s.id);
+                existing.interchanges = mergeInterchanges([existing.interchanges, s.interchanges]);
+            }
+        }
+    }
+
+    // Each name group's index, until its platforms are known and give it an id.
+    const groupOf = new Map<string, number>();
+    const groups = [...nameGroups.values()];
+    groups.forEach((group, i) => { for (const s of group) groupOf.set(s.id, i); });
+
     const features: StopFeature[] = [];
     const stopRoutes = new Map<string, string[]>();
-    for (const { geometry, properties: p } of mapStops.features) {
-        const base = { stop_name: p.stop_name, platform_code: p.platform_code ?? null, zone_id: p.zone_id, lines: [] };
-        if (p.is_centroid) {
-            features.push({ type: 'Feature', geometry, properties: { ...base, stop_id: p.stop_id, platform_code: null, location_type: 1, parent_station: null } });
+    const stationGroup = new Map<StopFeature, number | undefined>();
+    const platformIdsOf = groups.map((): string[] => []);
+    for (const g of grouped.values()) {
+        const { base } = g;
+        const common = { stop_name: base.name, platform_code: base.platformCode, zone_id: base.zoneId, lines: [] };
+        if (g.kind === 'entrance') {
+            features.push({ type: 'Feature', geometry: { type: 'Point', coordinates: g.coordinates }, properties: { ...common, stop_id: base.id, location_type: 2, parent_station: null } });
+            stationGroup.set(features.at(-1)!, base.parentStation ? groupOf.get(base.parentStation) : undefined);
             continue;
         }
-        if (p.location_type === 2) {
-            const station = p.parent_station ? stationOf.get(p.parent_station) ?? null : null;
-            features.push({ type: 'Feature', geometry, properties: { ...base, stop_id: p.stop_id, location_type: 2, parent_station: station } });
-            continue;
-        }
-        const [id, ...aliases] = p.stop_id.split(',') as [string, ...string[]];
-        // A merged platform shows its first member's lines; a station feature the union of its platforms'.
-        const members = p.location_type === 1 ? [id, ...aliases] : [id];
-        stopRoutes.set(id, members.flatMap(m => routeIdsOf.get(m) ?? []));
+        const [id, ...aliases] = g.ids as [string, ...string[]];
+        // A merged pole boards its first member's routes; a GTFS station's feature the union of its platforms'.
+        stopRoutes.set(id, (g.gtfsStation ? g.ids : [id]).flatMap(m => routeIdsOf.get(m) ?? []));
         features.push({
             type: 'Feature',
-            geometry,
+            geometry: { type: 'Point', coordinates: g.coordinates },
             properties: {
-                ...base,
+                ...common,
                 stop_id: id,
                 location_type: 0,
-                parent_station: stationOf.get(p.stop_id) ?? stationOf.get(id) ?? null,
+                parent_station: null,
                 aliases: aliases.length ? aliases : undefined,
-                interchanges: p.interchanges,
+                interchanges: g.interchanges,
             },
         });
+        const group = (g.gtfsStation !== undefined ? groupOf.get(g.gtfsStation) : undefined) ?? groupOf.get(id);
+        stationGroup.set(features.at(-1)!, group);
+        if (group !== undefined) platformIdsOf[group]!.push(...g.ids);
     }
-    return { features, stopRoutes };
+
+    const stationIds = groups.map((group, i) => stationIdOf(platformIdsOf[i]!));
+    for (const [feature, group] of stationGroup) feature.properties.parent_station = (group !== undefined && stationIds[group]) || null;
+    // A station without platforms has no id; `gtfsStopsFile` leaves such stations out anyway.
+    const stations = groups.flatMap((group, i): StopFeature[] => {
+        const id = stationIds[i];
+        if (!id) return [];
+        const base = group.find(s => s.locationType === 1) ?? group[0]!;
+        return [{
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: mean(group.map(s => s.coordinates)) },
+            properties: { stop_id: id, stop_name: base.name, platform_code: null, location_type: 1, parent_station: null, zone_id: base.zoneId, lines: [] },
+        }];
+    });
+    return { features: [...features, ...stations], stopRoutes };
 }

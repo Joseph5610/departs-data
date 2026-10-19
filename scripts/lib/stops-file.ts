@@ -114,6 +114,7 @@ export function validateStopsFile(file: StopsFile, routes: RouteLookup): void {
         checkPos(e.pos, `entrance ${e.id}`);
     }
     for (const s of file.stations) if (!platformsPerStation.has(s.id)) problems.push(`station ${s.id} has no platform`);
+    if (!file.stations.length) problems.push('no stations: the stops were not grouped');
 
     if (problems.length) {
         throw new Error(`${STOPS_FILE} breaks its contract (${problems.length} problems):\n  ${problems.slice(0, MAX_REPORTED_PROBLEMS).join('\n  ')}`);
