@@ -24,6 +24,15 @@ export const CHUNKING = {
 
 export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
 
+/** The key of a departure bucket's station list, which no stop id can take. */
+export const BUCKET_STATIONS_KEY = '$stations';
+
+/**
+ * One `departure_buckets/` file: each stop's departure rows by stop id, and `$stations`, the platforms of every
+ * station hashed into it, so a request naming a station needs nothing but this file.
+ */
+export type DepartureBucketFile = Record<string, DepartureRow[]> & { [BUCKET_STATIONS_KEY]?: Record<string, string[]> };
+
 /**
  * Outputs no reader uses any more, deleted from a city's directory on every build: the workflows seed
  * staging from the published data, so a file a build merely stops writing would be published forever.

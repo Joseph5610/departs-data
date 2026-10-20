@@ -1,7 +1,7 @@
 import path from 'node:path';
 import type AdmZip from 'adm-zip';
-import type { DepartureExtras, DepartureRow, ParentChildMap, TripStop, TripWindow, TripWindowsFile } from './contract.ts';
-import { DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, TRIP_BUCKETS_DIR } from './contract.ts';
+import type { DepartureBucketFile, DepartureExtras, DepartureRow, ParentChildMap, TripStop, TripWindow, TripWindowsFile } from './contract.ts';
+import { BUCKET_STATIONS_KEY, DEPARTURE_BUCKETS_DIR, departuresBucketId, parentIndex, TRIP_BUCKETS_DIR } from './contract.ts';
 import { readTable } from './feed.ts';
 import { readServiceDates } from './calendar.ts';
 import { timeToMinutes, timeToOffsetMs, type ServiceDay } from './time.ts';
@@ -233,11 +233,20 @@ export function gtfsWindow(trip: ActiveTrip, calls: readonly Call[]): WindowedTr
     return { dates: trip.dates, startMin: timeToMinutes(calls[0]!.departure), endMin: timeToMinutes(calls[calls.length - 1]!.departure) };
 }
 
-/** Writes `departure_buckets/`: each stop's rows in time order, a station's platforms in their station's bucket. */
+/**
+ * Writes `departure_buckets/`: each stop's rows in time order, a station's platforms in their station's bucket,
+ * and in each bucket the platforms of its stations (`$stations`).
+ */
 export function writeDepartures(dir: string, departuresByStop: Map<string, DepartureRow[]>, parentChildMap: ParentChildMap): void {
     sortDepartures(departuresByStop);
     const parentOf = parentIndex(parentChildMap);
-    const buckets = chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf));
+    const buckets: Map<string, DepartureBucketFile> = chunkBy(departuresByStop, (id) => departuresBucketId(id, parentOf));
+    for (const [station, platforms] of Object.entries(parentChildMap)) {
+        const bucketId = departuresBucketId(station, parentOf);
+        let bucket = buckets.get(bucketId);
+        if (!bucket) { bucket = {}; buckets.set(bucketId, bucket); }
+        (bucket[BUCKET_STATIONS_KEY] ??= {})[station] = platforms;
+    }
     writeChunks(path.join(dir, DEPARTURE_BUCKETS_DIR), buckets);
     console.log(`Wrote ${buckets.size} departure buckets for ${departuresByStop.size} stops`);
 }
