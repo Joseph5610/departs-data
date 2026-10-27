@@ -28,10 +28,9 @@ there by hand or branch from it.
 Every city publishes its stops and routes through one writer (`writeStopsAndRoutes`): `stops.json`, `routes.json`, the coverage grid, the stop search index (`stop_search.*`, `stop_details/`) and `sitemap_stops.txt`. Route types are published as the app's vehicle types (`tram`, `metro`, `bus`...), never GTFS codes; `appRouteType` in `lib/route-types.ts` is the one translation. Shapes and `network.json` go through `writeShapeBuckets` and `buildNetwork` for every city that has them.
 
 Brno, Prešov and DÚK also publish a timetable through the shared pipeline in `lib/timetable.ts`: GTFS feeds are read by `readGtfsTimetable`, and every city's trips go through the same rules for who boards, trip windows (a trip lasts until it leaves its last stop) and buckets:
-- `departure_buckets/`: each stop's departures, a station's platforms in their station's bucket (`writeDepartures`).
+- `departure_buckets/`: each stop's departures, a station's platforms in their station's bucket, and `$stations`, the platforms of each station hashed into it (`writeDepartures`).
 - `trip_buckets/<n>.json`: each trip's stops plus `$days` and `$trips` (window, day flags, route), and the days each onward connection runs (`writeTrips`).
 - `schedule/<HH>.json`: the trips a vehicle may be matched to in that hour, with their routes (`writeCityFiles`).
-- `parent_child_map.json` and `stop_index/<n>.json`: each stop's station or platforms, so a departures request reads only the stops it names (`writeCityFiles`).
 - `feed_index/`: lookups a single network's realtime feed needs (Brno `trip_alias_runs.json`, DÚK `station_names.json`).
 - `rail_trips/<n>.json` (DÚK): trains by train number, with their stations and the Portabo platform each opens.
 

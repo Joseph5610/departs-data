@@ -3,7 +3,7 @@ import path from 'node:path';
 import https from 'node:https';
 import type AdmZip from 'adm-zip';
 import type { DepartureExtras, FeederRow, ParentChildMap, RouteInfo, ShapeGeometry, StopFeature, TripConnection, TripStop } from './lib/contract.ts';
-import { STOP_TIMES_DIR, toTripRuns, TRIP_ALIAS_RUNS_FILE } from './lib/contract.ts';
+import { nightFlag, STOP_TIMES_DIR, toTripRuns, TRIP_ALIAS_RUNS_FILE } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { distanceToLinesM, fanOutColocated } from './lib/geo.ts';
@@ -45,6 +45,8 @@ const CONFIG = {
     /** Drawn on the map at all times: the tram tracks as one network, about 70 km. */
     NETWORK_MODES: [{ routeTypes: ['0'], style: 'merged', minKm: 40 }] satisfies NetworkMode[],
     DEFAULT_ROUTE_COLOR: '#007DA8',
+    /** Night lines are numbered N<digit> (N89, N99). */
+    NIGHT_LINE: /^N\d/,
     /** KORDIS run identifier per trip, the only id stable across exports. */
     COURSE_FILE: 'trip_courses.json',
     /**
@@ -185,6 +187,7 @@ async function main(): Promise<void> {
             name: r.route_short_name,
             type: r.route_type,
             route_color: r.route_color ? `#${r.route_color}` : CONFIG.DEFAULT_ROUTE_COLOR,
+            ...nightFlag(CONFIG.NIGHT_LINE.test(r.route_short_name)),
         });
     }
 
@@ -293,7 +296,7 @@ async function main(): Promise<void> {
 
     const stationIds = stableStationIds(parentChildMap, CONFIG.STATION_ID);
     const servedParentChildMap = withStationIds(parentChildMap, stationIds);
-    writeCityFiles(DATA_DIR, { features, parentChildMap: servedParentChildMap, stationIds, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: [...tripsData.values()].map(calls => calls.map(call => call.stopId)) });
+    writeCityFiles(DATA_DIR, { features, stationIds, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: [...tripsData.values()].map(calls => calls.map(call => call.stopId)) });
     console.log(`Wrote ${features.length} stops`);
 
     const tripAliases = generateAliases(DATA_DIR, courseOf, activeTrips, days[0]!.str);

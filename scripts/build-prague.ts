@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import type AdmZip from 'adm-zip';
 import { outputDir, removeRetired, writeStopsAndRoutes } from './lib/emit.ts';
-import type { RouteInfo } from './lib/contract.ts';
+import { nightFlag, type RouteInfo } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { readStops } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
@@ -136,7 +136,7 @@ function readGtfsStops(zip: AdmZip): GtfsStopFeature[] {
     return stops;
 }
 
-const ROUTES_TABLE = { required: ['route_id', 'route_type', 'route_short_name'], optional: ['route_color', 'is_substitute_transport'] } as const;
+const ROUTES_TABLE = { required: ['route_id', 'route_type', 'route_short_name'], optional: ['route_color', 'is_night', 'is_substitute_transport'] } as const;
 
 /** PID's own bright highlight for substitute (replacement) service and night lines - the static feed's `route_color` column never carries these, it colors every bus/tram plainly by type regardless. Matches `functions/_domain/golemio/vehicles/colors.ts`'s `SUBSTITUTE`/`NIGHT` constants exactly, so this migration doesn't silently drop them. */
 const SUBSTITUTE_COLOR = '#FF4500';
@@ -166,6 +166,7 @@ function readPragueRoutes(zip: AdmZip): Record<string, RouteInfo> {
             name: r.route_short_name,
             type: r.route_type,
             route_color: routeColor,
+            ...nightFlag(r.is_night === '1'),
         };
     }
     const count = Object.keys(routes).length;

@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import type AdmZip from 'adm-zip';
-import type { ContinuationRow, ParentChildMap, RouteInfo, StopFeature, TripStop } from './lib/contract.ts';
+import { nightFlag, type ContinuationRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripStop } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToOffsetMs } from './lib/time.ts';
 import { clusterByDistance } from './lib/cluster.ts';
@@ -57,6 +57,8 @@ const CONFIG = {
         { pattern: /^N\d+$/, color: '#00378A' },
     ],
     DEFAULT_ROUTE_COLOR: '#999999',
+    /** Night lines are numbered N<digit>. */
+    NIGHT_LINE: /^N\d/,
 
     /** How long after arriving a vehicle may leave again as the trip its stop headsign names. */
     CONTINUATION_WINDOW_MINS: 20,
@@ -128,6 +130,7 @@ async function main(): Promise<void> {
             name,
             type: r.route_type,
             route_color: r.route_color ? `#${r.route_color}` : routeColorFor(name),
+            ...nightFlag(CONFIG.NIGHT_LINE.test(name)),
         });
     }
 
@@ -305,7 +308,7 @@ async function main(): Promise<void> {
         neededShapes.add(t.shapeId);
     }
 
-    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: [...tripsData.values()].map(calls => calls.map(call => call.stopId)) });
+    writeCityFiles(DATA_DIR, { features, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: [...tripsData.values()].map(calls => calls.map(call => call.stopId)) });
     console.log(`Wrote ${stations.length} stations over ${platforms.length} platforms`);
 
     writeDepartures(DATA_DIR, departuresByStop, parentChildMap);

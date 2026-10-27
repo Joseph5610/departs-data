@@ -1,11 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, RETIRED_OUTPUTS, SCHEDULE_DIR, STOP_INDEX_DIR, STOPS_FILE, type CoverageFile, type StopsFile, type DepartureRow, type ParentChildMap, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
+import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, RETIRED_OUTPUTS, SCHEDULE_DIR, STOPS_FILE, type CoverageFile, type StopsFile, type DepartureRow, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
 import { writeStopSearch, type StopSearchOptions } from './stop-search.ts';
 import { publishedRoutes } from './route-types.ts';
 import { buildScheduleFiles } from './schedule.ts';
-import { buildStopIndex } from './stop-index.ts';
 import { platformDirections } from './directions.ts';
 import { gtfsStopsFile, routeOf, validateStopsFile, type RouteLookup } from './stops-file.ts';
 
@@ -89,8 +88,6 @@ export function safetyCheck(stops: number, trips: number, minStops: number, minT
 
 export interface CityFiles {
     features: StopFeature[];
-    /** Keyed by the published station ids (`withStationIds`); `features` keep the feed's. */
-    parentChildMap: ParentChildMap;
     /** Each station's published id where it is not its feed id (`stableStationIds`). */
     stationIds?: ReadonlyMap<string, string>;
     routes: RouteLookup;
@@ -145,9 +142,6 @@ export function writeCityFiles(dir: string, files: CityFiles): void {
     const directions = platformDirections(files.features, files.tripCalls);
     const stops = gtfsStopsFile(files.features, files.stopRoutes, directions, files.routes, files.stationIds);
     writeStopsAndRoutes(dir, stops, files.routes);
-    writeJson(dir, 'parent_child_map.json', files.parentChildMap);
-    const largestStopShard = writeChunks(path.join(dir, STOP_INDEX_DIR), buildStopIndex(files.parentChildMap));
-    console.log(`Wrote ${STOP_INDEX_DIR}/, largest shard ${(largestStopShard / 1024).toFixed(1)}KB`);
     const schedule = buildScheduleFiles(files.tripWindows, files.tripRoutes);
     const largestSchedule = writeChunks(path.join(dir, SCHEDULE_DIR), schedule);
     console.log(`Wrote ${schedule.size} schedule files, largest ${(largestSchedule / 1024).toFixed(0)}KB`);

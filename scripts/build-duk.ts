@@ -881,7 +881,7 @@ async function main(): Promise<void> {
     safetyCheck(departuresByStop.size, activeTrips.size, CONFIG.MIN_DEPARTURE_STOPS, CONFIG.MIN_ACTIVE_TRIPS);
 
     // JDF has no geometry; the app draws the route stop to stop.
-    writeCityFiles(DATA_DIR, { features, parentChildMap, routes, tripRoutes, tripWindows: windowsFile, stopRoutes: platformRoutes, tripCalls: [...tripStops.values()].map(stops => stops.map(stop => stop.stop_id)) });
+    writeCityFiles(DATA_DIR, { features, routes, tripRoutes, tripWindows: windowsFile, stopRoutes: platformRoutes, tripCalls: [...tripStops.values()].map(stops => stops.map(stop => stop.stop_id)) });
     writeFeedIndex(DATA_DIR, STATION_NAMES_FILE, index.names);
     // A third-party source: when it is down the trains already published stay.
     try {

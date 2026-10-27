@@ -6,7 +6,7 @@ export type StationIdRule = (feedId: string, platforms: readonly string[]) => st
 /**
  * Each station's published id: a key that survives the feed's re-exports, so links and favorites keep
  * working. The app and the Worker treat it as opaque.
- * Throws when two stations, or a station and a platform, would share an id: both key `stop_index/`.
+ * Throws when two stations, or a station and a platform, would share an id: both key a departure bucket's `$stations` and the app's stop list.
  */
 export function stableStationIds(parentChildMap: ParentChildMap, rule: StationIdRule): Map<string, string> {
     const platformIds = new Set(Object.values(parentChildMap).flat());

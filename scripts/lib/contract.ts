@@ -18,8 +18,6 @@ export const CHUNKING = {
     TRIP_SHAPE_BUCKET_COUNT: 512,
     /** Files shape geometry is hashed across (`shape_buckets/`); read by the app. */
     SHAPE_BUCKET_COUNT: 1024,
-    /** Files each stop's station relation is hashed across (`stop_index/`); keeps each near 2KB. */
-    STOP_INDEX_SHARDS: 256,
 } as const;
 
 export const DEPARTURE_BUCKETS_DIR = 'departure_buckets';
@@ -85,7 +83,7 @@ export function bucketOf(id: string, count: number): string {
     return String(hash % count);
 }
 
-/** Each platform's parent station, from `parent_child_map.json`; the Worker builds the same index. */
+/** Each platform's parent station. */
 export function parentIndex(parentChildMap: ParentChildMap): Map<string, string> {
     const parentOf = new Map<string, string>();
     for (const parent in parentChildMap) {
@@ -105,11 +103,6 @@ export function departuresBucketId(stopId: string, parentOf: ReadonlyMap<string,
 /** trip_buckets/<bucket>.json */
 export function tripBucketId(tripId: string): string {
     return bucketOf(tripId, CHUNKING.TRIP_BUCKET_COUNT);
-}
-
-/** stop_index/<shard>.json */
-export function stopIndexShardId(stopId: string): string {
-    return bucketOf(stopId, CHUNKING.STOP_INDEX_SHARDS);
 }
 
 /** connection_buckets/<bucket>.json */
@@ -199,7 +192,12 @@ export interface RouteInfo {
     name: string;
     type: string;
     route_color: string;
+    /** A night line: the app lists it after the day lines and leaves it off stop badges by day. */
+    night?: true;
 }
+
+/** The night flag for a `RouteInfo`, spread in so a day line carries no key. */
+export const nightFlag = (isNight: boolean): { night?: true } => (isNight ? { night: true } : {});
 
 /** A stop entry inside a trips chunk. */
 export interface TripStop {
@@ -390,14 +388,6 @@ export interface TripBucketFile {
  */
 export const SCHEDULE_DIR = 'schedule';
 
-/**
- * `stop_index/<n>.json`: each stop's relation to its station, so a departures request reads the few stops it
- * names instead of the whole `parent_child_map.json`. Every shard is written, empty ones too.
- */
-export const STOP_INDEX_DIR = 'stop_index';
-/** `[station]` for a platform, `[null, ...platforms]` for a station. */
-export type StopRelation = [string] | [null, ...string[]];
-export type StopIndexFile = Record<string, StopRelation>;
 export const SCHEDULE_MATCH_WINDOW = { BEFORE_MINS: 240, AFTER_MINS: 240 } as const;
 
 /** `[start_mins, end_mins, dayFlags, routeIndex]`, plus `direction_id` where `TripWindow` carries one; `routeIndex` is -1 for a trip without a route. */
