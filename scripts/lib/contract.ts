@@ -342,8 +342,10 @@ export type LiveContinuationRow = [string, string, string, string, string];
  */
 export const FEED_INDEX_DIR = 'feed_index';
 
-/** Trip ids of older timetable exports -> the current trip, as `TripRunsFile` (Brno). */
+/** Trip ids of older timetable exports -> the current trip, as `TripRunsFile` (Brno), the newest export redirecting an id winning. */
 export const TRIP_ALIAS_RUNS_FILE = 'trip_alias_runs.json';
+/** The same per older export, newest first, as `TripRunsFile[]` (Brno): the realtime feed may lag several exports behind. */
+export const TRIP_ALIAS_GENERATIONS_FILE = 'trip_alias_generations.json';
 
 /** Realtime node id -> stop name, for naming a vehicle's destination without the network's whole stop list. */
 export const STATION_NAMES_FILE = 'station_names.json';

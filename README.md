@@ -31,7 +31,7 @@ Brno, Prešov and DÚK also publish a timetable through the shared pipeline in `
 - `departure_buckets/`: each stop's departures, a station's platforms in their station's bucket, and `$stations`, the platforms of each station hashed into it (`writeDepartures`).
 - `trip_buckets/<n>.json`: each trip's stops plus `$days` and `$trips` (window, day flags, route), and the days each onward connection runs (`writeTrips`).
 - `schedule/<HH>.json`: the trips a vehicle may be matched to in that hour, with their routes (`writeCityFiles`).
-- `feed_index/`: lookups a single network's realtime feed needs (Brno `trip_alias_runs.json`, DÚK `station_names.json`).
+- `feed_index/`: lookups a single network's realtime feed needs (Brno `trip_alias_generations.json` and `trip_alias_runs.json`, DÚK `station_names.json`).
 - `rail_trips/<n>.json` (DÚK): trains by train number, with their stations and the Portabo platform each opens.
 
 ### 🇨🇿 Brno (IDS JMK)
@@ -40,7 +40,7 @@ Brno, Prešov and DÚK also publish a timetable through the shared pipeline in `
 KORDIS publishes a GTFS `.zip`; parsing it inside a Cloudflare Worker is impossible, so it is processed ahead of time:
 1. Reads the timetable for today and tomorrow through the shared pipeline, with KORDIS's held connections attached to departures (the feeders a departure waits for) and to trip stops (the onward trips that wait).
 2. Uses the feed's own stations, published under a stable id (`U1271`), since KORDIS renumbers their `N…` part.
-3. Maps trip ids of older exports onto current trips by run (`feed_index/trip_alias_runs.json`), keeping two exports of run ids in `trip_courses.json` as build state.
+3. Maps trip ids of older exports onto current trips by run, one table per older export (`feed_index/trip_alias_generations.json`, plus the merged `trip_alias_runs.json`), keeping five exports of run ids in `trip_courses.json` as build state.
 4. Writes hourly `stop_times/` slices, from which the app estimates delays the realtime feed lacks.
 5. Fetches route shapes from the Lissy API (needs `LISSY_API_TOKEN`) and draws the tram network in `network.json`.
 

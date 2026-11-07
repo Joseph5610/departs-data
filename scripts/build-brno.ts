@@ -3,7 +3,8 @@ import path from 'node:path';
 import https from 'node:https';
 import type AdmZip from 'adm-zip';
 import type { DepartureExtras, FeederRow, ParentChildMap, RouteInfo, ShapeGeometry, StopFeature, TripConnection, TripStop } from './lib/contract.ts';
-import { nightFlag, STOP_TIMES_DIR, toTripRuns, TRIP_ALIAS_RUNS_FILE } from './lib/contract.ts';
+import { nightFlag, STOP_TIMES_DIR, toTripRuns, TRIP_ALIAS_GENERATIONS_FILE, TRIP_ALIAS_RUNS_FILE } from './lib/contract.ts';
+import { aliasGenerations, mergedAliases, type CourseGeneration } from './lib/trip-aliases.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
 import { getServiceDays, timeToOffsetMs, type ServiceDay } from './lib/time.ts';
 import { distanceToLinesM, fanOutColocated } from './lib/geo.ts';
@@ -50,10 +51,11 @@ const CONFIG = {
     /** KORDIS run identifier per trip, the only id stable across exports. */
     COURSE_FILE: 'trip_courses.json',
     /**
-     * Exports kept in that file, so the feed can lag without losing the mapping. Build state only -
-     * the Worker never fetches it, it is read by the next build from the published data.
+     * Exports kept in that file, the current one included, so the feed can lag several publishes behind
+     * without losing the mapping. Build state only - the Worker never fetches it, it is read by the next
+     * build from the published data.
      */
-    COURSE_GENERATIONS: 2,
+    COURSE_GENERATIONS: 5,
 
     /** Connections held for less than this are planned only and not emitted. */
     MIN_CONNECTION_WAIT_S: 1,
@@ -108,41 +110,33 @@ function readCourses(zip: AdmZip): Map<string, string> {
  * Maps the trip ids the realtime feed still broadcasts onto the current export's ids.
  *
  * KORDIS renumbers effectively every trip on each export (measured: 0 of 29,544 carried-over runs
- * kept their id) while the feed keeps sending the previous numbering, so the run id from `api.txt`
- * is the only usable key. The previous export's map has to be carried forward because the old zip
+ * kept their id) while the feed keeps sending an older numbering, so the run id from `api.txt`
+ * is the only usable key. Older exports' maps have to be carried forward because an old zip
  * is no longer downloadable once KORDIS replaces it.
  *
  * Only real mappings are emitted: a null would make the app discard that vehicle entirely.
- * Returns the map so other steps can translate ids from the same stale export.
+ * Returns each older export's table, newest first, so other steps can translate ids from them.
  */
 function generateAliases(
     dataDir: string,
     courseOf: Map<string, string>,
     activeTrips: ReadonlyMap<string, ActiveTrip>,
     todayStr: string,
-): Record<string, string> {
+): Array<Record<string, string>> {
     const coursePath = path.join(dataDir, CONFIG.COURSE_FILE);
     const stored: unknown = fs.existsSync(coursePath) ? JSON.parse(fs.readFileSync(coursePath, 'utf8')) : null;
     // Older builds wrote a bare map; treat it as a single generation.
-    const previousGenerations: Record<string, string>[] = Array.isArray(stored)
-        ? stored as Record<string, string>[]
-        : (stored ? [stored as Record<string, string>] : []);
+    const previousGenerations: CourseGeneration[] = Array.isArray(stored)
+        ? stored as CourseGeneration[]
+        : (stored ? [stored as CourseGeneration] : []);
 
     // The file also holds the generation this build is reproducing; decoding with it would map every
     // id onto itself and leave a lagging feed pointing at the wrong trip.
     const current = Object.fromEntries(courseOf);
     const currentKey = JSON.stringify(current);
-    const olderGenerations = previousGenerations.filter(g => JSON.stringify(g) !== currentKey);
-
-    // An id may carry a different run in each generation; the newest reading that still redirects wins.
-    const knownCourses = new Map<string, string[]>();
-    for (const generation of olderGenerations) {
-        for (const [tripId, course] of Object.entries(generation)) {
-            let list = knownCourses.get(tripId);
-            if (!list) { list = []; knownCourses.set(tripId, list); }
-            if (!list.includes(course)) list.push(course);
-        }
-    }
+    const olderGenerations = previousGenerations
+        .filter(g => JSON.stringify(g) !== currentKey)
+        .slice(0, CONFIG.COURSE_GENERATIONS - 1);
 
     // Prefer the trip running today where a run has variants across service days.
     const currentByCourse = new Map<string, string>();
@@ -153,25 +147,16 @@ function generateAliases(
         if (runsToday || !currentByCourse.has(course)) currentByCourse.set(course, tripId);
     }
 
-    // Prefer the reading that actually redirects: one resolving to the id itself is the current
-    // export's own meaning and would leave a lagging feed pointing at the wrong trip.
-    const tripAliases: Record<string, string> = {};
-    for (const [legacyTripId, courses] of knownCourses) {
-        for (const course of courses) {
-            const current = currentByCourse.get(course);
-            if (current && current !== legacyTripId) { tripAliases[legacyTripId] = current; break; }
-        }
-    }
-
-    const generations = [current, ...olderGenerations].slice(0, CONFIG.COURSE_GENERATIONS);
-
-    writeFeedIndex(dataDir, TRIP_ALIAS_RUNS_FILE, toTripRuns(tripAliases));
-    fs.writeFileSync(coursePath, JSON.stringify(generations));
-    console.log(`Mapped ${Object.keys(tripAliases).length} legacy trip ids onto current trips via ${currentByCourse.size} runs (${generations.length} export generations retained).`);
+    const generations = aliasGenerations(olderGenerations, currentByCourse);
+    writeFeedIndex(dataDir, TRIP_ALIAS_GENERATIONS_FILE, generations.map(toTripRuns));
+    writeFeedIndex(dataDir, TRIP_ALIAS_RUNS_FILE, toTripRuns(mergedAliases(generations)));
+    fs.writeFileSync(coursePath, JSON.stringify([current, ...olderGenerations]));
+    const counts = generations.map(g => Object.keys(g).length).join(', ');
+    console.log(`Mapped legacy trip ids onto current trips via ${currentByCourse.size} runs, per older export newest first: ${counts || 'none'}.`);
 
     // The signature-based state this replaces is no longer read by anything.
     fs.rmSync(path.join(dataDir, 'previous_trips.json'), { force: true });
-    return tripAliases;
+    return generations;
 }
 
 async function main(): Promise<void> {
@@ -299,7 +284,7 @@ async function main(): Promise<void> {
     writeCityFiles(DATA_DIR, { features, stationIds, routes, tripRoutes, tripWindows: windowsFile, stopRoutes, tripCalls: [...tripsData.values()].map(calls => calls.map(call => call.stopId)) });
     console.log(`Wrote ${features.length} stops`);
 
-    const tripAliases = generateAliases(DATA_DIR, courseOf, activeTrips, days[0]!.str);
+    const aliasTables = generateAliases(DATA_DIR, courseOf, activeTrips, days[0]!.str);
 
     writeDepartures(DATA_DIR, departuresByStop, servedParentChildMap);
 
@@ -365,7 +350,7 @@ async function main(): Promise<void> {
 
             // Lissy may number trips by any retained export, so the range spans the legacy ids too.
             let maxTripId = 0;
-            for (const tripId of [...activeTrips.keys(), ...Object.keys(tripAliases)]) {
+            for (const tripId of [...activeTrips.keys(), ...aliasTables.flatMap(t => Object.keys(t))]) {
                 const numId = parseInt(tripId, 10);
                 if (!isNaN(numId) && numId > maxTripId) maxTripId = numId;
             }
@@ -384,9 +369,8 @@ async function main(): Promise<void> {
                     // trips fit equally, so picking one reading would starve the other.
                     for (const rawTripId of item.gtfs_trips) {
                         const raw = String(rawTripId);
-                        const alias = tripAliases[raw];
                         let matched = false;
-                        for (const candidate of alias && alias !== raw ? [raw, alias] : [raw]) {
+                        for (const candidate of new Set([raw, ...aliasTables.map(t => t[raw]).filter(a => a !== undefined)])) {
                             if (!activeTrips.has(candidate)) continue;
                             const fit = shapeFit(lines, candidate);
                             if (fit < CONFIG.MIN_SHAPE_FIT) continue;
