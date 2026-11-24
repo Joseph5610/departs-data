@@ -18,7 +18,7 @@ const feature = (lon: number, lat: number, lv: number[]): IndoorFeature => ({
 const stairs = (lon: number, lat: number, lv: number[]): IndoorFeature =>
     ({ type: 'Feature', geometry: { type: 'LineString', coordinates: [[lon, lat], [lon + 0.0001, lat]] }, properties: { k: 'steps', lv } });
 
-const CELLS = { cell: 0.005, stationReach: 1, minFeatures: 2, minLevelFeatures: 1, minLevels: 2 };
+const CELLS = { cell: 0.005, stationRadiusM: 300, minLevelFeatures: 1 };
 
 describe('parseLevels', () => {
     it('reads lists and rounds half levels to the nearest floor', () => {
@@ -89,19 +89,20 @@ describe('toIndoorFeature', () => {
 describe('indoorCells', () => {
     const station: IndoorPosition = [14.4352, 50.0832];
 
-    it('keeps multi-floor cells around a station', () => {
-        const cells = indoorCells([feature(14.4351, 50.0831, [0]), feature(14.4353, 50.0833, [-1])], [station], CELLS);
-        assert.deepEqual([...cells.keys()], ['2887_10016']);
+    it('keeps plans within reach of a station, across cell edges', () => {
+        const cells = indoorCells([feature(14.4351, 50.0831, [0]), feature(14.4348, 50.0833, [-1])], [station], CELLS);
+        assert.deepEqual([...cells.keys()].sort(), ['2886_10016', '2887_10016']);
     });
 
-    it('leaves out cells far from any station', () => {
-        assert.equal(indoorCells([feature(14.5, 50.0831, [0]), feature(14.5, 50.0833, [-1])], [station], CELLS).size, 0);
+    // A shopping centre a few hundred metres off is not the station's plan.
+    it('leaves out features beyond the station radius', () => {
+        const cells = indoorCells([feature(14.4351, 50.0831, [0]), feature(14.4400, 50.0831, [0])], [station], CELLS);
+        assert.equal(cells.get('2887_10016')?.length, 1);
+        assert.equal(cells.size, 1);
     });
 
-    // Street-level shops tagged level=0 are not an indoor map; only a cell spanning floors gets a level switcher.
-    it('leaves out cells on a single floor or with too few features', () => {
-        assert.equal(indoorCells([feature(14.4351, 50.0831, [0]), feature(14.4353, 50.0833, [0])], [station], CELLS).size, 0);
-        assert.equal(indoorCells([feature(14.4351, 50.0831, [0, -1])], [station], CELLS).size, 0);
+    it('leaves out cells with no floor drawn as areas', () => {
+        assert.equal(indoorCells([stairs(14.4351, 50.0831, [0]), stairs(14.4353, 50.0833, [-1])], [station], CELLS).size, 0);
     });
 });
 

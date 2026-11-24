@@ -1,5 +1,5 @@
 import { indoorCellId, type IndoorCellSummary, type IndoorFeature, type IndoorGeometry, type IndoorKind, type IndoorPosition } from './contract.ts';
-import { round6 } from './geo.ts';
+import { distanceM, round6 } from './geo.ts';
 
 /** OSM tags of one exported object. */
 export type OsmTags = Readonly<Record<string, string | undefined>>;
@@ -141,40 +141,58 @@ export function anchorOf(geometry: IndoorGeometry): IndoorPosition {
 
 export interface IndoorCellOptions {
     cell: number;
-    /** Cells this many steps around a station's cell are kept too. */
-    stationReach: number;
-    minFeatures: number;
+    /** Features farther than this from every station point are left out; must stay below a cell's width. */
+    stationRadiusM: number;
     /** A floor with fewer floor-space areas in a cell is only a walking graph or a stray tag, not a floor plan. */
     minLevelFeatures: number;
-    /** A cell on fewer floors is plain street-level tagging, not an indoor map. */
-    minLevels: number;
 }
 
-/** The cells worth publishing: near a station, with enough features on enough floors. */
-export function indoorCells(
-    features: Iterable<IndoorFeature>,
-    stations: Iterable<IndoorPosition>,
-    options: IndoorCellOptions,
-): Map<string, IndoorFeature[]> {
-    const near = new Set<string>();
-    for (const [lon, lat] of stations) {
-        const x = Math.floor(lon / options.cell);
-        const y = Math.floor(lat / options.cell);
-        for (let dx = -options.stationReach; dx <= options.stationReach; dx++) {
-            for (let dy = -options.stationReach; dy <= options.stationReach; dy++) near.add(`${x + dx}_${y + dy}`);
+/** Points indexed by grid cell, so a lookup scans only the cells around a position. */
+function pointsByCell(points: Iterable<IndoorPosition>, cell: number): Map<string, IndoorPosition[]> {
+    const byCell = new Map<string, IndoorPosition[]>();
+    for (const point of points) {
+        const id = indoorCellId(point[0], point[1], cell);
+        const list = byCell.get(id);
+        if (list) list.push(point);
+        else byCell.set(id, [point]);
+    }
+    return byCell;
+}
+
+function isNear([lon, lat]: IndoorPosition, index: ReadonlyMap<string, IndoorPosition[]>, options: IndoorCellOptions): boolean {
+    const x = Math.floor(lon / options.cell);
+    const y = Math.floor(lat / options.cell);
+    for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+            for (const [plon, plat] of index.get(`${x + dx}_${y + dy}`) ?? []) {
+                if (distanceM({ lon, lat }, { lon: plon, lat: plat }) <= options.stationRadiusM) return true;
+            }
         }
     }
+    return false;
+}
+
+/**
+ * The cells worth publishing: the features within reach of a station point (a metro or rail station or
+ * one of its platforms), in cells with at least one floor drawn as a plan.
+ */
+export function indoorCells(
+    features: Iterable<IndoorFeature>,
+    stationPoints: Iterable<IndoorPosition>,
+    options: IndoorCellOptions,
+): Map<string, IndoorFeature[]> {
+    const index = pointsByCell(stationPoints, options.cell);
     const byCell = new Map<string, IndoorFeature[]>();
     for (const feature of features) {
-        const [lon, lat] = anchorOf(feature.geometry);
-        const id = indoorCellId(lon, lat, options.cell);
-        if (!near.has(id)) continue;
+        const anchor = anchorOf(feature.geometry);
+        if (!isNear(anchor, index, options)) continue;
+        const id = indoorCellId(anchor[0], anchor[1], options.cell);
         const cell = byCell.get(id);
         if (cell) cell.push(feature);
         else byCell.set(id, [feature]);
     }
     for (const [id, cellFeatures] of byCell) {
-        if (cellFeatures.length < options.minFeatures || summarizeCell(cellFeatures, options.minLevelFeatures).levels.length < options.minLevels) byCell.delete(id);
+        if (summarizeCell(cellFeatures, options.minLevelFeatures).levels.length === 0) byCell.delete(id);
     }
     return byCell;
 }

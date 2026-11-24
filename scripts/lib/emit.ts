@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, RETIRED_OUTPUTS, SCHEDULE_DIR, STOPS_FILE, type CoverageFile, type StopsFile, type DepartureRow, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
+import { COVERAGE_CELL_DEG, COVERAGE_FILE, FEED_INDEX_DIR, RETIRED_OUTPUTS, ROUTES_FILE, SCHEDULE_DIR, STOPS_FILE, type CoverageFile, type StopsFile, type DepartureRow, type RouteInfo, type StopFeature, type TripWindowsFile } from './contract.ts';
 import { writeStopSearch, type StopSearchOptions } from './stop-search.ts';
 import { publishedRoutes } from './route-types.ts';
 import { buildScheduleFiles } from './schedule.ts';
@@ -132,7 +132,7 @@ export function writeStopsAndRoutes(dir: string, stops: StopsFile, routes: Route
     writeCoverage(dir, stops);
     const published = publishedRoutes(routes);
     writeStopSearch(dir, stops, published, search);
-    writeJson(dir, 'routes.json', published);
+    writeJson(dir, ROUTES_FILE, published);
 }
 
 /** Writes the root JSON files every GTFS city adapter reads. */

@@ -188,6 +188,9 @@ export interface TripWindowsFile {
     trips: Record<string, TripWindow>;
 }
 
+/** `<city>/routes.json`: each route id's line name, vehicle type and colour. */
+export const ROUTES_FILE = 'routes.json';
+
 export interface RouteInfo {
     name: string;
     type: string;

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
-import { INDOOR_CELL_DEG, INDOOR_DIR, INDOOR_INDEX_FILE, STOPS_FILE, type IndoorFeature, type IndoorIndexFile, type IndoorPosition, type StopsFile } from './lib/contract.ts';
+import { INDOOR_CELL_DEG, INDOOR_DIR, INDOOR_INDEX_FILE, ROUTES_FILE, STOPS_FILE, type IndoorFeature, type IndoorIndexFile, type IndoorPosition, type RouteInfo, type StopsFile } from './lib/contract.ts';
 import { outputDir, writeJson } from './lib/emit.ts';
 import { indoorCells, summarizeCell, toIndoorFeature, type OsmFeature } from './lib/indoor.ts';
 
@@ -14,9 +14,10 @@ const CONFIG = {
     /** Where the published city folders are; the data branch checkout in CI. */
     STOPS_DIR: process.env.STOPS_DIR || path.join(import.meta.dirname, '..'),
     CELL_DEG: INDOOR_CELL_DEG,
-    STATION_REACH_CELLS: 1,
-    MIN_CELL_FEATURES: 15,
-    MIN_CELL_LEVELS: 2,
+    /** Stations served by these vehicle types get floor plans; bus and tram stops do not. */
+    STATION_ROUTE_TYPES: new Set(['metro', 'train']),
+    /** Below the cell width (~360 m at 0.005° in Czechia and Slovakia), as `indoorCells` scans one cell around. */
+    STATION_RADIUS_M: 300,
     MIN_LEVEL_FEATURES: 2,
     MAX_LEVEL_SPAN: 10,
     /** Abort threshold guarding against an empty or truncated extract. */
@@ -34,20 +35,33 @@ Filtered to indoor features (floors, platforms, stairs, escalators, lifts, entra
 departs.app stations, re-tagged into a compact schema and split into grid cells.
 `;
 
-function stationPositions(): IndoorPosition[] {
-    const positions: IndoorPosition[] = [];
+/** Metro and rail stations and their platforms, whose surroundings get floor plans. */
+function stationPoints(): IndoorPosition[] {
+    const points: IndoorPosition[] = [];
     for (const city of CONFIG.CITIES) {
-        const file = path.join(CONFIG.STOPS_DIR, city, STOPS_FILE);
-        if (!fs.existsSync(file)) {
-            console.warn(`[Indoor] ${file} not found; ${city} gets no indoor maps.`);
+        const stopsFile = path.join(CONFIG.STOPS_DIR, city, STOPS_FILE);
+        const routesFile = path.join(CONFIG.STOPS_DIR, city, ROUTES_FILE);
+        if (!fs.existsSync(stopsFile) || !fs.existsSync(routesFile)) {
+            console.warn(`[Indoor] ${city} has no published ${STOPS_FILE} or ${ROUTES_FILE}; it gets no indoor maps.`);
             continue;
         }
-        const stops = JSON.parse(fs.readFileSync(file, 'utf8')) as StopsFile;
-        for (const station of stops.stations) positions.push(station.pos);
-        console.log(`[Indoor] ${city}: ${stops.stations.length} stations`);
+        const stops = JSON.parse(fs.readFileSync(stopsFile, 'utf8')) as StopsFile;
+        const routes = JSON.parse(fs.readFileSync(routesFile, 'utf8')) as Record<string, RouteInfo>;
+        const stationPos = new Map(stops.stations.map(station => [station.id, station.pos]));
+        const served = new Set<string>();
+        for (const platform of stops.platforms) {
+            if (!platform.routes.some(id => CONFIG.STATION_ROUTE_TYPES.has(routes[id]?.type ?? ''))) continue;
+            points.push(platform.pos);
+            served.add(platform.station);
+        }
+        for (const id of served) {
+            const pos = stationPos.get(id);
+            if (pos) points.push(pos);
+        }
+        console.log(`[Indoor] ${city}: ${served.size} metro and rail stations`);
     }
-    if (positions.length === 0) throw new Error('No stations to place indoor maps around.');
-    return positions;
+    if (points.length === 0) throw new Error('No metro or rail stations to place indoor maps around.');
+    return points;
 }
 
 async function readFeatures(files: readonly string[]): Promise<IndoorFeature[]> {
@@ -76,14 +90,12 @@ async function main(): Promise<void> {
     const sources = process.argv.slice(2);
     if (sources.length === 0) throw new Error('Usage: build-indoor.ts <export.geojsonseq>...');
 
-    const stations = stationPositions();
+    const stations = stationPoints();
     const features = await readFeatures(sources);
     const cells = indoorCells(features, stations, {
         cell: CONFIG.CELL_DEG,
-        stationReach: CONFIG.STATION_REACH_CELLS,
-        minFeatures: CONFIG.MIN_CELL_FEATURES,
+        stationRadiusM: CONFIG.STATION_RADIUS_M,
         minLevelFeatures: CONFIG.MIN_LEVEL_FEATURES,
-        minLevels: CONFIG.MIN_CELL_LEVELS,
     });
     if (cells.size < CONFIG.MIN_CELLS) throw new Error(`Suspiciously few indoor cells (${cells.size}). Aborting.`);
 
