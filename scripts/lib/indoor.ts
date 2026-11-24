@@ -84,6 +84,9 @@ function roundPositions(value: unknown): unknown {
     return value.map(roundPositions);
 }
 
+/** Business names are left out; a shop is drawn as a unit, not advertised. */
+const UNNAMED_KINDS = new Set<IndoorKind>(['shop']);
+
 const DRAWN_GEOMETRIES = new Set(['Point', 'LineString', 'Polygon', 'MultiPolygon']);
 
 /** Kinds drawn as floor space; osmium exports their closed ways as lines unless the tags it knows mark an area. */
@@ -115,6 +118,7 @@ export function toIndoorFeature(osm: OsmFeature, maxLevelSpan: number): IndoorFe
         geometry: drawnGeometry(k, geometry.type, geometry.coordinates),
         properties: { k, lv },
     };
+    if (UNNAMED_KINDS.has(k)) return feature;
     if (tags.name) feature.properties.name = tags.name;
     if (tags.ref) feature.properties.ref = tags.ref;
     return feature;

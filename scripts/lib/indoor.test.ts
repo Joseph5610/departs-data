@@ -70,6 +70,10 @@ describe('toIndoorFeature', () => {
         assert.equal(toIndoorFeature(closed({ highway: 'footway', level: '0' }), 10)?.geometry.type, 'LineString');
     });
 
+    it('leaves business names out of shops', () => {
+        assert.deepEqual(toIndoorFeature(point({ shop: 'bakery', level: '-1', name: 'Paul', brand: 'Paul' }), 10)?.properties, { k: 'shop', lv: [-1] });
+    });
+
     it('takes repeat_on when level is missing and drops objects on no floor', () => {
         assert.deepEqual(toIndoorFeature(line({ indoor: 'wall', repeat_on: '1;2' }), 10)?.properties.lv, [1, 2]);
         assert.equal(toIndoorFeature(line({ highway: 'footway' }), 10), null);
