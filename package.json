@@ -9,6 +9,7 @@
     "build:duk": "node scripts/build-duk.ts",
     "build:prague": "node scripts/build-prague.ts",
     "build:prague-pos": "node scripts/build-prague-pos.ts",
+    "build:indoor": "node scripts/build-indoor.ts",
     "test": "node --test 'scripts/**/*.test.ts'"
   },
   "repository": {

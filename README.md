@@ -19,6 +19,7 @@ Scripts and published data live on separate branches.
 **`data`** — the published output, served at `https://data.departs.app` via GitHub Pages:
 
 - `/brno`, `/prague`, `/presov`, `/duk` - Chunked JSON per network. Each has a `stops.json`: its stations, platforms and entrances in one format the app loads directly.
+- `/indoor` - OpenStreetMap indoor maps around the networks' stations, one file per grid cell.
 
 The `data` branch holds a single commit, which each workflow amends and force-pushes. Don't commit
 there by hand or branch from it.
@@ -80,6 +81,14 @@ The kraj currently publishes no GTFS, so timetables come from the national CIS J
 
 Trains come from Spojenka's GTFS into `rail_trips/` (by train number); the CIS JŘ export carries no trains. Stops Portabo lacks or places at a placeholder position (most Most/Litvínov city stops) stay in trip timelines with an empty `stop_id` and no coordinates.
 
+## 🏢 Indoor Maps
+*Script:* `scripts/build-indoor.ts` | *Action:* `update-indoor.yml` (Runs weekly)
+
+Floors, platforms, stairs, escalators, lifts, entrances and shops inside stations, from OpenStreetMap:
+1. Downloads the Geofabrik extracts of Czechia and Slovakia and keeps only objects tagged `level`, `indoor` or `repeat_on` (`osmium tags-filter`), exported as GeoJSON lines (`osmium export`).
+2. Classifies each object into a compact kind (`room`, `corridor`, `platform`, `steps`, `escalator`, `elevator`, `shop`…) with the whole floors it is on (`lv`; half levels like `-0.7` rounded).
+3. Splits them into grid cells of `INDOOR_CELL_DEG` and publishes the cells next to any network's station that span at least two floors: `indoor/<x>_<y>.json` (a FeatureCollection) and `indoor/index.json` (each cell's floors), so the app fetches only the cells in view.
+
 ## 🚀 Local Development
 
 To run the pipelines locally:
@@ -94,6 +103,11 @@ npm run build:presov
 npm run build:duk
 npm run build:prague
 npm run build:prague-pos
+
+# indoor maps from any OSM extract (needs osmium-tool) and the published stops.json files
+osmium tags-filter extract.osm.pbf nwr/level nwr/indoor nwr/repeat_on -o indoor.osm.pbf
+osmium export indoor.osm.pbf -f geojsonseq --attributes type,id -o indoor.geojsonseq
+STOPS_DIR=<data branch checkout> npm run build:indoor -- indoor.geojsonseq
 ```
 
 A build writes into the repository's city folder unless `OUT_DIR` points elsewhere. To compare two versions of the scripts on the same input, pin it: `GTFS_ZIP` (a downloaded feed zip, Brno and Prešov), `STATIONS_JSON` (Portabo stations, DÚK), `JDF_CACHE_DIR` (keeps the JDF and Spojenka downloads) and `BUILD_NOW` (epoch ms the service days are counted from).
@@ -113,5 +127,7 @@ A build writes into the repository's city folder unless `OUT_DIR` points elsewhe
 | `/duk` | [Jízdní řády veřejné linkové dopravy (CIS JŘ, JDF)](https://data.gov.cz/datová-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatové-sady%2F66003008%2F1463646434) (Ministerstvo dopravy ČR) | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) (CC0 equivalent) | Filtered to the kraj's lines, calendars evaluated, stop names matched to Portabo nodes, trips placed on platforms, lines named and coloured; operator and other personal data are not carried over. |
 | `/duk` | [Ústecký kraj open data (Portabo)](https://lkod.portabo.cz/datasets): stops (`cis/GetStations`) | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) | One station per node and one platform per post; platforms on the same point fanned out on the map. |
 | `/duk` | [Spojenka – Data jízdních řádů](https://www.spojenka.cz/jrdata) (GTFS) | Free for non-commercial use only, without warranty, as its publisher states; not covered by this repository's CC BY 4.0 | Trains calling in the kraj on three days, keyed by train number, stations tied to the nearest Portabo platform (`rail_trips/`). |
+
+**Indoor maps** (`/indoor`): © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, published under the [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/1-0/), not CC BY 4.0, since it is a database derived from OpenStreetMap; filtered to indoor features near stations, re-tagged into a compact schema and split into grid cells. Maps drawn from it must credit OpenStreetMap contributors.
 
 The CC BY 4.0 sources require attribution and an indication of changes; the Czech open-data sources require neither, but are credited all the same. departs.app shows the same credits in its Settings, next to the realtime feeds it reads directly.

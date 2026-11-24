@@ -1,0 +1,90 @@
+name: Update Indoor Maps
+
+on:
+  schedule:
+    - cron: '17 2 * * 1' # Every Monday at 02:17 UTC; Geofabrik refreshes its extracts daily
+  workflow_dispatch: # Allow manual trigger
+
+concurrency:
+  # All builds force-push the same single-commit data branch, so they must not overlap.
+  group: data-branch
+  cancel-in-progress: false
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout scripts
+        uses: actions/checkout@v5
+
+      - name: Checkout published data
+        uses: actions/checkout@v5
+        with:
+          ref: data
+          path: data-branch
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          sudo apt-get update -q
+          sudo apt-get install -y -q osmium-tool
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      # tags-filter keeps the referenced nodes, so ways and multipolygons still export with their geometry.
+      - name: Extract indoor objects from OpenStreetMap
+        run: |
+          mkdir -p osm
+          for region in czech-republic slovakia; do
+            curl -fsSL --retry 3 -o "osm/$region.osm.pbf" "https://download.geofabrik.de/europe/$region-latest.osm.pbf"
+            osmium tags-filter "osm/$region.osm.pbf" nwr/level nwr/indoor nwr/repeat_on -o "osm/$region-indoor.osm.pbf"
+            osmium export "osm/$region-indoor.osm.pbf" -f geojsonseq --attributes type,id -o "osm/$region.geojsonseq"
+            rm "osm/$region.osm.pbf"
+          done
+
+      - name: Build indoor maps
+        run: node scripts/build-indoor.ts osm/czech-republic.geojsonseq osm/slovakia.geojsonseq
+        env:
+          STOPS_DIR: ${{ github.workspace }}/data-branch
+          OUT_DIR: ${{ github.workspace }}/out/indoor
+
+      # The data branch holds exactly one commit, so publishing amends it. --force-with-lease
+      # refuses if the branch moved while we were building; on a lease failure we re-apply this
+      # build's output onto the new tip and retry, so a concurrent run is never overwritten.
+      - name: Publish data
+        working-directory: data-branch
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@users.noreply.github.com
+          for attempt in 1 2 3; do
+            git fetch --depth=1 origin data
+            git reset -q --hard origin/data
+            rm -rf indoor
+            cp -a "$GITHUB_WORKSPACE/out/indoor" indoor
+            git add -A indoor
+            if git diff --cached --quiet; then
+              echo "No data change; nothing to publish."
+              exit 0
+            fi
+            git commit -q --amend --no-edit --reset-author
+            if git push --force-with-lease=data:$(git rev-parse origin/data) origin data; then
+              echo "Published on attempt $attempt."
+              exit 0
+            fi
+            echo "Branch moved while building; retrying ($attempt)."
+          done
+          echo "Could not publish after 3 attempts." >&2
+          exit 1

@@ -445,3 +445,61 @@ export interface TripTracksFile {
     stops: string[];
     trips: Record<string, TripTrack>;
 }
+
+/**
+ * `indoor/`: OpenStreetMap indoor maps (floors, platforms, stairs, lifts) near the networks' stations, one
+ * `<cell>.json` FeatureCollection per grid cell listed in `index.json`. Published under ODbL, not CC BY.
+ */
+export const INDOOR_DIR = 'indoor';
+export const INDOOR_INDEX_FILE = 'index.json';
+/** Cell size in degrees; departs-app reads it from the index. */
+export const INDOOR_CELL_DEG = 0.005;
+
+export type IndoorKind =
+    | 'area' | 'room' | 'corridor' | 'wall' | 'platform' | 'footway' | 'steps' | 'escalator'
+    | 'elevator' | 'entrance' | 'shop' | 'toilets' | 'tickets';
+
+export type IndoorPosition = [number, number];
+export type IndoorGeometry =
+    | { type: 'Point'; coordinates: IndoorPosition }
+    | { type: 'LineString'; coordinates: IndoorPosition[] }
+    | { type: 'Polygon'; coordinates: IndoorPosition[][] }
+    | { type: 'MultiPolygon'; coordinates: IndoorPosition[][][] };
+
+export interface IndoorProperties {
+    k: IndoorKind;
+    /** Whole floors the feature is on, ascending; OSM half levels (`-0.7`) are rounded to the nearest floor. */
+    lv: number[];
+    name?: string;
+    ref?: string;
+}
+
+export interface IndoorFeature {
+    type: 'Feature';
+    geometry: IndoorGeometry;
+    properties: IndoorProperties;
+}
+
+export interface IndoorCellFile {
+    type: 'FeatureCollection';
+    features: IndoorFeature[];
+}
+
+export interface IndoorCellSummary {
+    /** Every floor the cell's features are on, ascending. */
+    levels: number[];
+    /** Feature count. */
+    n: number;
+}
+
+export interface IndoorIndexFile {
+    version: 1;
+    cell: number;
+    /** Keyed by `indoorCellId`; each cell's features are in `<key>.json`. */
+    cells: Record<string, IndoorCellSummary>;
+}
+
+/** `<floor(lon / cell)>_<floor(lat / cell)>`, the file name (without `.json`) of the cell holding a point. */
+export function indoorCellId(lon: number, lat: number, cell: number = INDOOR_CELL_DEG): string {
+    return `${Math.floor(lon / cell)}_${Math.floor(lat / cell)}`;
+}
