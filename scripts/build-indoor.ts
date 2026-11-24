@@ -18,7 +18,7 @@ const CONFIG = {
     STATION_ROUTE_TYPES: new Set(['metro', 'train']),
     /** Below the cell width (~360 m at 0.005° in Czechia and Slovakia), as `indoorCells` scans one cell around. */
     STATION_RADIUS_M: 300,
-    MIN_LEVEL_FEATURES: 2,
+    MIN_LEVEL_FEATURES: 1,
     MAX_LEVEL_SPAN: 10,
     /** Abort threshold guarding against an empty or truncated extract. */
     MIN_CELLS: 10,
