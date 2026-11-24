@@ -9,8 +9,14 @@ const point = (tags: Record<string, string>, coordinates: IndoorPosition = [14.4
 const line = (tags: Record<string, string>): OsmFeature =>
     ({ type: 'Feature', geometry: { type: 'LineString', coordinates: [[14.435, 50.083], [14.436, 50.083]] }, properties: tags });
 
-const feature = (lon: number, lat: number, lv: number[]): IndoorFeature =>
-    ({ type: 'Feature', geometry: { type: 'Point', coordinates: [lon, lat] }, properties: { k: 'shop', lv } });
+const feature = (lon: number, lat: number, lv: number[]): IndoorFeature => ({
+    type: 'Feature',
+    geometry: { type: 'Polygon', coordinates: [[[lon, lat], [lon + 0.0001, lat], [lon, lat + 0.0001], [lon, lat]]] },
+    properties: { k: 'room', lv },
+});
+
+const stairs = (lon: number, lat: number, lv: number[]): IndoorFeature =>
+    ({ type: 'Feature', geometry: { type: 'LineString', coordinates: [[lon, lat], [lon + 0.0001, lat]] }, properties: { k: 'steps', lv } });
 
 const CELLS = { cell: 0.005, stationReach: 1, minFeatures: 2, minLevelFeatures: 1, minLevels: 2 };
 
@@ -101,8 +107,14 @@ describe('indoorCells', () => {
 
 describe('summarizeCell', () => {
     // A lone shop tagged level=3 must not add a floor to the switcher.
-    it('lists only floors with enough features', () => {
+    it('lists only floors with enough areas', () => {
         const features = [feature(14.4351, 50.0831, [0]), feature(14.4352, 50.0831, [0, -1]), feature(14.4353, 50.0831, [-1]), feature(14.4354, 50.0831, [3])];
         assert.deepEqual(summarizeCell(features, 2), { levels: [-1, 0], n: 4 });
+    });
+
+    // Many stations map only the walking graph; lines alone would show an empty plan.
+    it('counts no floor made of stairs alone', () => {
+        const features = [feature(14.4351, 50.0831, [0]), feature(14.4352, 50.0831, [0]), stairs(14.4353, 50.0831, [-2]), stairs(14.4354, 50.0831, [-2])];
+        assert.deepEqual(summarizeCell(features, 2).levels, [0]);
     });
 });

@@ -144,7 +144,7 @@ export interface IndoorCellOptions {
     /** Cells this many steps around a station's cell are kept too. */
     stationReach: number;
     minFeatures: number;
-    /** A floor with fewer features in a cell is a stray tag (a lone `level=3` shop), not a floor of the plan. */
+    /** A floor with fewer floor-space areas in a cell is only a walking graph or a stray tag, not a floor plan. */
     minLevelFeatures: number;
     /** A cell on fewer floors is plain street-level tagging, not an indoor map. */
     minLevels: number;
@@ -179,10 +179,19 @@ export function indoorCells(
     return byCell;
 }
 
-/** A cell's floors with at least `minLevelFeatures` features each, and its feature count. */
+const isSpaceArea = ({ geometry, properties }: IndoorFeature): boolean =>
+    (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') && SPACE_KINDS.has(properties.k);
+
+/**
+ * A cell's floors drawn as a plan, with at least `minLevelFeatures` floor-space areas (rooms, corridors,
+ * platforms, shops) each, and its feature count. Stairs and footways alone make no floor.
+ */
 export function summarizeCell(features: readonly IndoorFeature[], minLevelFeatures: number): IndoorCellSummary {
     const counts = new Map<number, number>();
-    for (const feature of features) for (const level of feature.properties.lv) counts.set(level, (counts.get(level) ?? 0) + 1);
+    for (const feature of features) {
+        if (!isSpaceArea(feature)) continue;
+        for (const level of feature.properties.lv) counts.set(level, (counts.get(level) ?? 0) + 1);
+    }
     const levels = [...counts].filter(([, count]) => count >= minLevelFeatures).map(([level]) => level);
     return { levels: levels.sort((a, b) => a - b), n: features.length };
 }

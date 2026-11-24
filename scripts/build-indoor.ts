@@ -17,7 +17,7 @@ const CONFIG = {
     STATION_REACH_CELLS: 1,
     MIN_CELL_FEATURES: 15,
     MIN_CELL_LEVELS: 2,
-    MIN_LEVEL_FEATURES: 5,
+    MIN_LEVEL_FEATURES: 2,
     MAX_LEVEL_SPAN: 10,
     /** Abort threshold guarding against an empty or truncated extract. */
     MIN_CELLS: 10,
