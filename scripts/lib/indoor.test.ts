@@ -56,10 +56,10 @@ describe('indoorKind', () => {
 
 describe('toIndoorFeature', () => {
     it('keeps the kind, floors, name and ref with coordinates rounded to 6 decimals', () => {
-        assert.deepEqual(toIndoorFeature(point({ highway: 'elevator', level: '-2;0', name: 'Výtah', ref: 'V1', operator: 'DPP' }), 10), {
+        assert.deepEqual(toIndoorFeature(point({ entrance: 'main', level: '-2;0', name: 'Vstup Wilsonova', ref: 'E1', operator: 'DPP' }), 10), {
             type: 'Feature',
             geometry: { type: 'Point', coordinates: [14.435123, 50.083123] },
-            properties: { k: 'elevator', lv: [-2, 0], name: 'Výtah', ref: 'V1' },
+            properties: { k: 'entrance', lv: [-2, 0], name: 'Vstup Wilsonova', ref: 'E1' },
         });
     });
 
@@ -70,8 +70,10 @@ describe('toIndoorFeature', () => {
         assert.equal(toIndoorFeature(closed({ highway: 'footway', level: '0' }), 10)?.geometry.type, 'LineString');
     });
 
-    it('leaves business names out of shops', () => {
+    // Rooms carry the shop's name as often as a shop tag, so only platforms and entrances keep names.
+    it('leaves business names out of shops and rooms', () => {
         assert.deepEqual(toIndoorFeature(point({ shop: 'bakery', level: '-1', name: 'Paul', brand: 'Paul' }), 10)?.properties, { k: 'shop', lv: [-1] });
+        assert.deepEqual(toIndoorFeature(line({ indoor: 'room', level: '-1', name: 'Sephora' }), 10)?.properties, { k: 'room', lv: [-1] });
     });
 
     it('takes repeat_on when level is missing and drops objects on no floor', () => {

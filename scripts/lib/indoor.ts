@@ -84,8 +84,8 @@ function roundPositions(value: unknown): unknown {
     return value.map(roundPositions);
 }
 
-/** Business names are left out; a shop is drawn as a unit, not advertised. */
-const UNNAMED_KINDS = new Set<IndoorKind>(['shop']);
+/** Only these keep their name and ref; rooms and shops are often named after the business in them. */
+const NAMED_KINDS = new Set<IndoorKind>(['platform', 'entrance']);
 
 const DRAWN_GEOMETRIES = new Set(['Point', 'LineString', 'Polygon', 'MultiPolygon']);
 
@@ -118,7 +118,7 @@ export function toIndoorFeature(osm: OsmFeature, maxLevelSpan: number): IndoorFe
         geometry: drawnGeometry(k, geometry.type, geometry.coordinates),
         properties: { k, lv },
     };
-    if (UNNAMED_KINDS.has(k)) return feature;
+    if (!NAMED_KINDS.has(k)) return feature;
     if (tags.name) feature.properties.name = tags.name;
     if (tags.ref) feature.properties.ref = tags.ref;
     return feature;
