@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import type { IndoorFeature, IndoorPosition } from './contract.ts';
-import { indoorCells, indoorKind, parseLevels, toIndoorFeature, type OsmFeature } from './indoor.ts';
+import { indoorCells, indoorKind, parseLevels, summarizeCell, toIndoorFeature, type OsmFeature } from './indoor.ts';
 
 const point = (tags: Record<string, string>, coordinates: IndoorPosition = [14.4351234567, 50.0831234567]): OsmFeature =>
     ({ type: 'Feature', geometry: { type: 'Point', coordinates }, properties: tags });
@@ -12,7 +12,7 @@ const line = (tags: Record<string, string>): OsmFeature =>
 const feature = (lon: number, lat: number, lv: number[]): IndoorFeature =>
     ({ type: 'Feature', geometry: { type: 'Point', coordinates: [lon, lat] }, properties: { k: 'shop', lv } });
 
-const CELLS = { cell: 0.005, stationReach: 1, minFeatures: 2, minLevels: 2 };
+const CELLS = { cell: 0.005, stationReach: 1, minFeatures: 2, minLevelFeatures: 1, minLevels: 2 };
 
 describe('parseLevels', () => {
     it('reads lists and rounds half levels to the nearest floor', () => {
@@ -96,5 +96,13 @@ describe('indoorCells', () => {
     it('leaves out cells on a single floor or with too few features', () => {
         assert.equal(indoorCells([feature(14.4351, 50.0831, [0]), feature(14.4353, 50.0833, [0])], [station], CELLS).size, 0);
         assert.equal(indoorCells([feature(14.4351, 50.0831, [0, -1])], [station], CELLS).size, 0);
+    });
+});
+
+describe('summarizeCell', () => {
+    // A lone shop tagged level=3 must not add a floor to the switcher.
+    it('lists only floors with enough features', () => {
+        const features = [feature(14.4351, 50.0831, [0]), feature(14.4352, 50.0831, [0, -1]), feature(14.4353, 50.0831, [-1]), feature(14.4354, 50.0831, [3])];
+        assert.deepEqual(summarizeCell(features, 2), { levels: [-1, 0], n: 4 });
     });
 });

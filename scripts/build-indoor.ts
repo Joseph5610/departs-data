@@ -17,6 +17,7 @@ const CONFIG = {
     STATION_REACH_CELLS: 1,
     MIN_CELL_FEATURES: 15,
     MIN_CELL_LEVELS: 2,
+    MIN_LEVEL_FEATURES: 5,
     MAX_LEVEL_SPAN: 10,
     /** Abort threshold guarding against an empty or truncated extract. */
     MIN_CELLS: 10,
@@ -81,6 +82,7 @@ async function main(): Promise<void> {
         cell: CONFIG.CELL_DEG,
         stationReach: CONFIG.STATION_REACH_CELLS,
         minFeatures: CONFIG.MIN_CELL_FEATURES,
+        minLevelFeatures: CONFIG.MIN_LEVEL_FEATURES,
         minLevels: CONFIG.MIN_CELL_LEVELS,
     });
     if (cells.size < CONFIG.MIN_CELLS) throw new Error(`Suspiciously few indoor cells (${cells.size}). Aborting.`);
@@ -92,7 +94,7 @@ async function main(): Promise<void> {
     const index: IndoorIndexFile = { version: 1, cell: CONFIG.CELL_DEG, cells: {} };
     let bytes = 0;
     for (const [id, cellFeatures] of [...cells].sort(([a], [b]) => a.localeCompare(b))) {
-        index.cells[id] = summarizeCell(cellFeatures);
+        index.cells[id] = summarizeCell(cellFeatures, CONFIG.MIN_LEVEL_FEATURES);
         bytes += writeJson(dir, `${id}.json`, { type: 'FeatureCollection', features: cellFeatures });
     }
     writeJson(dir, INDOOR_INDEX_FILE, index);

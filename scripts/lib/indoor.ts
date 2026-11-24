@@ -144,6 +144,8 @@ export interface IndoorCellOptions {
     /** Cells this many steps around a station's cell are kept too. */
     stationReach: number;
     minFeatures: number;
+    /** A floor with fewer features in a cell is a stray tag (a lone `level=3` shop), not a floor of the plan. */
+    minLevelFeatures: number;
     /** A cell on fewer floors is plain street-level tagging, not an indoor map. */
     minLevels: number;
 }
@@ -172,13 +174,15 @@ export function indoorCells(
         else byCell.set(id, [feature]);
     }
     for (const [id, cellFeatures] of byCell) {
-        if (cellFeatures.length < options.minFeatures || summarizeCell(cellFeatures).levels.length < options.minLevels) byCell.delete(id);
+        if (cellFeatures.length < options.minFeatures || summarizeCell(cellFeatures, options.minLevelFeatures).levels.length < options.minLevels) byCell.delete(id);
     }
     return byCell;
 }
 
-export function summarizeCell(features: readonly IndoorFeature[]): IndoorCellSummary {
-    const levels = new Set<number>();
-    for (const feature of features) for (const level of feature.properties.lv) levels.add(level);
-    return { levels: [...levels].sort((a, b) => a - b), n: features.length };
+/** A cell's floors with at least `minLevelFeatures` features each, and its feature count. */
+export function summarizeCell(features: readonly IndoorFeature[], minLevelFeatures: number): IndoorCellSummary {
+    const counts = new Map<number, number>();
+    for (const feature of features) for (const level of feature.properties.lv) counts.set(level, (counts.get(level) ?? 0) + 1);
+    const levels = [...counts].filter(([, count]) => count >= minLevelFeatures).map(([level]) => level);
+    return { levels: levels.sort((a, b) => a - b), n: features.length };
 }
