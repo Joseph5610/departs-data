@@ -86,7 +86,7 @@ Trains come from Spojenka's GTFS into `rail_trips/` (by train number); the CIS J
 
 Floors, platforms, stairs, escalators, lifts, entrances and shops inside stations, from OpenStreetMap:
 1. Downloads the Geofabrik extracts of Czechia and Slovakia and keeps only objects tagged `level`, `indoor` or `repeat_on` (`osmium tags-filter`), exported as GeoJSON lines (`osmium export`).
-2. Classifies each object into a compact kind (`room`, `corridor`, `platform`, `steps`, `escalator`, `elevator`, `shop`…) with the whole floors it is on (`lv`; half levels like `-0.7` rounded). Only platforms and entrances keep their names, so no business names are published.
+2. Classifies each object into a compact kind (`room`, `corridor`, `platform`, `steps`, `escalator`, `elevator`, `shop`…) with the whole floors it is on (`lv`; half levels like `-0.7` rounded).
 3. Splits them into grid cells of `INDOOR_CELL_DEG` and publishes the cells next to any network's station that span at least two floors: `indoor/<x>_<y>.json` (a FeatureCollection) and `indoor/index.json` (each cell's floors), so the app fetches only the cells in view.
 
 ## 🚀 Local Development

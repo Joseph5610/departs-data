@@ -70,10 +70,8 @@ describe('toIndoorFeature', () => {
         assert.equal(toIndoorFeature(closed({ highway: 'footway', level: '0' }), 10)?.geometry.type, 'LineString');
     });
 
-    // Rooms carry the shop's name as often as a shop tag, so only platforms and entrances keep names.
-    it('leaves business names out of shops and rooms', () => {
-        assert.deepEqual(toIndoorFeature(point({ shop: 'bakery', level: '-1', name: 'Paul', brand: 'Paul' }), 10)?.properties, { k: 'shop', lv: [-1] });
-        assert.deepEqual(toIndoorFeature(line({ indoor: 'room', level: '-1', name: 'Sephora' }), 10)?.properties, { k: 'room', lv: [-1] });
+    it('keeps shop names', () => {
+        assert.deepEqual(toIndoorFeature(point({ shop: 'bakery', level: '-1', name: 'Paul', brand: 'Paul' }), 10)?.properties, { k: 'shop', lv: [-1], name: 'Paul' });
     });
 
     it('takes repeat_on when level is missing and drops objects on no floor', () => {
