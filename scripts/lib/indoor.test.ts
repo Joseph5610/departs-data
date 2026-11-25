@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import type { IndoorFeature, IndoorPosition } from './contract.ts';
-import { groupStations, indoorKind, parseLevels, planLevels, stationPlans, toIndoorFeature, type IndoorStation, type OsmFeature } from './indoor.ts';
+import { groupStations, indoorKind, parseLevels, planLevels, planStartLevel, stationPlans, toIndoorFeature, type IndoorStation, type OsmFeature } from './indoor.ts';
 
 const point = (tags: Record<string, string>, coordinates: IndoorPosition = [14.4351234567, 50.0831234567]): OsmFeature =>
     ({ type: 'Feature', geometry: { type: 'Point', coordinates }, properties: tags });
@@ -90,18 +90,27 @@ describe('groupStations', () => {
     // Hlavní nádraží's metro and its trains are two stations in one building; they get one plan.
     it('merges stations whose points are close and keeps the lowest id', () => {
         const stations: IndoorStation[] = [
-            { id: 'U142S1', name: 'Hlavní nádraží', points: [[14.4352, 50.0832]] },
-            { id: 'U142-301', name: 'Praha hl.n.', points: [[14.4360, 50.0830]] },
-            { id: 'U1072S1', name: 'Můstek', points: [[14.4243, 50.0835]] },
+            { id: 'A', name: 'Station A', node: 'a', points: [[14.4352, 50.0832]] },
+            { id: 'B', name: 'Station B', node: 'b', points: [[14.4360, 50.0830]] },
+            { id: 'C', name: 'Můstek', node: 'c', points: [[14.4243, 50.0835]] },
         ];
         const groups = groupStations(stations, PLANS);
-        assert.deepEqual(groups.map(g => [g.id, g.points.length]).sort(), [['U1072S1', 1], ['U142-301', 2]]);
+        assert.deepEqual(groups.map(g => [g.id, g.points.length]).sort(), [['A', 2], ['C', 1]]);
+    });
+
+    // PID's Hlavní nádraží metro (U142-1) and trains (U142-301) are 170 m apart but one node.
+    it('merges stations of one node however far apart their points are', () => {
+        const stations: IndoorStation[] = [
+            { id: 'U142-1', name: 'Hlavní nádraží', node: 'U142', points: [[14.4352, 50.0832]] },
+            { id: 'U142-301', name: 'Praha hlavní nádraží', node: 'U142', points: [[14.4380, 50.0830]] },
+        ];
+        assert.deepEqual(groupStations(stations, PLANS).map(g => g.id), ['U142-1']);
     });
 });
 
 describe('stationPlans', () => {
-    const mustek: IndoorStation = { id: 'mustek', name: 'Můstek', points: [[14.4243, 50.0835]] };
-    const muzeum: IndoorStation = { id: 'muzeum', name: 'Muzeum', points: [[14.4285, 50.0835]] };
+    const mustek: IndoorStation = { id: 'mustek', name: 'Můstek', node: 'mustek', points: [[14.4243, 50.0835]] };
+    const muzeum: IndoorStation = { id: 'muzeum', name: 'Muzeum', node: 'muzeum', points: [[14.4285, 50.0835]] };
 
     // Václavské náměstí lies between Můstek and Muzeum; each feature goes to one of them only.
     it('gives each feature to the nearest station', () => {
@@ -124,5 +133,19 @@ describe('planLevels', () => {
     // Many stations map only the walking graph; lines alone would show an empty plan.
     it('counts floors with areas only', () => {
         assert.deepEqual(planLevels([feature(14.4351, 50.0831, [0, -1]), stairs(14.4353, 50.0831, [-2])], 1), [-1, 0]);
+    });
+});
+
+describe('planStartLevel', () => {
+    const platform = (lv: number[]): IndoorFeature => ({ ...feature(14.4351, 50.0831, lv), properties: { k: 'platform', lv } });
+
+    // Můstek's plan reaches a shop on floor 1; it still opens on its platforms, not up there.
+    it('opens on the platform floor nearest the surface', () => {
+        assert.equal(planStartLevel([platform([-5]), platform([-3]), feature(14.4351, 50.0831, [1])], [-5, -3, 1]), -3);
+    });
+
+    it('opens on street level, or the floor nearest it, without platforms', () => {
+        assert.equal(planStartLevel([feature(14.4351, 50.0831, [0])], [-1, 0, 2]), 0);
+        assert.equal(planStartLevel([feature(14.4351, 50.0831, [-2])], [-2, -1]), -1);
     });
 });

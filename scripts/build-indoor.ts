@@ -4,7 +4,7 @@ import path from 'node:path';
 import readline from 'node:readline';
 import { INDOOR_DIR, INDOOR_INDEX_FILE, ROUTES_FILE, STOPS_FILE, type IndoorFeature, type IndoorIndexFile, type RouteInfo, type StopsFile } from './lib/contract.ts';
 import { outputDir, writeJson } from './lib/emit.ts';
-import { groupStations, planBbox, planLevels, stationPlans, toIndoorFeature, type IndoorStation, type IndoorStationOptions, type OsmFeature } from './lib/indoor.ts';
+import { groupStations, planBbox, planLevels, planStartLevel, stationPlans, toIndoorFeature, type IndoorStation, type IndoorStationOptions, type OsmFeature } from './lib/indoor.ts';
 
 /**
  * OpenStreetMap indoor maps near the networks' stations. Reads `osmium export -f geojsonseq` files
@@ -41,6 +41,9 @@ Filtered to indoor features (floors, platforms, stairs, escalators, lifts, entra
 departs.app stations, re-tagged into a compact schema and grouped by station.
 `;
 
+/** The node of a station id: PID's `U142-301` and `U142-1` are both node `U142`. */
+const stationNode = (id: string): string => id.split('-')[0]!;
+
 /** Metro and rail stations with the points (the station and its platforms) their floor plans gather around. */
 function railStations(): IndoorStation[] {
     const stations: IndoorStation[] = [];
@@ -54,7 +57,7 @@ function railStations(): IndoorStation[] {
         const stops = JSON.parse(fs.readFileSync(stopsFile, 'utf8')) as StopsFile;
         const routes = JSON.parse(fs.readFileSync(routesFile, 'utf8')) as Record<string, RouteInfo>;
         const byId = new Map<string, IndoorStation>();
-        for (const station of stops.stations) byId.set(station.id, { id: station.id, name: station.name, points: [station.pos] });
+        for (const station of stops.stations) byId.set(station.id, { id: station.id, name: station.name, node: `${city}:${stationNode(station.id)}`, points: [station.pos] });
         const served = new Set<string>();
         for (const platform of stops.platforms) {
             if (!platform.routes.some(id => CONFIG.STATION_ROUTE_TYPES.has(routes[id]?.type ?? ''))) continue;
@@ -104,15 +107,17 @@ async function main(): Promise<void> {
     fs.mkdirSync(dir, { recursive: true });
 
     const names = new Map(stations.map(station => [station.id, station.name]));
-    const index: IndoorIndexFile = { version: 2, stations: {} };
+    const index: IndoorIndexFile = { version: 3, stations: {} };
     let bytes = 0;
     for (const [id, plan] of [...plans].sort(([a], [b]) => a.localeCompare(b))) {
         const payload = JSON.stringify({ type: 'FeatureCollection', features: plan });
         fs.writeFileSync(path.join(dir, `${id}.json`), payload);
         bytes += payload.length;
+        const levels = planLevels(plan, CONFIG.PLANS.minLevelFeatures);
         index.stations[id] = {
             name: names.get(id) ?? id,
-            levels: planLevels(plan, CONFIG.PLANS.minLevelFeatures),
+            levels,
+            start: planStartLevel(plan, levels),
             bbox: planBbox(plan),
             v: createHash('sha1').update(payload).digest('hex').slice(0, CONFIG.VERSION_LENGTH),
         };

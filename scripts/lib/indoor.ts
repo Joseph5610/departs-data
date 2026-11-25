@@ -147,6 +147,8 @@ export function anchorOf(geometry: IndoorGeometry): IndoorPosition {
 export interface IndoorStation {
     id: string;
     name: string;
+    /** The network's node; stations of one node (PID's `U142-1` metro and `U142-301` trains) share one plan. */
+    node: string;
     points: IndoorPosition[];
 }
 
@@ -192,18 +194,29 @@ function* pointsAround([lon, lat]: IndoorPosition, grid: ReadonlyMap<string, Ind
 const metresBetween = ([lon1, lat1]: IndoorPosition, [lon2, lat2]: IndoorPosition): number =>
     distanceM({ lon: lon1, lat: lat1 }, { lon: lon2, lat: lat2 });
 
-/** Stations sharing a building, merged into one: the lowest id names the group, its points are all of theirs. */
+/**
+ * Stations sharing a building, merged into one: those of one node or with points within `joinM`. The
+ * lowest id names the group; its points are all of theirs.
+ */
 export function groupStations(stations: readonly IndoorStation[], options: IndoorStationOptions): IndoorStation[] {
     const sorted = [...stations].sort((a, b) => a.id.localeCompare(b.id));
     const parent = sorted.map((_, i) => i);
     const root = (i: number): number => (parent[i] === i ? i : (parent[i] = root(parent[i]!)));
+    const join = (i: number, j: number): void => {
+        const [a, b] = [root(i), root(j)];
+        if (a !== b) parent[Math.max(a, b)] = Math.min(a, b);
+    };
+    const firstOfNode = new Map<string, number>();
+    sorted.forEach((station, i) => {
+        const first = firstOfNode.get(station.node);
+        if (first === undefined) firstOfNode.set(station.node, i);
+        else join(first, i);
+    });
     const grid = pointGrid(sorted, options.cellDeg);
     sorted.forEach((station, i) => {
         for (const pos of station.points) {
             for (const other of pointsAround(pos, grid, options.cellDeg)) {
-                if (other.station === i || metresBetween(pos, other.pos) > options.joinM) continue;
-                const [a, b] = [root(i), root(other.station)];
-                if (a !== b) parent[Math.max(a, b)] = Math.min(a, b);
+                if (other.station !== i && metresBetween(pos, other.pos) <= options.joinM) join(i, other.station);
             }
         }
     });
@@ -211,7 +224,7 @@ export function groupStations(stations: readonly IndoorStation[], options: Indoo
     sorted.forEach((station, i) => {
         const group = groups.get(root(i));
         if (group) group.points.push(...station.points);
-        else groups.set(root(i), { id: station.id, name: station.name, points: [...station.points] });
+        else groups.set(root(i), { id: station.id, name: station.name, node: station.node, points: [...station.points] });
     });
     return [...groups.values()];
 }
@@ -255,6 +268,19 @@ export function planLevels(features: readonly IndoorFeature[], minLevelFeatures:
         for (const level of feature.properties.lv) counts.set(level, (counts.get(level) ?? 0) + 1);
     }
     return [...counts].filter(([, count]) => count >= minLevelFeatures).map(([level]) => level).sort((a, b) => a - b);
+}
+
+/** The floor a plan opens on: its platforms' floor nearest the surface, else street level, else the floor nearest to it. */
+export function planStartLevel(features: readonly IndoorFeature[], levels: readonly number[]): number {
+    let platformLevel: number | null = null;
+    for (const feature of features) {
+        if (feature.properties.k !== 'platform' || !isSpaceArea(feature)) continue;
+        for (const level of feature.properties.lv) {
+            if (levels.includes(level) && (platformLevel === null || Math.abs(level) < Math.abs(platformLevel))) platformLevel = level;
+        }
+    }
+    if (platformLevel !== null) return platformLevel;
+    return levels.reduce((best, level) => (Math.abs(level) < Math.abs(best) ? level : best), levels[0] ?? 0);
 }
 
 /** `[west, south, east, north]` of a plan. */
