@@ -2,7 +2,7 @@ import type { IndoorFeature, IndoorGeometry, IndoorKind, IndoorPosition } from '
 import { distanceM, round6 } from './geo.ts';
 
 /** OSM tags of one exported object. */
-export type OsmTags = Readonly<Record<string, string | undefined>>;
+type OsmTags = Readonly<Record<string, string | undefined>>;
 
 /** A feature as `osmium export -f geojsonseq` writes it. */
 export interface OsmFeature {
@@ -140,7 +140,7 @@ function bboxOf(coordinates: unknown, into: Bbox = [Infinity, Infinity, -Infinit
 }
 
 /** The centre of a geometry's bounding box, which decides the station it belongs to. */
-export function anchorOf(geometry: IndoorGeometry): IndoorPosition {
+function anchorOf(geometry: IndoorGeometry): IndoorPosition {
     const [west, south, east, north] = bboxOf(geometry.coordinates);
     return [(west + east) / 2, (south + north) / 2];
 }
