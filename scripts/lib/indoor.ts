@@ -159,7 +159,7 @@ export interface IndoorStationOptions {
     radiusM: number;
     /** Stations with points this close share one building and one plan (Hlavní nádraží's metro and trains). */
     joinM: number;
-    /** Only areas this close to a station point make its floors; farther ones (a university hall above Můstek) are drawn but add none. */
+    /** Only features this close to a station point make its floors; farther ones (a university hall above Můstek) are drawn but add none. */
     coreM: number;
     /** A floor needs this many floor-space areas (rooms, corridors, platforms, shops). */
     minLevelFeatures: number;
@@ -234,13 +234,13 @@ export function groupStations(stations: readonly IndoorStation[], options: Indoo
 /** A station's floor plan: its features and its floors. */
 export interface StationPlan {
     features: IndoorFeature[];
-    /** Floors with areas near the station, ascending. */
+    /** Floors with features near the station, ascending. */
     levels: number[];
 }
 
 /**
  * Each station's plan: the features whose nearest station point within `radiusM` is one of its own. Its
- * floors come from the areas within `coreM`; stations without one are left out.
+ * floors come from the features within `coreM`; stations without one are left out.
  */
 export function stationPlans(
     features: Iterable<IndoorFeature>,
@@ -276,32 +276,23 @@ export function stationPlans(
     return plans;
 }
 
-/** Kinds whose areas make a floor: floor space and pedestrian areas (a vestibule mapped as `highway=pedestrian, area=yes`). */
-const FLOOR_KINDS = new Set<IndoorKind>([...SPACE_KINDS, 'footway']);
-
-const isArea = ({ geometry }: IndoorFeature): boolean => geometry.type === 'Polygon' || geometry.type === 'MultiPolygon';
-
-/** Floors with at least `minLevelFeatures` areas each, ascending. Stairs and lines alone make no floor. */
+/** Floors with at least `minLevelFeatures` drawn features (areas or lines; lone points such as a shop pin add none), ascending. */
 export function planLevels(features: readonly IndoorFeature[], minLevelFeatures: number): number[] {
     const counts = new Map<number, number>();
     for (const feature of features) {
-        if (!isArea(feature) || !FLOOR_KINDS.has(feature.properties.k)) continue;
+        if (feature.geometry.type === 'Point') continue;
         for (const level of feature.properties.lv) counts.set(level, (counts.get(level) ?? 0) + 1);
     }
     return [...counts].filter(([, count]) => count >= minLevelFeatures).map(([level]) => level).sort((a, b) => a - b);
 }
 
-/** The floor a plan opens on: its platforms' floor nearest the surface, else street level, else the floor nearest to it. */
-export function planStartLevel(features: readonly IndoorFeature[], levels: readonly number[]): number {
-    let platformLevel: number | null = null;
-    for (const feature of features) {
-        if (feature.properties.k !== 'platform' || !isArea(feature)) continue;
-        for (const level of feature.properties.lv) {
-            if (levels.includes(level) && (platformLevel === null || Math.abs(level) < Math.abs(platformLevel))) platformLevel = level;
-        }
+/** The floor a plan opens on: street level, else the floor nearest it (the upper one on a tie). */
+export function planStartLevel(levels: readonly number[]): number {
+    let best = levels[0] ?? 0;
+    for (const level of levels) {
+        if (Math.abs(level) < Math.abs(best) || (Math.abs(level) === Math.abs(best) && level > best)) best = level;
     }
-    if (platformLevel !== null) return platformLevel;
-    return levels.reduce((best, level) => (Math.abs(level) < Math.abs(best) ? level : best), levels[0] ?? 0);
+    return best;
 }
 
 /** `[west, south, east, north]` of a plan. */

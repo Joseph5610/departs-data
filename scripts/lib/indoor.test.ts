@@ -131,28 +131,26 @@ describe('stationPlans', () => {
         assert.deepEqual(plan?.levels, [-3]);
     });
 
-    it('leaves out stations with no floor drawn as areas', () => {
-        assert.equal(stationPlans([stairs(14.4244, 50.0835, [-1])], [mustek], PLANS).size, 0);
+    it('leaves out stations with lone points only', () => {
+        const pin: IndoorFeature = { type: 'Feature', geometry: { type: 'Point', coordinates: [14.4244, 50.0835] }, properties: { k: 'shop', lv: [0] } };
+        assert.equal(stationPlans([pin], [mustek], PLANS).size, 0);
     });
 });
 
 describe('planLevels', () => {
-    // Many stations map only the walking graph; lines alone would show an empty plan.
-    it('counts floors with areas only', () => {
-        assert.deepEqual(planLevels([feature(14.4351, 50.0831, [0, -1]), stairs(14.4353, 50.0831, [-2])], 1), [-1, 0]);
+    it('counts floors with areas or lines, not lone points', () => {
+        const pin: IndoorFeature = { type: 'Feature', geometry: { type: 'Point', coordinates: [14.4351, 50.0831] }, properties: { k: 'shop', lv: [3] } };
+        assert.deepEqual(planLevels([feature(14.4351, 50.0831, [0]), stairs(14.4353, 50.0831, [-2, -1]), pin], 1), [-2, -1, 0]);
     });
 });
 
 describe('planStartLevel', () => {
-    const platform = (lv: number[]): IndoorFeature => ({ ...feature(14.4351, 50.0831, lv), properties: { k: 'platform', lv } });
-
-    // Můstek's plan reaches a shop on floor 1; it still opens on its platforms, not up there.
-    it('opens on the platform floor nearest the surface', () => {
-        assert.equal(planStartLevel([platform([-5]), platform([-3]), feature(14.4351, 50.0831, [1])], [-5, -3, 1]), -3);
+    it('opens on street level where the plan has it', () => {
+        assert.equal(planStartLevel([-3, -1, 0, 1]), 0);
     });
 
-    it('opens on street level, or the floor nearest it, without platforms', () => {
-        assert.equal(planStartLevel([feature(14.4351, 50.0831, [0])], [-1, 0, 2]), 0);
-        assert.equal(planStartLevel([feature(14.4351, 50.0831, [-2])], [-2, -1]), -1);
+    it('opens on the floor nearest street level otherwise, the upper one on a tie', () => {
+        assert.equal(planStartLevel([-5, -3, -1]), -1);
+        assert.equal(planStartLevel([-1, 1]), 1);
     });
 });

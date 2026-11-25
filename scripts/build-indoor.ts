@@ -117,7 +117,7 @@ async function main(): Promise<void> {
         index.stations[id] = {
             name: names.get(id) ?? id,
             levels,
-            start: planStartLevel(plan, levels),
+            start: planStartLevel(levels),
             bbox: planBbox(plan),
             v: createHash('sha1').update(payload).digest('hex').slice(0, CONFIG.VERSION_LENGTH),
         };

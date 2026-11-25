@@ -488,9 +488,9 @@ export interface IndoorStationFile {
 
 export interface IndoorStationSummary {
     name: string;
-    /** The floors drawn as areas (rooms, corridors, platforms), ascending. */
+    /** The floors with features near the station, ascending. */
     levels: number[];
-    /** The floor the plan opens on: the platforms' (the one nearest the surface), else street level, else the nearest floor to it. */
+    /** The floor the plan opens on: street level, else the floor nearest it. */
     start: number;
     /** `[west, south, east, north]` of the plan. */
     bbox: [number, number, number, number];
