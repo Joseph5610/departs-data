@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import type { IndoorFeature, IndoorPosition } from './contract.ts';
-import { indoorCells, indoorKind, parseLevels, summarizeCell, toIndoorFeature, type OsmFeature } from './indoor.ts';
+import { groupStations, indoorKind, parseLevels, planLevels, stationPlans, toIndoorFeature, type IndoorStation, type OsmFeature } from './indoor.ts';
 
 const point = (tags: Record<string, string>, coordinates: IndoorPosition = [14.4351234567, 50.0831234567]): OsmFeature =>
     ({ type: 'Feature', geometry: { type: 'Point', coordinates }, properties: tags });
@@ -18,7 +18,7 @@ const feature = (lon: number, lat: number, lv: number[]): IndoorFeature => ({
 const stairs = (lon: number, lat: number, lv: number[]): IndoorFeature =>
     ({ type: 'Feature', geometry: { type: 'LineString', coordinates: [[lon, lat], [lon + 0.0001, lat]] }, properties: { k: 'steps', lv } });
 
-const CELLS = { cell: 0.005, stationRadiusM: 300, minLevelFeatures: 1 };
+const PLANS = { cellDeg: 0.005, radiusM: 300, joinM: 150, minLevelFeatures: 1 };
 
 describe('parseLevels', () => {
     it('reads lists and rounds half levels to the nearest floor', () => {
@@ -86,36 +86,43 @@ describe('toIndoorFeature', () => {
     });
 });
 
-describe('indoorCells', () => {
-    const station: IndoorPosition = [14.4352, 50.0832];
+describe('groupStations', () => {
+    // Hlavní nádraží's metro and its trains are two stations in one building; they get one plan.
+    it('merges stations whose points are close and keeps the lowest id', () => {
+        const stations: IndoorStation[] = [
+            { id: 'U142S1', name: 'Hlavní nádraží', points: [[14.4352, 50.0832]] },
+            { id: 'U142-301', name: 'Praha hl.n.', points: [[14.4360, 50.0830]] },
+            { id: 'U1072S1', name: 'Můstek', points: [[14.4243, 50.0835]] },
+        ];
+        const groups = groupStations(stations, PLANS);
+        assert.deepEqual(groups.map(g => [g.id, g.points.length]).sort(), [['U1072S1', 1], ['U142-301', 2]]);
+    });
+});
 
-    it('keeps plans within reach of a station, across cell edges', () => {
-        const cells = indoorCells([feature(14.4351, 50.0831, [0]), feature(14.4348, 50.0833, [-1])], [station], CELLS);
-        assert.deepEqual([...cells.keys()].sort(), ['2886_10016', '2887_10016']);
+describe('stationPlans', () => {
+    const mustek: IndoorStation = { id: 'mustek', name: 'Můstek', points: [[14.4243, 50.0835]] };
+    const muzeum: IndoorStation = { id: 'muzeum', name: 'Muzeum', points: [[14.4285, 50.0835]] };
+
+    // Václavské náměstí lies between Můstek and Muzeum; each feature goes to one of them only.
+    it('gives each feature to the nearest station', () => {
+        const plans = stationPlans([feature(14.4255, 50.0835, [-3]), feature(14.4274, 50.0835, [-2])], [mustek, muzeum], PLANS);
+        assert.deepEqual(plans.get('mustek')?.map(f => f.properties.lv), [[-3]]);
+        assert.deepEqual(plans.get('muzeum')?.map(f => f.properties.lv), [[-2]]);
     });
 
     // A shopping centre a few hundred metres off is not the station's plan.
     it('leaves out features beyond the station radius', () => {
-        const cells = indoorCells([feature(14.4351, 50.0831, [0]), feature(14.4400, 50.0831, [0])], [station], CELLS);
-        assert.equal(cells.get('2887_10016')?.length, 1);
-        assert.equal(cells.size, 1);
+        assert.equal(stationPlans([feature(14.4300, 50.0900, [0])], [mustek], PLANS).size, 0);
     });
 
-    it('leaves out cells with no floor drawn as areas', () => {
-        assert.equal(indoorCells([stairs(14.4351, 50.0831, [0]), stairs(14.4353, 50.0833, [-1])], [station], CELLS).size, 0);
+    it('leaves out stations with no floor drawn as areas', () => {
+        assert.equal(stationPlans([stairs(14.4244, 50.0835, [-1])], [mustek], PLANS).size, 0);
     });
 });
 
-describe('summarizeCell', () => {
-    // A lone shop tagged level=3 must not add a floor to the switcher.
-    it('lists only floors with enough areas', () => {
-        const features = [feature(14.4351, 50.0831, [0]), feature(14.4352, 50.0831, [0, -1]), feature(14.4353, 50.0831, [-1]), feature(14.4354, 50.0831, [3])];
-        assert.deepEqual(summarizeCell(features, 2), { levels: [-1, 0], n: 4 });
-    });
-
+describe('planLevels', () => {
     // Many stations map only the walking graph; lines alone would show an empty plan.
-    it('counts no floor made of stairs alone', () => {
-        const features = [feature(14.4351, 50.0831, [0]), feature(14.4352, 50.0831, [0]), stairs(14.4353, 50.0831, [-2]), stairs(14.4354, 50.0831, [-2])];
-        assert.deepEqual(summarizeCell(features, 2).levels, [0]);
+    it('counts floors with areas only', () => {
+        assert.deepEqual(planLevels([feature(14.4351, 50.0831, [0, -1]), stairs(14.4353, 50.0831, [-2])], 1), [-1, 0]);
     });
 });

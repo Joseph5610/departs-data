@@ -1,4 +1,4 @@
-import { indoorCellId, type IndoorCellSummary, type IndoorFeature, type IndoorGeometry, type IndoorKind, type IndoorPosition } from './contract.ts';
+import type { IndoorFeature, IndoorGeometry, IndoorKind, IndoorPosition } from './contract.ts';
 import { distanceM, round6 } from './geo.ts';
 
 /** OSM tags of one exported object. */
@@ -120,96 +120,146 @@ export function toIndoorFeature(osm: OsmFeature, maxLevelSpan: number): IndoorFe
     return feature;
 }
 
-/** The centre of a geometry's bounding box, which decides the cell it is published in. */
-export function anchorOf(geometry: IndoorGeometry): IndoorPosition {
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    const visit = (value: unknown): void => {
-        if (!Array.isArray(value)) return;
-        if (typeof value[0] === 'number') {
-            const [x, y] = value as IndoorPosition;
-            if (x < minX) minX = x;
-            if (x > maxX) maxX = x;
-            if (y < minY) minY = y;
-            if (y > maxY) maxY = y;
-            return;
-        }
-        for (const child of value) visit(child);
-    };
-    visit(geometry.coordinates);
-    return [(minX + maxX) / 2, (minY + maxY) / 2];
+type Bbox = [number, number, number, number];
+
+/** `[west, south, east, north]` of any nested coordinate array. */
+function bboxOf(coordinates: unknown, into: Bbox = [Infinity, Infinity, -Infinity, -Infinity]): Bbox {
+    if (!Array.isArray(coordinates)) return into;
+    if (typeof coordinates[0] === 'number') {
+        const [x, y] = coordinates as IndoorPosition;
+        if (x < into[0]) into[0] = x;
+        if (y < into[1]) into[1] = y;
+        if (x > into[2]) into[2] = x;
+        if (y > into[3]) into[3] = y;
+        return into;
+    }
+    for (const child of coordinates) bboxOf(child, into);
+    return into;
 }
 
-export interface IndoorCellOptions {
-    cell: number;
-    /** Features farther than this from every station point are left out; must stay below a cell's width. */
-    stationRadiusM: number;
-    /** A floor with fewer floor-space areas in a cell is only a walking graph or a stray tag, not a floor plan. */
+/** The centre of a geometry's bounding box, which decides the station it belongs to. */
+export function anchorOf(geometry: IndoorGeometry): IndoorPosition {
+    const [west, south, east, north] = bboxOf(geometry.coordinates);
+    return [(west + east) / 2, (south + north) / 2];
+}
+
+/** A metro or rail station: the points (the station and its platforms) its floor plan gathers around. */
+export interface IndoorStation {
+    id: string;
+    name: string;
+    points: IndoorPosition[];
+}
+
+export interface IndoorStationOptions {
+    /** Grid size of the point index in degrees; must exceed `radiusM` and `joinM`, as a lookup scans one cell around. */
+    cellDeg: number;
+    /** A feature belongs to the nearest station point within this distance. */
+    radiusM: number;
+    /** Stations with points this close share one building and one plan (Hlavní nádraží's metro and trains). */
+    joinM: number;
+    /** A floor needs this many floor-space areas (rooms, corridors, platforms, shops). */
     minLevelFeatures: number;
 }
 
-/** Points indexed by grid cell, so a lookup scans only the cells around a position. */
-function pointsByCell(points: Iterable<IndoorPosition>, cell: number): Map<string, IndoorPosition[]> {
-    const byCell = new Map<string, IndoorPosition[]>();
-    for (const point of points) {
-        const id = indoorCellId(point[0], point[1], cell);
-        const list = byCell.get(id);
-        if (list) list.push(point);
-        else byCell.set(id, [point]);
-    }
-    return byCell;
+interface IndexedPoint {
+    pos: IndoorPosition;
+    station: number;
 }
 
-function isNear([lon, lat]: IndoorPosition, index: ReadonlyMap<string, IndoorPosition[]>, options: IndoorCellOptions): boolean {
-    const x = Math.floor(lon / options.cell);
-    const y = Math.floor(lat / options.cell);
+const gridKey = (lon: number, lat: number, cellDeg: number): string => `${Math.floor(lon / cellDeg)}_${Math.floor(lat / cellDeg)}`;
+
+function pointGrid(stations: readonly IndoorStation[], cellDeg: number): Map<string, IndexedPoint[]> {
+    const grid = new Map<string, IndexedPoint[]>();
+    stations.forEach((station, index) => {
+        for (const pos of station.points) {
+            const key = gridKey(pos[0], pos[1], cellDeg);
+            const list = grid.get(key);
+            if (list) list.push({ pos, station: index });
+            else grid.set(key, [{ pos, station: index }]);
+        }
+    });
+    return grid;
+}
+
+function* pointsAround([lon, lat]: IndoorPosition, grid: ReadonlyMap<string, IndexedPoint[]>, cellDeg: number): Generator<IndexedPoint> {
+    const x = Math.floor(lon / cellDeg);
+    const y = Math.floor(lat / cellDeg);
     for (let dx = -1; dx <= 1; dx++) {
-        for (let dy = -1; dy <= 1; dy++) {
-            for (const [plon, plat] of index.get(`${x + dx}_${y + dy}`) ?? []) {
-                if (distanceM({ lon, lat }, { lon: plon, lat: plat }) <= options.stationRadiusM) return true;
+        for (let dy = -1; dy <= 1; dy++) yield* grid.get(`${x + dx}_${y + dy}`) ?? [];
+    }
+}
+
+const metresBetween = ([lon1, lat1]: IndoorPosition, [lon2, lat2]: IndoorPosition): number =>
+    distanceM({ lon: lon1, lat: lat1 }, { lon: lon2, lat: lat2 });
+
+/** Stations sharing a building, merged into one: the lowest id names the group, its points are all of theirs. */
+export function groupStations(stations: readonly IndoorStation[], options: IndoorStationOptions): IndoorStation[] {
+    const sorted = [...stations].sort((a, b) => a.id.localeCompare(b.id));
+    const parent = sorted.map((_, i) => i);
+    const root = (i: number): number => (parent[i] === i ? i : (parent[i] = root(parent[i]!)));
+    const grid = pointGrid(sorted, options.cellDeg);
+    sorted.forEach((station, i) => {
+        for (const pos of station.points) {
+            for (const other of pointsAround(pos, grid, options.cellDeg)) {
+                if (other.station === i || metresBetween(pos, other.pos) > options.joinM) continue;
+                const [a, b] = [root(i), root(other.station)];
+                if (a !== b) parent[Math.max(a, b)] = Math.min(a, b);
             }
         }
-    }
-    return false;
+    });
+    const groups = new Map<number, IndoorStation>();
+    sorted.forEach((station, i) => {
+        const group = groups.get(root(i));
+        if (group) group.points.push(...station.points);
+        else groups.set(root(i), { id: station.id, name: station.name, points: [...station.points] });
+    });
+    return [...groups.values()];
 }
 
-/**
- * The cells worth publishing: the features within reach of a station point (a metro or rail station or
- * one of its platforms), in cells with at least one floor drawn as a plan.
- */
-export function indoorCells(
+/** Each station's plan: the features whose nearest station point within `radiusM` is one of its own. Stations without a floor drawn as areas are left out. */
+export function stationPlans(
     features: Iterable<IndoorFeature>,
-    stationPoints: Iterable<IndoorPosition>,
-    options: IndoorCellOptions,
+    stations: readonly IndoorStation[],
+    options: IndoorStationOptions,
 ): Map<string, IndoorFeature[]> {
-    const index = pointsByCell(stationPoints, options.cell);
-    const byCell = new Map<string, IndoorFeature[]>();
+    const grid = pointGrid(stations, options.cellDeg);
+    const plans = new Map<string, IndoorFeature[]>();
     for (const feature of features) {
         const anchor = anchorOf(feature.geometry);
-        if (!isNear(anchor, index, options)) continue;
-        const id = indoorCellId(anchor[0], anchor[1], options.cell);
-        const cell = byCell.get(id);
-        if (cell) cell.push(feature);
-        else byCell.set(id, [feature]);
+        let nearest: number | null = null;
+        let nearestM = options.radiusM;
+        for (const point of pointsAround(anchor, grid, options.cellDeg)) {
+            const metres = metresBetween(anchor, point.pos);
+            if (metres <= nearestM) { nearest = point.station; nearestM = metres; }
+        }
+        if (nearest === null) continue;
+        const id = stations[nearest]!.id;
+        const plan = plans.get(id);
+        if (plan) plan.push(feature);
+        else plans.set(id, [feature]);
     }
-    for (const [id, cellFeatures] of byCell) {
-        if (summarizeCell(cellFeatures, options.minLevelFeatures).levels.length === 0) byCell.delete(id);
+    for (const [id, plan] of plans) {
+        if (planLevels(plan, options.minLevelFeatures).length === 0) plans.delete(id);
     }
-    return byCell;
+    return plans;
 }
 
 const isSpaceArea = ({ geometry, properties }: IndoorFeature): boolean =>
     (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') && SPACE_KINDS.has(properties.k);
 
-/**
- * A cell's floors drawn as a plan, with at least `minLevelFeatures` floor-space areas (rooms, corridors,
- * platforms, shops) each, and its feature count. Stairs and footways alone make no floor.
- */
-export function summarizeCell(features: readonly IndoorFeature[], minLevelFeatures: number): Omit<IndoorCellSummary, 'v'> {
+/** A plan's floors with at least `minLevelFeatures` floor-space areas each, ascending. Stairs and footways alone make no floor. */
+export function planLevels(features: readonly IndoorFeature[], minLevelFeatures: number): number[] {
     const counts = new Map<number, number>();
     for (const feature of features) {
         if (!isSpaceArea(feature)) continue;
         for (const level of feature.properties.lv) counts.set(level, (counts.get(level) ?? 0) + 1);
     }
-    const levels = [...counts].filter(([, count]) => count >= minLevelFeatures).map(([level]) => level);
-    return { levels: levels.sort((a, b) => a - b), n: features.length };
+    return [...counts].filter(([, count]) => count >= minLevelFeatures).map(([level]) => level).sort((a, b) => a - b);
+}
+
+/** `[west, south, east, north]` of a plan. */
+export function planBbox(features: readonly IndoorFeature[]): Bbox {
+    const bbox: Bbox = [Infinity, Infinity, -Infinity, -Infinity];
+    for (const feature of features) bboxOf(feature.geometry.coordinates, bbox);
+    return bbox.map(round6) as Bbox;
 }

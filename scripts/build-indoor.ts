@@ -2,9 +2,9 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
-import { INDOOR_CELL_DEG, INDOOR_DIR, INDOOR_INDEX_FILE, ROUTES_FILE, STOPS_FILE, type IndoorFeature, type IndoorIndexFile, type IndoorPosition, type RouteInfo, type StopsFile } from './lib/contract.ts';
+import { INDOOR_DIR, INDOOR_INDEX_FILE, ROUTES_FILE, STOPS_FILE, type IndoorFeature, type IndoorIndexFile, type RouteInfo, type StopsFile } from './lib/contract.ts';
 import { outputDir, writeJson } from './lib/emit.ts';
-import { indoorCells, summarizeCell, toIndoorFeature, type OsmFeature } from './lib/indoor.ts';
+import { groupStations, planBbox, planLevels, stationPlans, toIndoorFeature, type IndoorStation, type IndoorStationOptions, type OsmFeature } from './lib/indoor.ts';
 
 /**
  * OpenStreetMap indoor maps near the networks' stations. Reads `osmium export -f geojsonseq` files
@@ -14,17 +14,20 @@ const CONFIG = {
     CITIES: ['prague', 'brno', 'presov', 'duk'],
     /** Where the published city folders are; the data branch checkout in CI. */
     STOPS_DIR: process.env.STOPS_DIR || path.join(import.meta.dirname, '..'),
-    CELL_DEG: INDOOR_CELL_DEG,
     /** Stations served by these vehicle types get floor plans; bus and tram stops do not. */
     STATION_ROUTE_TYPES: new Set(['metro', 'train']),
-    /** Below the cell width (~360 m at 0.005° in Czechia and Slovakia), as `indoorCells` scans one cell around. */
-    STATION_RADIUS_M: 300,
-    MIN_LEVEL_FEATURES: 1,
-    /** Hex digits of the cell file hash published as its version. */
+    PLANS: {
+        /** ~360 m east-west in Czechia and Slovakia, above both distances below. */
+        cellDeg: 0.005,
+        radiusM: 300,
+        joinM: 150,
+        minLevelFeatures: 1,
+    } satisfies IndoorStationOptions,
+    /** Hex digits of the station file hash published as its version. */
     VERSION_LENGTH: 10,
     MAX_LEVEL_SPAN: 10,
     /** Abort threshold guarding against an empty or truncated extract. */
-    MIN_CELLS: 10,
+    MIN_STATIONS: 10,
 } as const;
 
 const LICENSE_TEXT = `# Indoor map data
@@ -35,12 +38,12 @@ This folder is made available under the Open Database License (ODbL) 1.0:
 https://opendatacommons.org/licenses/odbl/1-0/
 
 Filtered to indoor features (floors, platforms, stairs, escalators, lifts, entrances, shops) near
-departs.app stations, re-tagged into a compact schema and split into grid cells.
+departs.app stations, re-tagged into a compact schema and grouped by station.
 `;
 
-/** Metro and rail stations and their platforms, whose surroundings get floor plans. */
-function stationPoints(): IndoorPosition[] {
-    const points: IndoorPosition[] = [];
+/** Metro and rail stations with the points (the station and its platforms) their floor plans gather around. */
+function railStations(): IndoorStation[] {
+    const stations: IndoorStation[] = [];
     for (const city of CONFIG.CITIES) {
         const stopsFile = path.join(CONFIG.STOPS_DIR, city, STOPS_FILE);
         const routesFile = path.join(CONFIG.STOPS_DIR, city, ROUTES_FILE);
@@ -50,21 +53,19 @@ function stationPoints(): IndoorPosition[] {
         }
         const stops = JSON.parse(fs.readFileSync(stopsFile, 'utf8')) as StopsFile;
         const routes = JSON.parse(fs.readFileSync(routesFile, 'utf8')) as Record<string, RouteInfo>;
-        const stationPos = new Map(stops.stations.map(station => [station.id, station.pos]));
+        const byId = new Map<string, IndoorStation>();
+        for (const station of stops.stations) byId.set(station.id, { id: station.id, name: station.name, points: [station.pos] });
         const served = new Set<string>();
         for (const platform of stops.platforms) {
             if (!platform.routes.some(id => CONFIG.STATION_ROUTE_TYPES.has(routes[id]?.type ?? ''))) continue;
-            points.push(platform.pos);
+            byId.get(platform.station)?.points.push(platform.pos);
             served.add(platform.station);
         }
-        for (const id of served) {
-            const pos = stationPos.get(id);
-            if (pos) points.push(pos);
-        }
+        for (const id of served) stations.push(byId.get(id)!);
         console.log(`[Indoor] ${city}: ${served.size} metro and rail stations`);
     }
-    if (points.length === 0) throw new Error('No metro or rail stations to place indoor maps around.');
-    return points;
+    if (stations.length === 0) throw new Error('No metro or rail stations to place indoor maps around.');
+    return stations;
 }
 
 async function readFeatures(files: readonly string[]): Promise<IndoorFeature[]> {
@@ -93,32 +94,34 @@ async function main(): Promise<void> {
     const sources = process.argv.slice(2);
     if (sources.length === 0) throw new Error('Usage: build-indoor.ts <export.geojsonseq>...');
 
-    const stations = stationPoints();
+    const stations = groupStations(railStations(), CONFIG.PLANS);
     const features = await readFeatures(sources);
-    const cells = indoorCells(features, stations, {
-        cell: CONFIG.CELL_DEG,
-        stationRadiusM: CONFIG.STATION_RADIUS_M,
-        minLevelFeatures: CONFIG.MIN_LEVEL_FEATURES,
-    });
-    if (cells.size < CONFIG.MIN_CELLS) throw new Error(`Suspiciously few indoor cells (${cells.size}). Aborting.`);
+    const plans = stationPlans(features, stations, CONFIG.PLANS);
+    if (plans.size < CONFIG.MIN_STATIONS) throw new Error(`Suspiciously few station plans (${plans.size}). Aborting.`);
 
     const dir = outputDir(INDOOR_DIR);
     fs.rmSync(dir, { recursive: true, force: true });
     fs.mkdirSync(dir, { recursive: true });
 
-    const index: IndoorIndexFile = { version: 1, cell: CONFIG.CELL_DEG, cells: {} };
+    const names = new Map(stations.map(station => [station.id, station.name]));
+    const index: IndoorIndexFile = { version: 2, stations: {} };
     let bytes = 0;
-    for (const [id, cellFeatures] of [...cells].sort(([a], [b]) => a.localeCompare(b))) {
-        const payload = JSON.stringify({ type: 'FeatureCollection', features: cellFeatures });
+    for (const [id, plan] of [...plans].sort(([a], [b]) => a.localeCompare(b))) {
+        const payload = JSON.stringify({ type: 'FeatureCollection', features: plan });
         fs.writeFileSync(path.join(dir, `${id}.json`), payload);
         bytes += payload.length;
-        index.cells[id] = { ...summarizeCell(cellFeatures, CONFIG.MIN_LEVEL_FEATURES), v: createHash('sha1').update(payload).digest('hex').slice(0, CONFIG.VERSION_LENGTH) };
+        index.stations[id] = {
+            name: names.get(id) ?? id,
+            levels: planLevels(plan, CONFIG.PLANS.minLevelFeatures),
+            bbox: planBbox(plan),
+            v: createHash('sha1').update(payload).digest('hex').slice(0, CONFIG.VERSION_LENGTH),
+        };
     }
     writeJson(dir, INDOOR_INDEX_FILE, index);
     fs.writeFileSync(path.join(dir, 'LICENSE.md'), LICENSE_TEXT);
 
-    const kept = [...cells.values()].reduce((sum, list) => sum + list.length, 0);
-    console.log(`[Indoor] Wrote ${cells.size} cells, ${kept} of ${features.length} features, ${(bytes / 1024).toFixed(0)} kB.`);
+    const kept = [...plans.values()].reduce((sum, plan) => sum + plan.length, 0);
+    console.log(`[Indoor] Wrote ${plans.size} station plans, ${kept} of ${features.length} features, ${(bytes / 1024).toFixed(0)} kB.`);
 }
 
 main().catch((err: unknown) => {

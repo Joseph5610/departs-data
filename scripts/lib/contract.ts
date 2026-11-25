@@ -450,13 +450,11 @@ export interface TripTracksFile {
 }
 
 /**
- * `indoor/`: OpenStreetMap indoor maps (floors, platforms, stairs, lifts) near the networks' stations, one
- * `<cell>.json` FeatureCollection per grid cell listed in `index.json`. Published under ODbL, not CC BY.
+ * `indoor/`: OpenStreetMap floor plans of metro and rail stations, one `<station>.json` FeatureCollection per
+ * station listed in `index.json`. Published under ODbL, not CC BY.
  */
 export const INDOOR_DIR = 'indoor';
 export const INDOOR_INDEX_FILE = 'index.json';
-/** Cell size in degrees; departs-app reads it from the index. */
-export const INDOOR_CELL_DEG = 0.005;
 
 export type IndoorKind =
     | 'area' | 'room' | 'corridor' | 'wall' | 'platform' | 'footway' | 'steps' | 'escalator'
@@ -483,28 +481,23 @@ export interface IndoorFeature {
     properties: IndoorProperties;
 }
 
-export interface IndoorCellFile {
+export interface IndoorStationFile {
     type: 'FeatureCollection';
     features: IndoorFeature[];
 }
 
-export interface IndoorCellSummary {
-    /** Every floor the cell's features are on, ascending. */
+export interface IndoorStationSummary {
+    name: string;
+    /** The floors drawn as areas (rooms, corridors, platforms), ascending. */
     levels: number[];
-    /** Feature count. */
-    n: number;
-    /** A hash of the cell file, which departs-app adds to its URL so a CDN never serves an older copy. */
+    /** `[west, south, east, north]` of the plan. */
+    bbox: [number, number, number, number];
+    /** A hash of the station file, which departs-app adds to its URL so a CDN never serves an older copy. */
     v: string;
 }
 
 export interface IndoorIndexFile {
-    version: 1;
-    cell: number;
-    /** Keyed by `indoorCellId`; each cell's features are in `<key>.json`. */
-    cells: Record<string, IndoorCellSummary>;
-}
-
-/** `<floor(lon / cell)>_<floor(lat / cell)>`, the file name (without `.json`) of the cell holding a point. */
-export function indoorCellId(lon: number, lat: number, cell: number = INDOOR_CELL_DEG): string {
-    return `${Math.floor(lon / cell)}_${Math.floor(lat / cell)}`;
+    version: 2;
+    /** Keyed by station id (the first of a group of stations sharing one building); its plan is `<id>.json`. */
+    stations: Record<string, IndoorStationSummary>;
 }

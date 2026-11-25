@@ -84,10 +84,11 @@ Trains come from Spojenka's GTFS into `rail_trips/` (by train number); the CIS J
 ## 🏢 Indoor Maps
 *Script:* `scripts/build-indoor.ts` | *Action:* `update-indoor.yml` (Runs weekly)
 
-Floors, platforms, stairs, escalators, lifts, entrances and shops inside stations, from OpenStreetMap:
+Floor plans of metro and rail stations (floors, platforms, stairs, escalators, lifts, entrances, shops), from OpenStreetMap:
 1. Downloads the Geofabrik extracts of Czechia and Slovakia and keeps only objects tagged `level`, `indoor` or `repeat_on` (`osmium tags-filter`), exported as GeoJSON lines (`osmium export`).
 2. Classifies each object into a compact kind (`room`, `corridor`, `platform`, `steps`, `escalator`, `elevator`, `shop`…) with the whole floors it is on (`lv`; half levels like `-0.7` rounded).
-3. Keeps the objects within 300 m of a metro or rail station or one of its platforms, splits them into grid cells of `INDOOR_CELL_DEG` and publishes the cells with at least one floor drawn as areas: `indoor/<x>_<y>.json` (a FeatureCollection) and `indoor/index.json` (each cell's floors with at least one room, corridor or platform drawn as an area, so a walking graph or stray points alone add no floor), so the app fetches only the cells in view.
+3. Takes the stations served by metro or trains, merges those sharing a building (points within 150 m, e.g. Hlavní nádraží's metro and trains) and gives each object to the nearest station point within 300 m.
+4. Publishes each station with at least one floor drawn as areas: `indoor/<station>.json` (a FeatureCollection) and `indoor/index.json` (each station's name, floors, bounding box and a hash of its file, which the app puts into the file's URL).
 
 ## 🚀 Local Development
 
