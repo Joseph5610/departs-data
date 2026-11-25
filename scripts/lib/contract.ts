@@ -501,3 +501,22 @@ export interface IndoorIndexFile {
     /** Keyed by station id (the lowest of a node's stations); its plan is `<id>.json`. */
     stations: Record<string, IndoorStationSummary>;
 }
+
+/**
+ * `platforms/<city>.json`: the platforms on street level (an OpenStreetMap platform with no level, or
+ * level 0) at the city's stops, drawn by departs-app without floors; `platforms/index.json` gives each
+ * city's file hash. Published under ODbL, not CC BY.
+ */
+export const PLATFORMS_DIR = 'platforms';
+export const PLATFORMS_INDEX_FILE = 'index.json';
+
+export interface PlatformsFile {
+    type: 'FeatureCollection';
+    features: IndoorFeature[];
+}
+
+export interface PlatformsIndexFile {
+    version: 1;
+    /** A hash of each city's file, which departs-app adds to its URL so a CDN never serves an older copy. */
+    cities: Record<string, { v: string }>;
+}

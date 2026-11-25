@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import type { IndoorFeature, IndoorPosition } from './contract.ts';
-import { groupStations, indoorKind, parseLevels, planLevels, stationPlans, toIndoorFeature, type IndoorStation, type OsmFeature } from './indoor.ts';
+import { groupStations, indoorKind, isStreetPlatform, parseLevels, planLevels, stationPlans, toIndoorFeature, type IndoorStation, type OsmFeature } from './indoor.ts';
 
 const point = (tags: Record<string, string>, coordinates: IndoorPosition = [14.4351234567, 50.0831234567]): OsmFeature =>
     ({ type: 'Feature', geometry: { type: 'Point', coordinates }, properties: tags });
@@ -120,5 +120,22 @@ describe('stationPlans', () => {
 describe('planLevels', () => {
     it('lists every floor of the plan, ascending', () => {
         assert.deepEqual(planLevels([feature(14.4351, 50.0831, [0]), stairs(14.4353, 50.0831, [-2, -1])]), [-2, -1, 0]);
+    });
+});
+
+describe('isStreetPlatform', () => {
+    const platform = (lv: number[], type: 'LineString' | 'Point' = 'LineString'): IndoorFeature => ({
+        type: 'Feature',
+        geometry: type === 'Point' ? { type, coordinates: [14.43, 50.08] } : { type, coordinates: [[14.43, 50.08], [14.44, 50.08]] },
+        properties: { k: 'platform', lv },
+    });
+
+    // Tram and train platforms on the street go to the platforms layer, metro platforms stay in floor plans: drawn once.
+    it('takes platforms on street level only', () => {
+        assert.equal(isStreetPlatform(platform([0])), true);
+        assert.equal(isStreetPlatform(platform([-2])), false);
+        assert.equal(isStreetPlatform(platform([0, 1])), false);
+        assert.equal(isStreetPlatform(platform([0], 'Point')), false);
+        assert.equal(isStreetPlatform(stairs(14.43, 50.08, [0])), false);
     });
 });

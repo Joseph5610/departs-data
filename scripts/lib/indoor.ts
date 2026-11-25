@@ -215,3 +215,7 @@ export function planBbox(features: readonly IndoorFeature[]): Bbox {
     for (const feature of features) bboxOf(feature.geometry.coordinates, bbox);
     return bbox.map(round6) as Bbox;
 }
+
+/** A platform on street level (no level in OSM, or 0): drawn on the map without floors, not in a floor plan. */
+export const isStreetPlatform = ({ geometry, properties }: IndoorFeature): boolean =>
+    properties.k === 'platform' && geometry.type !== 'Point' && properties.lv.length === 1 && properties.lv[0] === 0;

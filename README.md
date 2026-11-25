@@ -88,7 +88,8 @@ Floor plans of metro and rail stations (floors, platforms, stairs, escalators, l
 1. Downloads the Geofabrik extracts of Czechia and Slovakia and keeps the objects listed in `scripts/indoor-tags.txt` (anything with a `level`, plus stairs, lifts and platforms) with `osmium tags-filter`, exported as GeoJSON lines (`osmium export`). An object without a `level` is on street level (0).
 2. Classifies each object into a compact kind (`room`, `corridor`, `platform`, `steps`, `escalator`, `elevator`, `shop`…) with the whole floors it is on (`lv`; half levels like `-0.7` rounded).
 3. Gives each object to the nearest metro or rail station (its position or a platform's) within 300 m; PID stations of one node, such as Hlavní nádraží's metro and trains, are one station.
-4. Publishes each station's plan as `indoor/<station>.json` (a FeatureCollection) and `indoor/index.json`: each station's name, floors (every `level` in its plan), bounding box and a hash of its file, which the app puts into the file's URL.
+4. Platforms on street level (no `level`, or 0) are left out of the plans and published per city instead, as `platforms/<city>.json` (those within 50 m of a stop) with `platforms/index.json` (each file's hash), drawn by the app without floors.
+5. Publishes each station's plan as `indoor/<station>.json` (a FeatureCollection) and `indoor/index.json`: each station's name, floors (every `level` in its plan), bounding box and a hash of its file, which the app puts into the file's URL.
 
 ## 🚀 Local Development
 
@@ -129,6 +130,6 @@ A build writes into the repository's city folder unless `OUT_DIR` points elsewhe
 | `/duk` | [Ústecký kraj open data (Portabo)](https://lkod.portabo.cz/datasets): stops (`cis/GetStations`) | [Open data without copyright or database rights](https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/) | One station per node and one platform per post; platforms on the same point fanned out on the map. |
 | `/duk` | [Spojenka – Data jízdních řádů](https://www.spojenka.cz/jrdata) (GTFS) | Free for non-commercial use only, without warranty, as its publisher states; not covered by this repository's CC BY 4.0 | Trains calling in the kraj on three days, keyed by train number, stations tied to the nearest Portabo platform (`rail_trips/`). |
 
-**Indoor maps** (`/indoor`): © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, published under the [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/1-0/), not CC BY 4.0, since it is a database derived from OpenStreetMap; filtered to indoor features near stations, re-tagged into a compact schema and split into grid cells. Maps drawn from it must credit OpenStreetMap contributors.
+**Indoor maps and platforms** (`/indoor`, `/platforms`): © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, published under the [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/1-0/), not CC BY 4.0, since it is a database derived from OpenStreetMap; filtered to indoor features near stations, re-tagged into a compact schema and split into grid cells. Maps drawn from it must credit OpenStreetMap contributors.
 
 The CC BY 4.0 sources require attribution and an indication of changes; the Czech open-data sources require neither, but are credited all the same. departs.app shows the same credits in its Settings, next to the realtime feeds it reads directly.

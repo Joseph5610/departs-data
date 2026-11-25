@@ -75,9 +75,10 @@ jobs:
           for attempt in 1 2 3; do
             git fetch --depth=1 origin data
             git reset -q --hard origin/data
-            rm -rf indoor
+            rm -rf indoor platforms
             cp -a "$GITHUB_WORKSPACE/out/indoor" indoor
-            git add -A indoor
+            cp -a "$GITHUB_WORKSPACE/out/platforms" platforms
+            git add -A indoor platforms
             if git diff --cached --quiet; then
               echo "No data change; nothing to publish."
               exit 0

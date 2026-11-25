@@ -2,9 +2,9 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
-import { INDOOR_DIR, INDOOR_INDEX_FILE, ROUTES_FILE, STOPS_FILE, type IndoorFeature, type IndoorIndexFile, type RouteInfo, type StopsFile } from './lib/contract.ts';
+import { INDOOR_DIR, INDOOR_INDEX_FILE, PLATFORMS_DIR, PLATFORMS_INDEX_FILE, ROUTES_FILE, STOPS_FILE, type IndoorFeature, type IndoorIndexFile, type PlatformsIndexFile, type RouteInfo, type StopsFile } from './lib/contract.ts';
 import { outputDir, writeJson } from './lib/emit.ts';
-import { groupStations, planBbox, planLevels, stationPlans, toIndoorFeature, type IndoorStation, type OsmFeature } from './lib/indoor.ts';
+import { groupStations, isStreetPlatform, planBbox, planLevels, stationPlans, toIndoorFeature, type IndoorStation, type OsmFeature } from './lib/indoor.ts';
 
 /**
  * OpenStreetMap indoor maps near the networks' stations. Reads `osmium export -f geojsonseq` files
@@ -18,6 +18,8 @@ const CONFIG = {
     STATION_ROUTE_TYPES: new Set(['metro', 'train']),
     /** An object belongs to the nearest metro or rail station point within this distance; below `GRID_DEG` in lib/indoor.ts. */
     STATION_RADIUS_M: 300,
+    /** A street-level platform belongs to the city with a stop this close. */
+    PLATFORM_STOP_RADIUS_M: 50,
     /** Hex digits of the station file hash published as its version. */
     VERSION_LENGTH: 10,
     MAX_LEVEL_SPAN: 10,
@@ -38,6 +40,20 @@ departs.app stations, re-tagged into a compact schema and grouped by station.
 
 /** The node of a station id: PID's `U142-301` and `U142-1` are both node `U142`. */
 const stationNode = (id: string): string => id.split('-')[0]!;
+
+/** Every city's stops as one point set each, which street-level platforms are matched to. */
+function cityStops(): IndoorStation[] {
+    const cities: IndoorStation[] = [];
+    for (const city of CONFIG.CITIES) {
+        const stopsFile = path.join(CONFIG.STOPS_DIR, city, STOPS_FILE);
+        if (!fs.existsSync(stopsFile)) continue;
+        const stops = JSON.parse(fs.readFileSync(stopsFile, 'utf8')) as StopsFile;
+        cities.push({ id: city, name: city, node: city, points: stops.platforms.map(platform => platform.pos) });
+    }
+    return cities;
+}
+
+const hashOf = (payload: string): string => createHash('sha1').update(payload).digest('hex').slice(0, CONFIG.VERSION_LENGTH);
 
 /** Metro and rail stations with the points (the station and its platforms) their floor plans gather around. */
 function railStations(): IndoorStation[] {
@@ -94,7 +110,8 @@ async function main(): Promise<void> {
 
     const stations = groupStations(railStations());
     const features = await readFeatures(sources);
-    const plans = stationPlans(features, stations, CONFIG.STATION_RADIUS_M);
+    const plans = stationPlans(features.filter(feature => !isStreetPlatform(feature)), stations, CONFIG.STATION_RADIUS_M);
+    const platforms = stationPlans(features.filter(isStreetPlatform), cityStops(), CONFIG.PLATFORM_STOP_RADIUS_M);
     if (plans.size < CONFIG.MIN_STATIONS) throw new Error(`Suspiciously few station plans (${plans.size}). Aborting.`);
 
     const dir = outputDir(INDOOR_DIR);
@@ -112,7 +129,7 @@ async function main(): Promise<void> {
             name: names.get(id) ?? id,
             levels: planLevels(plan),
             bbox: planBbox(plan),
-            v: createHash('sha1').update(payload).digest('hex').slice(0, CONFIG.VERSION_LENGTH),
+            v: hashOf(payload),
         };
     }
     writeJson(dir, INDOOR_INDEX_FILE, index);
@@ -120,6 +137,20 @@ async function main(): Promise<void> {
 
     const kept = [...plans.values()].reduce((sum, plan) => sum + plan.length, 0);
     console.log(`[Indoor] Wrote ${plans.size} station plans, ${kept} of ${features.length} features, ${(bytes / 1024).toFixed(0)} kB.`);
+
+    // Beside indoor/: out/indoor in CI gives out/platforms.
+    const platformsDir = path.join(path.dirname(dir), PLATFORMS_DIR);
+    fs.rmSync(platformsDir, { recursive: true, force: true });
+    fs.mkdirSync(platformsDir, { recursive: true });
+    const platformsIndex: PlatformsIndexFile = { version: 1, cities: {} };
+    for (const [city, list] of platforms) {
+        const payload = JSON.stringify({ type: 'FeatureCollection', features: list.map(({ type, geometry, properties: { k, lv, name, ref } }) => ({ type, geometry, properties: { k, lv, ...(name ? { name } : {}), ...(ref ? { ref } : {}) } })) });
+        fs.writeFileSync(path.join(platformsDir, `${city}.json`), payload);
+        platformsIndex.cities[city] = { v: hashOf(payload) };
+        console.log(`[Platforms] ${city}: ${list.length} street-level platforms, ${(payload.length / 1024).toFixed(0)} kB.`);
+    }
+    writeJson(platformsDir, PLATFORMS_INDEX_FILE, platformsIndex);
+    fs.writeFileSync(path.join(platformsDir, 'LICENSE.md'), LICENSE_TEXT);
 }
 
 main().catch((err: unknown) => {
