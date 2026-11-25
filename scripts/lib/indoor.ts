@@ -102,11 +102,13 @@ function drawnGeometry(kind: IndoorKind, type: string, coordinates: unknown): In
     return { type, coordinates: rounded } as IndoorGeometry;
 }
 
-/** The indoor feature an exported OSM object becomes, or null when it has no floor or is not drawn indoors. */
+/** The indoor feature an exported OSM object becomes (on street level when it names no floor), or null when its floor is unreadable or it is not drawn indoors. */
 export function toIndoorFeature(osm: OsmFeature, maxLevelSpan: number): IndoorFeature | null {
     const { geometry, properties: tags } = osm;
     if (!DRAWN_GEOMETRIES.has(geometry.type)) return null;
-    const lv = parseLevels(tags.level ?? tags.repeat_on, maxLevelSpan);
+    const levelTag = tags.level ?? tags.repeat_on;
+    // In OpenStreetMap an object without a level is on street level.
+    const lv = levelTag === undefined ? [0] : parseLevels(levelTag, maxLevelSpan);
     if (lv.length === 0) return null;
     const k = indoorKind(tags, geometry.type);
     if (!k) return null;

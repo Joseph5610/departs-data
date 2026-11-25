@@ -79,9 +79,14 @@ describe('toIndoorFeature', () => {
         assert.deepEqual(toIndoorFeature(point({ shop: 'bakery', level: '-1', name: 'Paul', brand: 'Paul' }), 10)?.properties, { k: 'shop', lv: [-1], name: 'Paul' });
     });
 
-    it('takes repeat_on when level is missing and drops objects on no floor', () => {
+    it('takes repeat_on when level is missing', () => {
         assert.deepEqual(toIndoorFeature(line({ indoor: 'wall', repeat_on: '1;2' }), 10)?.properties.lv, [1, 2]);
-        assert.equal(toIndoorFeature(line({ highway: 'footway' }), 10), null);
+    });
+
+    // Most stairs and tram platforms in OSM name no level; they are on street level.
+    it('puts an object without a level on street level, and drops an unreadable level', () => {
+        assert.deepEqual(toIndoorFeature(line({ railway: 'platform' }), 10)?.properties.lv, [0]);
+        assert.equal(toIndoorFeature(line({ highway: 'steps', level: 'x' }), 10), null);
     });
 });
 

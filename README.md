@@ -85,7 +85,7 @@ Trains come from Spojenka's GTFS into `rail_trips/` (by train number); the CIS J
 *Script:* `scripts/build-indoor.ts` | *Action:* `update-indoor.yml` (Runs weekly)
 
 Floor plans of metro and rail stations (floors, platforms, stairs, escalators, lifts, entrances, shops), from OpenStreetMap:
-1. Downloads the Geofabrik extracts of Czechia and Slovakia and keeps only objects tagged `level`, `indoor` or `repeat_on` (`osmium tags-filter`), exported as GeoJSON lines (`osmium export`).
+1. Downloads the Geofabrik extracts of Czechia and Slovakia and keeps the objects listed in `scripts/indoor-tags.txt` (anything with a `level`, plus stairs, lifts and platforms) with `osmium tags-filter`, exported as GeoJSON lines (`osmium export`). An object without a `level` is on street level (0).
 2. Classifies each object into a compact kind (`room`, `corridor`, `platform`, `steps`, `escalator`, `elevator`, `shop`…) with the whole floors it is on (`lv`; half levels like `-0.7` rounded).
 3. Gives each object to the nearest metro or rail station (its position or a platform's) within 300 m; PID stations of one node, such as Hlavní nádraží's metro and trains, are one station.
 4. Publishes each station's plan as `indoor/<station>.json` (a FeatureCollection) and `indoor/index.json`: each station's name, floors (every `level` in its plan), bounding box and a hash of its file, which the app puts into the file's URL.
@@ -106,7 +106,7 @@ npm run build:prague
 npm run build:prague-pos
 
 # indoor maps from any OSM extract (needs osmium-tool) and the published stops.json files
-osmium tags-filter extract.osm.pbf nwr/level nwr/indoor nwr/repeat_on -o indoor.osm.pbf
+osmium tags-filter extract.osm.pbf --expressions=scripts/indoor-tags.txt -o indoor.osm.pbf
 osmium export indoor.osm.pbf -f geojsonseq --attributes type,id -o indoor.geojsonseq
 STOPS_DIR=<data branch checkout> npm run build:indoor -- indoor.geojsonseq
 ```

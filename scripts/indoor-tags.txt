@@ -1,0 +1,11 @@
+# The OpenStreetMap objects build-indoor.ts reads (osmium tags-filter --expressions).
+# Anything on a floor:
+nwr/level
+nwr/indoor
+nwr/repeat_on
+# Stairs, lifts and platforms, drawn on street level when they name no floor:
+w/highway=steps
+w/conveying
+n/highway=elevator
+w/railway=platform
+w/public_transport=platform
