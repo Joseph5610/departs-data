@@ -159,6 +159,8 @@ export interface IndoorStationOptions {
     radiusM: number;
     /** Stations with points this close share one building and one plan (Hlavní nádraží's metro and trains). */
     joinM: number;
+    /** Only areas this close to a station point make its floors; farther ones (a university hall above Můstek) are drawn but add none. */
+    coreM: number;
     /** A floor needs this many floor-space areas (rooms, corridors, platforms, shops). */
     minLevelFeatures: number;
 }
@@ -229,14 +231,30 @@ export function groupStations(stations: readonly IndoorStation[], options: Indoo
     return [...groups.values()];
 }
 
-/** Each station's plan: the features whose nearest station point within `radiusM` is one of its own. Stations without a floor drawn as areas are left out. */
+/** A station's floor plan: its features and its floors. */
+export interface StationPlan {
+    features: IndoorFeature[];
+    /** Floors with areas near the station, ascending. */
+    levels: number[];
+}
+
+/**
+ * Each station's plan: the features whose nearest station point within `radiusM` is one of its own. Its
+ * floors come from the areas within `coreM`; stations without one are left out.
+ */
 export function stationPlans(
     features: Iterable<IndoorFeature>,
     stations: readonly IndoorStation[],
     options: IndoorStationOptions,
-): Map<string, IndoorFeature[]> {
+): Map<string, StationPlan> {
     const grid = pointGrid(stations, options.cellDeg);
-    const plans = new Map<string, IndoorFeature[]>();
+    const all = new Map<string, IndoorFeature[]>();
+    const core = new Map<string, IndoorFeature[]>();
+    const add = (map: Map<string, IndoorFeature[]>, id: string, feature: IndoorFeature): void => {
+        const list = map.get(id);
+        if (list) list.push(feature);
+        else map.set(id, [feature]);
+    };
     for (const feature of features) {
         const anchor = anchorOf(feature.geometry);
         let nearest: number | null = null;
@@ -247,24 +265,27 @@ export function stationPlans(
         }
         if (nearest === null) continue;
         const id = stations[nearest]!.id;
-        const plan = plans.get(id);
-        if (plan) plan.push(feature);
-        else plans.set(id, [feature]);
+        add(all, id, feature);
+        if (nearestM <= options.coreM) add(core, id, feature);
     }
-    for (const [id, plan] of plans) {
-        if (planLevels(plan, options.minLevelFeatures).length === 0) plans.delete(id);
+    const plans = new Map<string, StationPlan>();
+    for (const [id, planFeatures] of all) {
+        const levels = planLevels(core.get(id) ?? [], options.minLevelFeatures);
+        if (levels.length > 0) plans.set(id, { features: planFeatures, levels });
     }
     return plans;
 }
 
-const isSpaceArea = ({ geometry, properties }: IndoorFeature): boolean =>
-    (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') && SPACE_KINDS.has(properties.k);
+/** Kinds whose areas make a floor: floor space and pedestrian areas (a vestibule mapped as `highway=pedestrian, area=yes`). */
+const FLOOR_KINDS = new Set<IndoorKind>([...SPACE_KINDS, 'footway']);
 
-/** A plan's floors with at least `minLevelFeatures` floor-space areas each, ascending. Stairs and footways alone make no floor. */
+const isArea = ({ geometry }: IndoorFeature): boolean => geometry.type === 'Polygon' || geometry.type === 'MultiPolygon';
+
+/** Floors with at least `minLevelFeatures` areas each, ascending. Stairs and lines alone make no floor. */
 export function planLevels(features: readonly IndoorFeature[], minLevelFeatures: number): number[] {
     const counts = new Map<number, number>();
     for (const feature of features) {
-        if (!isSpaceArea(feature)) continue;
+        if (!isArea(feature) || !FLOOR_KINDS.has(feature.properties.k)) continue;
         for (const level of feature.properties.lv) counts.set(level, (counts.get(level) ?? 0) + 1);
     }
     return [...counts].filter(([, count]) => count >= minLevelFeatures).map(([level]) => level).sort((a, b) => a - b);
@@ -274,7 +295,7 @@ export function planLevels(features: readonly IndoorFeature[], minLevelFeatures:
 export function planStartLevel(features: readonly IndoorFeature[], levels: readonly number[]): number {
     let platformLevel: number | null = null;
     for (const feature of features) {
-        if (feature.properties.k !== 'platform' || !isSpaceArea(feature)) continue;
+        if (feature.properties.k !== 'platform' || !isArea(feature)) continue;
         for (const level of feature.properties.lv) {
             if (levels.includes(level) && (platformLevel === null || Math.abs(level) < Math.abs(platformLevel))) platformLevel = level;
         }

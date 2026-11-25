@@ -4,7 +4,7 @@ import path from 'node:path';
 import readline from 'node:readline';
 import { INDOOR_DIR, INDOOR_INDEX_FILE, ROUTES_FILE, STOPS_FILE, type IndoorFeature, type IndoorIndexFile, type RouteInfo, type StopsFile } from './lib/contract.ts';
 import { outputDir, writeJson } from './lib/emit.ts';
-import { groupStations, planBbox, planLevels, planStartLevel, stationPlans, toIndoorFeature, type IndoorStation, type IndoorStationOptions, type OsmFeature } from './lib/indoor.ts';
+import { groupStations, planBbox, planStartLevel, stationPlans, toIndoorFeature, type IndoorStation, type IndoorStationOptions, type OsmFeature } from './lib/indoor.ts';
 
 /**
  * OpenStreetMap indoor maps near the networks' stations. Reads `osmium export -f geojsonseq` files
@@ -21,6 +21,7 @@ const CONFIG = {
         cellDeg: 0.005,
         radiusM: 300,
         joinM: 150,
+        coreM: 150,
         minLevelFeatures: 1,
     } satisfies IndoorStationOptions,
     /** Hex digits of the station file hash published as its version. */
@@ -109,11 +110,10 @@ async function main(): Promise<void> {
     const names = new Map(stations.map(station => [station.id, station.name]));
     const index: IndoorIndexFile = { version: 3, stations: {} };
     let bytes = 0;
-    for (const [id, plan] of [...plans].sort(([a], [b]) => a.localeCompare(b))) {
+    for (const [id, { features: plan, levels }] of [...plans].sort(([a], [b]) => a.localeCompare(b))) {
         const payload = JSON.stringify({ type: 'FeatureCollection', features: plan });
         fs.writeFileSync(path.join(dir, `${id}.json`), payload);
         bytes += payload.length;
-        const levels = planLevels(plan, CONFIG.PLANS.minLevelFeatures);
         index.stations[id] = {
             name: names.get(id) ?? id,
             levels,
@@ -125,7 +125,7 @@ async function main(): Promise<void> {
     writeJson(dir, INDOOR_INDEX_FILE, index);
     fs.writeFileSync(path.join(dir, 'LICENSE.md'), LICENSE_TEXT);
 
-    const kept = [...plans.values()].reduce((sum, plan) => sum + plan.length, 0);
+    const kept = [...plans.values()].reduce((sum, plan) => sum + plan.features.length, 0);
     console.log(`[Indoor] Wrote ${plans.size} station plans, ${kept} of ${features.length} features, ${(bytes / 1024).toFixed(0)} kB.`);
 }
 

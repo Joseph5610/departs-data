@@ -18,7 +18,7 @@ const feature = (lon: number, lat: number, lv: number[]): IndoorFeature => ({
 const stairs = (lon: number, lat: number, lv: number[]): IndoorFeature =>
     ({ type: 'Feature', geometry: { type: 'LineString', coordinates: [[lon, lat], [lon + 0.0001, lat]] }, properties: { k: 'steps', lv } });
 
-const PLANS = { cellDeg: 0.005, radiusM: 300, joinM: 150, minLevelFeatures: 1 };
+const PLANS = { cellDeg: 0.005, radiusM: 300, joinM: 150, coreM: 150, minLevelFeatures: 1 };
 
 describe('parseLevels', () => {
     it('reads lists and rounds half levels to the nearest floor', () => {
@@ -115,13 +115,20 @@ describe('stationPlans', () => {
     // Václavské náměstí lies between Můstek and Muzeum; each feature goes to one of them only.
     it('gives each feature to the nearest station', () => {
         const plans = stationPlans([feature(14.4255, 50.0835, [-3]), feature(14.4274, 50.0835, [-2])], [mustek, muzeum], PLANS);
-        assert.deepEqual(plans.get('mustek')?.map(f => f.properties.lv), [[-3]]);
-        assert.deepEqual(plans.get('muzeum')?.map(f => f.properties.lv), [[-2]]);
+        assert.deepEqual(plans.get('mustek')?.features.map(f => f.properties.lv), [[-3]]);
+        assert.deepEqual(plans.get('muzeum')?.features.map(f => f.properties.lv), [[-2]]);
     });
 
     // A shopping centre a few hundred metres off is not the station's plan.
     it('leaves out features beyond the station radius', () => {
         assert.equal(stationPlans([feature(14.4300, 50.0900, [0])], [mustek], PLANS).size, 0);
+    });
+
+    // Velká aula Karolina, 280 m from Můstek's platforms on floor 1, is drawn but is no floor of the station.
+    it('takes floors only from areas near the station', () => {
+        const plan = stationPlans([feature(14.4244, 50.0835, [-3]), feature(14.4232, 50.0860, [1])], [mustek], PLANS).get('mustek');
+        assert.equal(plan?.features.length, 2);
+        assert.deepEqual(plan?.levels, [-3]);
     });
 
     it('leaves out stations with no floor drawn as areas', () => {
