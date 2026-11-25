@@ -16,10 +16,8 @@ const CONFIG = {
     STOPS_DIR: process.env.STOPS_DIR || path.join(import.meta.dirname, '..'),
     /** Stations served by these vehicle types get floor plans; bus and tram stops do not. */
     STATION_ROUTE_TYPES: new Set(['metro', 'train']),
-    /** An object belongs to the nearest metro or rail station point within this distance; below `GRID_DEG` in lib/indoor.ts. */
+    /** An object belongs to the nearest station (or, for a street-level platform, the city with a stop) within this distance; below `GRID_DEG` in lib/indoor.ts. */
     STATION_RADIUS_M: 300,
-    /** A street-level platform belongs to the city with a stop this close. */
-    PLATFORM_STOP_RADIUS_M: 50,
     /** Hex digits of the station file hash published as its version. */
     VERSION_LENGTH: 10,
     MAX_LEVEL_SPAN: 10,
@@ -111,7 +109,7 @@ async function main(): Promise<void> {
     const stations = groupStations(railStations());
     const features = await readFeatures(sources);
     const plans = stationPlans(features.filter(feature => !isStreetPlatform(feature)), stations, CONFIG.STATION_RADIUS_M);
-    const platforms = stationPlans(features.filter(isStreetPlatform), cityStops(), CONFIG.PLATFORM_STOP_RADIUS_M);
+    const platforms = stationPlans(features.filter(isStreetPlatform), cityStops(), CONFIG.STATION_RADIUS_M);
     if (plans.size < CONFIG.MIN_STATIONS) throw new Error(`Suspiciously few station plans (${plans.size}). Aborting.`);
 
     const dir = outputDir(INDOOR_DIR);

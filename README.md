@@ -88,7 +88,7 @@ Floor plans of metro and rail stations (floors, platforms, stairs, escalators, l
 1. Downloads the Geofabrik extracts of Czechia and Slovakia and keeps the objects listed in `scripts/indoor-tags.txt` (anything with a `level`, plus stairs, lifts and platforms) with `osmium tags-filter`, exported as GeoJSON lines (`osmium export`). An object without a `level` is on street level (0).
 2. Classifies each object into a compact kind (`room`, `corridor`, `platform`, `steps`, `escalator`, `elevator`, `shop`…) with the whole floors it is on (`lv`; half levels like `-0.7` rounded).
 3. Gives each object to the nearest metro or rail station (its position or a platform's) within 300 m; PID stations of one node, such as Hlavní nádraží's metro and trains, are one station.
-4. Platforms on street level (no `level`, or 0) are left out of the plans and published per city instead, as `platforms/<city>.json` (those within 50 m of a stop) with `platforms/index.json` (each file's hash), drawn by the app without floors.
+4. Platforms on street level (no `level`, or 0) are left out of the plans and published per city instead, as `platforms/<city>.json` (those within 300 m of a stop) with `platforms/index.json` (each file's hash), drawn by the app without floors.
 5. Publishes each station's plan as `indoor/<station>.json` (a FeatureCollection) and `indoor/index.json`: each station's name, floors (every `level` in its plan), bounding box and a hash of its file, which the app puts into the file's URL.
 
 ## 🚀 Local Development
