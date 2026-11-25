@@ -49,7 +49,7 @@ jobs:
         run: |
           mkdir -p osm
           for region in czech-republic slovakia; do
-            curl -fsSL --retry 3 -o "osm/$region.osm.pbf" "https://download.geofabrik.de/europe/$region-latest.osm.pbf"
+            curl -fsSL --retry 6 --retry-all-errors --retry-delay 60 -o "osm/$region.osm.pbf" "https://download.geofabrik.de/europe/$region-latest.osm.pbf"
             osmium tags-filter "osm/$region.osm.pbf" nwr/level nwr/indoor nwr/repeat_on -o "osm/$region-indoor.osm.pbf"
             osmium export "osm/$region-indoor.osm.pbf" -f geojsonseq --attributes type,id -o "osm/$region.geojsonseq"
             rm "osm/$region.osm.pbf"
