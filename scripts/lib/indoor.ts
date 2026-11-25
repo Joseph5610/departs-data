@@ -204,7 +204,7 @@ const isSpaceArea = ({ geometry, properties }: IndoorFeature): boolean =>
  * A cell's floors drawn as a plan, with at least `minLevelFeatures` floor-space areas (rooms, corridors,
  * platforms, shops) each, and its feature count. Stairs and footways alone make no floor.
  */
-export function summarizeCell(features: readonly IndoorFeature[], minLevelFeatures: number): IndoorCellSummary {
+export function summarizeCell(features: readonly IndoorFeature[], minLevelFeatures: number): Omit<IndoorCellSummary, 'v'> {
     const counts = new Map<number, number>();
     for (const feature of features) {
         if (!isSpaceArea(feature)) continue;

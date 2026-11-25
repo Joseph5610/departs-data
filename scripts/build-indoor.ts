@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
@@ -19,6 +20,8 @@ const CONFIG = {
     /** Below the cell width (~360 m at 0.005° in Czechia and Slovakia), as `indoorCells` scans one cell around. */
     STATION_RADIUS_M: 300,
     MIN_LEVEL_FEATURES: 1,
+    /** Hex digits of the cell file hash published as its version. */
+    VERSION_LENGTH: 10,
     MAX_LEVEL_SPAN: 10,
     /** Abort threshold guarding against an empty or truncated extract. */
     MIN_CELLS: 10,
@@ -106,8 +109,10 @@ async function main(): Promise<void> {
     const index: IndoorIndexFile = { version: 1, cell: CONFIG.CELL_DEG, cells: {} };
     let bytes = 0;
     for (const [id, cellFeatures] of [...cells].sort(([a], [b]) => a.localeCompare(b))) {
-        index.cells[id] = summarizeCell(cellFeatures, CONFIG.MIN_LEVEL_FEATURES);
-        bytes += writeJson(dir, `${id}.json`, { type: 'FeatureCollection', features: cellFeatures });
+        const payload = JSON.stringify({ type: 'FeatureCollection', features: cellFeatures });
+        fs.writeFileSync(path.join(dir, `${id}.json`), payload);
+        bytes += payload.length;
+        index.cells[id] = { ...summarizeCell(cellFeatures, CONFIG.MIN_LEVEL_FEATURES), v: createHash('sha1').update(payload).digest('hex').slice(0, CONFIG.VERSION_LENGTH) };
     }
     writeJson(dir, INDOOR_INDEX_FILE, index);
     fs.writeFileSync(path.join(dir, 'LICENSE.md'), LICENSE_TEXT);

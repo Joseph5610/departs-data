@@ -493,6 +493,8 @@ export interface IndoorCellSummary {
     levels: number[];
     /** Feature count. */
     n: number;
+    /** A hash of the cell file, which departs-app adds to its URL so a CDN never serves an older copy. */
+    v: string;
 }
 
 export interface IndoorIndexFile {
