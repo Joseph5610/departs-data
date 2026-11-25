@@ -87,8 +87,8 @@ Trains come from Spojenka's GTFS into `rail_trips/` (by train number); the CIS J
 Floor plans of metro and rail stations (floors, platforms, stairs, escalators, lifts, entrances, shops), from OpenStreetMap:
 1. Downloads the Geofabrik extracts of Czechia and Slovakia and keeps only objects tagged `level`, `indoor` or `repeat_on` (`osmium tags-filter`), exported as GeoJSON lines (`osmium export`).
 2. Classifies each object into a compact kind (`room`, `corridor`, `platform`, `steps`, `escalator`, `elevator`, `shop`…) with the whole floors it is on (`lv`; half levels like `-0.7` rounded).
-3. Takes the stations served by metro or trains, merges those sharing a building (points within 150 m, e.g. Hlavní nádraží's metro and trains) and gives each object to the nearest station point within 300 m.
-4. Publishes each station with at least one floor: the floors of the areas and lines within 150 m of its platforms (farther objects are drawn but add no floor): `indoor/<station>.json` (a FeatureCollection) and `indoor/index.json` (each station's name, floors, the floor it opens on — street level or the one nearest it — its bounding box and a hash of its file, which the app puts into the file's URL).
+3. Gives each object to the nearest metro or rail station (its position or a platform's) within 300 m; PID stations of one node, such as Hlavní nádraží's metro and trains, are one station.
+4. Publishes each station's plan as `indoor/<station>.json` (a FeatureCollection) and `indoor/index.json`: each station's name, floors (every `level` in its plan), bounding box and a hash of its file, which the app puts into the file's URL.
 
 ## 🚀 Local Development
 

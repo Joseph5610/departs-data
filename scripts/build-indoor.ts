@@ -4,7 +4,7 @@ import path from 'node:path';
 import readline from 'node:readline';
 import { INDOOR_DIR, INDOOR_INDEX_FILE, ROUTES_FILE, STOPS_FILE, type IndoorFeature, type IndoorIndexFile, type RouteInfo, type StopsFile } from './lib/contract.ts';
 import { outputDir, writeJson } from './lib/emit.ts';
-import { groupStations, planBbox, planStartLevel, stationPlans, toIndoorFeature, type IndoorStation, type IndoorStationOptions, type OsmFeature } from './lib/indoor.ts';
+import { groupStations, planBbox, planLevels, stationPlans, toIndoorFeature, type IndoorStation, type OsmFeature } from './lib/indoor.ts';
 
 /**
  * OpenStreetMap indoor maps near the networks' stations. Reads `osmium export -f geojsonseq` files
@@ -16,14 +16,8 @@ const CONFIG = {
     STOPS_DIR: process.env.STOPS_DIR || path.join(import.meta.dirname, '..'),
     /** Stations served by these vehicle types get floor plans; bus and tram stops do not. */
     STATION_ROUTE_TYPES: new Set(['metro', 'train']),
-    PLANS: {
-        /** ~360 m east-west in Czechia and Slovakia, above both distances below. */
-        cellDeg: 0.005,
-        radiusM: 300,
-        joinM: 150,
-        coreM: 150,
-        minLevelFeatures: 1,
-    } satisfies IndoorStationOptions,
+    /** An object belongs to the nearest metro or rail station point within this distance; below `GRID_DEG` in lib/indoor.ts. */
+    STATION_RADIUS_M: 300,
     /** Hex digits of the station file hash published as its version. */
     VERSION_LENGTH: 10,
     MAX_LEVEL_SPAN: 10,
@@ -98,9 +92,9 @@ async function main(): Promise<void> {
     const sources = process.argv.slice(2);
     if (sources.length === 0) throw new Error('Usage: build-indoor.ts <export.geojsonseq>...');
 
-    const stations = groupStations(railStations(), CONFIG.PLANS);
+    const stations = groupStations(railStations());
     const features = await readFeatures(sources);
-    const plans = stationPlans(features, stations, CONFIG.PLANS);
+    const plans = stationPlans(features, stations, CONFIG.STATION_RADIUS_M);
     if (plans.size < CONFIG.MIN_STATIONS) throw new Error(`Suspiciously few station plans (${plans.size}). Aborting.`);
 
     const dir = outputDir(INDOOR_DIR);
@@ -108,16 +102,15 @@ async function main(): Promise<void> {
     fs.mkdirSync(dir, { recursive: true });
 
     const names = new Map(stations.map(station => [station.id, station.name]));
-    const index: IndoorIndexFile = { version: 3, stations: {} };
+    const index: IndoorIndexFile = { version: 4, stations: {} };
     let bytes = 0;
-    for (const [id, { features: plan, levels }] of [...plans].sort(([a], [b]) => a.localeCompare(b))) {
+    for (const [id, plan] of [...plans].sort(([a], [b]) => a.localeCompare(b))) {
         const payload = JSON.stringify({ type: 'FeatureCollection', features: plan });
         fs.writeFileSync(path.join(dir, `${id}.json`), payload);
         bytes += payload.length;
         index.stations[id] = {
             name: names.get(id) ?? id,
-            levels,
-            start: planStartLevel(levels),
+            levels: planLevels(plan),
             bbox: planBbox(plan),
             v: createHash('sha1').update(payload).digest('hex').slice(0, CONFIG.VERSION_LENGTH),
         };
@@ -125,7 +118,7 @@ async function main(): Promise<void> {
     writeJson(dir, INDOOR_INDEX_FILE, index);
     fs.writeFileSync(path.join(dir, 'LICENSE.md'), LICENSE_TEXT);
 
-    const kept = [...plans.values()].reduce((sum, plan) => sum + plan.features.length, 0);
+    const kept = [...plans.values()].reduce((sum, plan) => sum + plan.length, 0);
     console.log(`[Indoor] Wrote ${plans.size} station plans, ${kept} of ${features.length} features, ${(bytes / 1024).toFixed(0)} kB.`);
 }
 

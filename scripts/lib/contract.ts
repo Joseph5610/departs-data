@@ -488,10 +488,8 @@ export interface IndoorStationFile {
 
 export interface IndoorStationSummary {
     name: string;
-    /** The floors with features near the station, ascending. */
+    /** Every floor of the plan's features, ascending. */
     levels: number[];
-    /** The floor the plan opens on: street level, else the floor nearest it. */
-    start: number;
     /** `[west, south, east, north]` of the plan. */
     bbox: [number, number, number, number];
     /** A hash of the station file, which departs-app adds to its URL so a CDN never serves an older copy. */
@@ -499,7 +497,7 @@ export interface IndoorStationSummary {
 }
 
 export interface IndoorIndexFile {
-    version: 3;
-    /** Keyed by station id (the first of a group of stations sharing one building); its plan is `<id>.json`. */
+    version: 4;
+    /** Keyed by station id (the lowest of a node's stations); its plan is `<id>.json`. */
     stations: Record<string, IndoorStationSummary>;
 }

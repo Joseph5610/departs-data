@@ -152,147 +152,59 @@ export interface IndoorStation {
     points: IndoorPosition[];
 }
 
-export interface IndoorStationOptions {
-    /** Grid size of the point index in degrees; must exceed `radiusM` and `joinM`, as a lookup scans one cell around. */
-    cellDeg: number;
-    /** A feature belongs to the nearest station point within this distance. */
-    radiusM: number;
-    /** Stations with points this close share one building and one plan (Hlavní nádraží's metro and trains). */
-    joinM: number;
-    /** Only features this close to a station point make its floors; farther ones (a university hall above Můstek) are drawn but add none. */
-    coreM: number;
-    /** A floor needs this many floor-space areas (rooms, corridors, platforms, shops). */
-    minLevelFeatures: number;
-}
-
-interface IndexedPoint {
-    pos: IndoorPosition;
-    station: number;
-}
-
-const gridKey = (lon: number, lat: number, cellDeg: number): string => `${Math.floor(lon / cellDeg)}_${Math.floor(lat / cellDeg)}`;
-
-function pointGrid(stations: readonly IndoorStation[], cellDeg: number): Map<string, IndexedPoint[]> {
-    const grid = new Map<string, IndexedPoint[]>();
-    stations.forEach((station, index) => {
-        for (const pos of station.points) {
-            const key = gridKey(pos[0], pos[1], cellDeg);
-            const list = grid.get(key);
-            if (list) list.push({ pos, station: index });
-            else grid.set(key, [{ pos, station: index }]);
-        }
-    });
-    return grid;
-}
-
-function* pointsAround([lon, lat]: IndoorPosition, grid: ReadonlyMap<string, IndexedPoint[]>, cellDeg: number): Generator<IndexedPoint> {
-    const x = Math.floor(lon / cellDeg);
-    const y = Math.floor(lat / cellDeg);
-    for (let dx = -1; dx <= 1; dx++) {
-        for (let dy = -1; dy <= 1; dy++) yield* grid.get(`${x + dx}_${y + dy}`) ?? [];
+/** Stations of one node merged into one, named by the lowest id. */
+export function groupStations(stations: readonly IndoorStation[]): IndoorStation[] {
+    const byNode = new Map<string, IndoorStation>();
+    for (const station of [...stations].sort((a, b) => a.id.localeCompare(b.id))) {
+        const group = byNode.get(station.node);
+        if (group) group.points.push(...station.points);
+        else byNode.set(station.node, { ...station, points: [...station.points] });
     }
+    return [...byNode.values()];
 }
 
-const metresBetween = ([lon1, lat1]: IndoorPosition, [lon2, lat2]: IndoorPosition): number =>
-    distanceM({ lon: lon1, lat: lat1 }, { lon: lon2, lat: lat2 });
+/** Grid size of the station point index in degrees (~360 m east-west here); `stationPlans` scans one cell around, so its radius must stay below it. */
+const GRID_DEG = 0.005;
 
-/**
- * Stations sharing a building, merged into one: those of one node or with points within `joinM`. The
- * lowest id names the group; its points are all of theirs.
- */
-export function groupStations(stations: readonly IndoorStation[], options: IndoorStationOptions): IndoorStation[] {
-    const sorted = [...stations].sort((a, b) => a.id.localeCompare(b.id));
-    const parent = sorted.map((_, i) => i);
-    const root = (i: number): number => (parent[i] === i ? i : (parent[i] = root(parent[i]!)));
-    const join = (i: number, j: number): void => {
-        const [a, b] = [root(i), root(j)];
-        if (a !== b) parent[Math.max(a, b)] = Math.min(a, b);
-    };
-    const firstOfNode = new Map<string, number>();
-    sorted.forEach((station, i) => {
-        const first = firstOfNode.get(station.node);
-        if (first === undefined) firstOfNode.set(station.node, i);
-        else join(first, i);
-    });
-    const grid = pointGrid(sorted, options.cellDeg);
-    sorted.forEach((station, i) => {
+const gridKey = (lon: number, lat: number): string => `${Math.floor(lon / GRID_DEG)}_${Math.floor(lat / GRID_DEG)}`;
+
+/** Each station's features: those whose nearest station point within `radiusM` is one of its own. */
+export function stationPlans(features: Iterable<IndoorFeature>, stations: readonly IndoorStation[], radiusM: number): Map<string, IndoorFeature[]> {
+    const grid = new Map<string, Array<{ pos: IndoorPosition; id: string }>>();
+    for (const station of stations) {
         for (const pos of station.points) {
-            for (const other of pointsAround(pos, grid, options.cellDeg)) {
-                if (other.station !== i && metresBetween(pos, other.pos) <= options.joinM) join(i, other.station);
+            const key = gridKey(pos[0], pos[1]);
+            const list = grid.get(key);
+            if (list) list.push({ pos, id: station.id });
+            else grid.set(key, [{ pos, id: station.id }]);
+        }
+    }
+    const plans = new Map<string, IndoorFeature[]>();
+    for (const feature of features) {
+        const [lon, lat] = anchorOf(feature.geometry);
+        let nearest: string | null = null;
+        let nearestM = radiusM;
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                for (const point of grid.get(`${Math.floor(lon / GRID_DEG) + dx}_${Math.floor(lat / GRID_DEG) + dy}`) ?? []) {
+                    const metres = distanceM({ lon, lat }, { lon: point.pos[0], lat: point.pos[1] });
+                    if (metres <= nearestM) { nearest = point.id; nearestM = metres; }
+                }
             }
         }
-    });
-    const groups = new Map<number, IndoorStation>();
-    sorted.forEach((station, i) => {
-        const group = groups.get(root(i));
-        if (group) group.points.push(...station.points);
-        else groups.set(root(i), { id: station.id, name: station.name, node: station.node, points: [...station.points] });
-    });
-    return [...groups.values()];
-}
-
-/** A station's floor plan: its features and its floors. */
-export interface StationPlan {
-    features: IndoorFeature[];
-    /** Floors with features near the station, ascending. */
-    levels: number[];
-}
-
-/**
- * Each station's plan: the features whose nearest station point within `radiusM` is one of its own. Its
- * floors come from the features within `coreM`; stations without one are left out.
- */
-export function stationPlans(
-    features: Iterable<IndoorFeature>,
-    stations: readonly IndoorStation[],
-    options: IndoorStationOptions,
-): Map<string, StationPlan> {
-    const grid = pointGrid(stations, options.cellDeg);
-    const all = new Map<string, IndoorFeature[]>();
-    const core = new Map<string, IndoorFeature[]>();
-    const add = (map: Map<string, IndoorFeature[]>, id: string, feature: IndoorFeature): void => {
-        const list = map.get(id);
-        if (list) list.push(feature);
-        else map.set(id, [feature]);
-    };
-    for (const feature of features) {
-        const anchor = anchorOf(feature.geometry);
-        let nearest: number | null = null;
-        let nearestM = options.radiusM;
-        for (const point of pointsAround(anchor, grid, options.cellDeg)) {
-            const metres = metresBetween(anchor, point.pos);
-            if (metres <= nearestM) { nearest = point.station; nearestM = metres; }
-        }
         if (nearest === null) continue;
-        const id = stations[nearest]!.id;
-        add(all, id, feature);
-        if (nearestM <= options.coreM) add(core, id, feature);
-    }
-    const plans = new Map<string, StationPlan>();
-    for (const [id, planFeatures] of all) {
-        const levels = planLevels(core.get(id) ?? [], options.minLevelFeatures);
-        if (levels.length > 0) plans.set(id, { features: planFeatures, levels });
+        const plan = plans.get(nearest);
+        if (plan) plan.push(feature);
+        else plans.set(nearest, [feature]);
     }
     return plans;
 }
 
-/** Floors with at least `minLevelFeatures` drawn features (areas or lines; lone points such as a shop pin add none), ascending. */
-export function planLevels(features: readonly IndoorFeature[], minLevelFeatures: number): number[] {
-    const counts = new Map<number, number>();
-    for (const feature of features) {
-        if (feature.geometry.type === 'Point') continue;
-        for (const level of feature.properties.lv) counts.set(level, (counts.get(level) ?? 0) + 1);
-    }
-    return [...counts].filter(([, count]) => count >= minLevelFeatures).map(([level]) => level).sort((a, b) => a - b);
-}
-
-/** The floor a plan opens on: street level, else the floor nearest it (the upper one on a tie). */
-export function planStartLevel(levels: readonly number[]): number {
-    let best = levels[0] ?? 0;
-    for (const level of levels) {
-        if (Math.abs(level) < Math.abs(best) || (Math.abs(level) === Math.abs(best) && level > best)) best = level;
-    }
-    return best;
+/** Every floor a plan's features are on, ascending. */
+export function planLevels(features: readonly IndoorFeature[]): number[] {
+    const levels = new Set<number>();
+    for (const feature of features) for (const level of feature.properties.lv) levels.add(level);
+    return [...levels].sort((a, b) => a - b);
 }
 
 /** `[west, south, east, north]` of a plan. */
