@@ -25,16 +25,19 @@ const CONFIG = {
     MIN_STATIONS: 10,
 } as const;
 
-const LICENSE_TEXT = `# Indoor map data
+/** The `LICENSE.md` each published folder carries: ODbL requires the licence and the source to travel with the data. */
+const licenseText = (title: string, contents: string): string => `# ${title}
 
 Derived from OpenStreetMap, © OpenStreetMap contributors, https://www.openstreetmap.org/copyright
 
 This folder is made available under the Open Database License (ODbL) 1.0:
 https://opendatacommons.org/licenses/odbl/1-0/
 
-Filtered to indoor features (floors, platforms, stairs, escalators, lifts, entrances, shops) near
-departs.app stations, re-tagged into a compact schema and grouped by station.
+${contents}
 `;
+
+const INDOOR_LICENSE = licenseText('Station floor plans', 'Objects on floors (rooms, corridors, platforms, stairs, escalators, lifts, entrances, shops) within 300 m of\ndeparts.app metro and rail stations, re-tagged into a compact schema and grouped by station.');
+const PLATFORMS_LICENSE = licenseText('Street-level platforms', 'Platforms on street level (no level, or level 0) within 300 m of departs.app stops, re-tagged into a\ncompact schema and grouped by city.');
 
 /** The node of a station id: PID's `U142-301` and `U142-1` are both node `U142`. */
 const stationNode = (id: string): string => id.split('-')[0]!;
@@ -131,7 +134,7 @@ async function main(): Promise<void> {
         };
     }
     writeJson(dir, INDOOR_INDEX_FILE, index);
-    fs.writeFileSync(path.join(dir, 'LICENSE.md'), LICENSE_TEXT);
+    fs.writeFileSync(path.join(dir, 'LICENSE.md'), INDOOR_LICENSE);
 
     const kept = [...plans.values()].reduce((sum, plan) => sum + plan.length, 0);
     console.log(`[Indoor] Wrote ${plans.size} station plans, ${kept} of ${features.length} features, ${(bytes / 1024).toFixed(0)} kB.`);
@@ -148,7 +151,7 @@ async function main(): Promise<void> {
         console.log(`[Platforms] ${city}: ${list.length} street-level platforms, ${(payload.length / 1024).toFixed(0)} kB.`);
     }
     writeJson(platformsDir, PLATFORMS_INDEX_FILE, platformsIndex);
-    fs.writeFileSync(path.join(platformsDir, 'LICENSE.md'), LICENSE_TEXT);
+    fs.writeFileSync(path.join(platformsDir, 'LICENSE.md'), PLATFORMS_LICENSE);
 }
 
 main().catch((err: unknown) => {
