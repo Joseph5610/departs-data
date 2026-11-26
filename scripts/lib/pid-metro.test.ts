@@ -47,6 +47,12 @@ describe('buildMetroExits', () => {
         assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1'], [5, 'B5']]).P?.stepFree, ['E1', [1]]);
     });
 
+    it('leaves out a car that reaches the lift only by walking along the platform from another car', () => {
+        // Only the car 1 end has a lift (to E2); the car 5 end has stairs only (to E1).
+        const pathways = [walk('B1', 'B5', 15), walk('B1', 'E2', 110, '5'), walk('B5', 'E1', 30, '2')];
+        assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1'], [5, 'B5']]).P?.stepFree, ['ul. Dlouhá', [1]]);
+    });
+
     it('skips a platform whose only way out has no public name', () => {
         assert.deepEqual(buildMetroExits(withStop(stop('E1', '(-)', 2)), [walk('B1', 'E1', 10)], [[1, 'B1']]), {});
     });

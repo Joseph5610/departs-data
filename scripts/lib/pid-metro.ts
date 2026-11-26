@@ -7,8 +7,6 @@ import type { GtfsStop } from './stops.ts';
 const METRO_CONFIG = {
     /** Walking time assumed for a pathway segment that has no `traversal_time`. */
     DEFAULT_TRAVERSAL_S: 15,
-    /** Cars whose step-free way out is within this of the best one count as equally good. */
-    STEP_FREE_TIE_S: 15,
     /** Abort threshold guarding against a feed that lost its boardings or pathways. */
     MIN_PLATFORMS: 80,
 } as const;
@@ -110,8 +108,8 @@ export function buildMetroExits(stopRows: readonly MetroStop[], pathways: readon
 
         const entry: MetroPlatformExits = { exits: [...byExit.values()].map(row => [row.name, row.sign, [...row.cars]]) };
         const best = stepFree.reduce<(typeof stepFree)[number] | null>((a, s) => (!a || s.seconds < a.seconds ? s : a), null);
-        // Only cars whose own step-free way leads to an exit of that name share it.
-        const tied = best ? stepFree.filter(s => s.name === best.name && s.seconds - best.seconds <= METRO_CONFIG.STEP_FREE_TIE_S) : [];
+        // Only the cars as near as the best: an untimed walk along the platform is counted as a few seconds, so any margin takes in its far end.
+        const tied = best ? stepFree.filter(s => s.name === best.name && s.seconds === best.seconds) : [];
         if (best) entry.stepFree = [best.name, [...new Set(tied.map(s => s.car))]];
         out[platform] = entry;
     }
