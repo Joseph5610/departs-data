@@ -9,6 +9,7 @@ import { buildNetwork, writeNetwork, type NetworkMode } from './lib/network.ts';
 import { buildPragueStops, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
 import { gtfsStopsFile } from './lib/stops-file.ts';
 import { writePragueConnections } from './lib/prague-connections.ts';
+import { writeMetroExits } from './lib/pid-metro.ts';
 
 /**
  * Prague (PID) static data.
@@ -93,6 +94,7 @@ async function main(): Promise<void> {
 
     writePragueShapes(zip, dataDir, routes);
     writePragueConnections(zip, dataDir);
+    writeMetroExits(zip, dataDir);
 }
 
 const isDigit = (c: string) => c >= '0' && c <= '9';

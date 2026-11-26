@@ -520,3 +520,14 @@ export interface PlatformsIndexFile {
     /** A hash of each city's file, which departs-app adds to its URL so a CDN never serves an older copy. */
     cities: Record<string, { v: string }>;
 }
+
+/** `metro_exits.json` (Prague): the metro car nearest to the way out, keyed by platform stop id. */
+export const METRO_EXITS_FILE = 'metro_exits.json';
+export type MetroExitsFile = Record<string, MetroPlatformExits>;
+
+export interface MetroPlatformExits {
+    /** `[exit name, signposted destination | null, cars for which it is the nearest exit]`; car 1 rides at the front. */
+    exits: Array<[string, string | null, number[]]>;
+    /** `[exit name, cars]` with the shortest way out avoiding stairs and escalators. */
+    stepFree?: [string, number[]];
+}
