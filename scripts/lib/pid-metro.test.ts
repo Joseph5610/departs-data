@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildMetroExits, exitName, type MetroPathway, type MetroStop } from './pid-metro.ts';
+import { buildMetroExits, exitName, signText, type MetroPathway, type MetroStop } from './pid-metro.ts';
 
 const stop = (stop_id: string, stop_name: string, location_type: number, parent_station: string | null = 'S'): MetroStop =>
     ({ stop_id, stop_name, location_type, parent_station });
@@ -66,6 +66,11 @@ describe('buildMetroExits', () => {
         assert.deepEqual(buildMetroExits(island, pathways, [[5, 'B5'], [1, 'C1']]).Q?.stepFree, ['ul. Dlouhá', [1]]);
     });
 
+    it('shows the sign at the stairs on the platform before the one at the exit', () => {
+        const pathways = [walk('B1', 'N', 10, '4', 'E1 - E2 náměstí OSN'), walk('N', 'E1', 10, '1', 'E1 ulice Freyova')];
+        assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1']]).P?.exits, [['E1', 'náměstí OSN', [1]]]);
+    });
+
     it('skips a platform whose only way out has no public name', () => {
         assert.deepEqual(buildMetroExits(withStop(stop('E1', '(-)', 2)), [walk('B1', 'E1', 10)], [[1, 'B1']]), {});
     });
@@ -75,5 +80,15 @@ describe('exitName', () => {
     it('unwraps a bracketed street name and drops the unnamed marker', () => {
         assert.equal(exitName('(ul. Nádražní)'), 'ul. Nádražní');
         assert.equal(exitName('(-)'), null);
+    });
+});
+
+describe('signText', () => {
+    it('keeps the destination and drops exit codes, transfers, bare exits and levels', () => {
+        assert.equal(signText('E1 - E2 náměstí OSN, NC Fénix'), 'náměstí OSN, NC Fénix');
+        assert.equal(signText('E1, ulice Mukařovského'), 'ulice Mukařovského');
+        assert.equal(signText('Přestup B, Transfer B'), null);
+        assert.equal(signText('Výstup, Exit'), null);
+        assert.equal(signText('E5 -1'), null);
     });
 });
