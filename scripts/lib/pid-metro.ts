@@ -132,7 +132,7 @@ function nearestExit(
         queue.sort((a, b) => a[0] - b[0]);
         const [d, node] = queue.shift()!;
         if (d > (dist.get(node) ?? Infinity)) continue;
-        if (stops.get(node)?.location_type === ENTRANCE) return { exit: node, seconds: d, leaves: lastOnPlatform(node, via, stops) ?? start };
+        if (stops.get(node)?.location_type === ENTRANCE) return { exit: node, seconds: d, leaves: lastOnPlatform(node, start, via, stops) ?? start };
         for (const e of edges.get(node) ?? []) {
             if (stepFreeOnly && e.stepped) continue;
             const nd = d + e.seconds;
@@ -142,10 +142,15 @@ function nearestExit(
     return null;
 }
 
-/** The last boarding area on the walk back from `node`: where the way out leaves the platform. */
-function lastOnPlatform(node: string, via: ReadonlyMap<string, string>, stops: ReadonlyMap<string, MetroStop>): string | null {
+/**
+ * The last boarding area of the start's own platform on the walk back from `node`: where the way out leaves it.
+ * An island platform links both tracks' areas, and a car number holds only on its own track.
+ */
+function lastOnPlatform(node: string, start: string, via: ReadonlyMap<string, string>, stops: ReadonlyMap<string, MetroStop>): string | null {
+    const platform = stops.get(start)?.parent_station;
     for (let at: string | undefined = node; at !== undefined; at = via.get(at)) {
-        if (stops.get(at)?.location_type === BOARDING_AREA) return at;
+        const stop = stops.get(at);
+        if (stop?.location_type === BOARDING_AREA && stop.parent_station === platform) return at;
     }
     return null;
 }
