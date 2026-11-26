@@ -354,24 +354,12 @@ export const TRIP_ALIAS_GENERATIONS_FILE = 'trip_alias_generations.json';
 export const STATION_NAMES_FILE = 'station_names.json';
 
 /**
- * `rail_trips/<n>.json`: DÚK trains by train number, for the vehicles the feed reports with a train
- * number instead of a timetable trip. Bucketed by `Number(train) % RAIL_TRIP_BUCKETS`. Mirrors
- * departs-app `functions/_feeds/duk/railTrips.ts`.
+ * DÚK trains are timetable trips `<numbers>-rail-<variant>`, numbers joined by `_`: the line part a
+ * realtime train number is matched under. Mirrors `TRAIN_TRIP_LINE` and `TRIP_NUMBER_SEPARATOR` in
+ * departs-app `functions/_feeds/duk/config.ts`.
  */
-export const RAIL_TRIPS_DIR = 'rail_trips';
-export const RAIL_TRIP_BUCKETS = 32;
-/** `[name, lat, lon]`, plus the network's platform id where one lies at the station. */
-export type RailStop = [string, number, number] | [string, number, number, string];
-/** `[stop index into $stops, arrival, departure]`; service-day `HH:MM:SS` that pass 24:00:00 after midnight, empty at the run's ends. */
-export type RailCall = [number, string, string];
-/** `[dayFlags over $days, calls]` */
-export type RailRun = [number, RailCall[]];
-export interface RailTripsFile {
-    /** YYYYMMDD service days the `dayFlags` bitmasks refer to. */
-    $days: string[];
-    $stops: RailStop[];
-    trains: Record<string, RailRun[]>;
-}
+export const RAIL_TRIP_LINE = 'rail';
+export const RAIL_TRIP_NUMBER_SEPARATOR = '_';
 
 /**
  * One `trip_buckets/` file: each trip's stops by trip id, plus `$days` and `$trips`, so a detail needs

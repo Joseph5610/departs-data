@@ -33,7 +33,6 @@ Brno, Prešov and DÚK also publish a timetable through the shared pipeline in `
 - `trip_buckets/<n>.json`: each trip's stops plus `$days` and `$trips` (window, day flags, route), and the days each onward connection runs (`writeTrips`).
 - `schedule/<HH>.json`: the trips a vehicle may be matched to in that hour, with their routes (`writeCityFiles`).
 - `feed_index/`: lookups a single network's realtime feed needs (Brno `trip_alias_generations.json` and `trip_alias_runs.json`, DÚK `station_names.json`).
-- `rail_trips/<n>.json` (DÚK): trains by train number, with their stations and the Portabo platform each opens.
 
 ### 🇨🇿 Brno (IDS JMK)
 *Script:* `scripts/build-brno.ts` | *Action:* `update-brno.yml` (Runs daily)
@@ -79,7 +78,7 @@ The kraj currently publishes no GTFS, so timetables come from the national CIS J
 7. Names lines by `LinExt` (X, XU28), a small override table (LD, MHD) or the last three digits, and colours Ústí city lines as DPmÚL does.
 8. Draws each trip through an estimated platform per stop (right of the direction of travel), since JDF names only the stop.
 
-Trains come from Spojenka's GTFS into `rail_trips/` (by train number); the CIS JŘ export carries no trains. Stops Portabo lacks or places at a placeholder position (most Most/Litvínov city stops) stay in trip timelines with an empty `stop_id` and no coordinates.
+Trains come from Spojenka's GTFS (non-commercial use only), since the CIS JŘ export carries none: those calling at a DÚK tariff stop, or at a station with a Portabo rail post (90–199) of a node in a DÚK zone, become ordinary trips `<numbers>-rail-<variant>` (numbers joined by `_`) in the same departure, trip and schedule files, boarded at that rail post and named by their DÚK line (`S4/U4` is U4). A failed Spojenka download fails the build, so the published data stays whole. Stops Portabo lacks or places at a placeholder position (most Most/Litvínov city stops) stay in trip timelines with an empty `stop_id` and no coordinates.
 
 ## 🏢 Indoor Maps
 *Script:* `scripts/build-indoor.ts` | *Action:* `update-indoor.yml` (Runs weekly)
