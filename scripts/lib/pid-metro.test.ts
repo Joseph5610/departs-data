@@ -59,11 +59,16 @@ describe('buildMetroExits', () => {
         assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1'], [5, 'B5']]).P?.stepFree, ['ul. Dlouhá', [1]]);
     });
 
-    it('names the car of the own track where an island platform reaches the lift across the other track', () => {
-        // Track 2's car 1 stands across from track 1's car 5, and only that side has the lift.
+    it('never credits a track with the stairs of the other track across an island platform', () => {
+        // Track 2's car 1 stands across from track 1's car 5, and only that side has a way up.
         const island = [...stops, stop('Q', 'Station', 0), stop('C1', 'Kolej 2 - Start', 4, 'Q')];
         const pathways = [walk('C1', 'B5', 5), walk('B5', 'E2', 60, '5')];
-        assert.deepEqual(buildMetroExits(island, pathways, [[5, 'B5'], [1, 'C1']]).Q?.stepFree, ['ul. Dlouhá', [1]]);
+        assert.equal(buildMetroExits(island, pathways, [[5, 'B5'], [1, 'C1']]).Q, undefined);
+    });
+
+    it('lists the far exit too, and leaves out a corridor signposted as a transfer', () => {
+        const pathways = [walk('B1', 'E1', 30), walk('B5', 'E2', 90), walk('B1', 'N', 5, '1', 'Přestup C, Transfer C'), walk('N', 'E2', 5)];
+        assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1'], [5, 'B5']]).P?.exits, [['E1', null, [1]], ['ul. Dlouhá', null, [5]]]);
     });
 
     it('shows the sign at the stairs on the platform before the one at the exit', () => {
