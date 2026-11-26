@@ -59,11 +59,21 @@ describe('buildMetroExits', () => {
         assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1'], [5, 'B5']]).P?.stepFree, ['ul. Dlouhá', [1]]);
     });
 
-    it('never credits a track with the stairs of the other track across an island platform', () => {
-        // Track 2's car 1 stands across from track 1's car 5, and only that side has a way up.
-        const island = [...stops, stop('Q', 'Station', 0), stop('C1', 'Kolej 2 - Start', 4, 'Q')];
-        const pathways = [walk('C1', 'B5', 5), walk('B5', 'E2', 60, '5')];
-        assert.equal(buildMetroExits(island, pathways, [[5, 'B5'], [1, 'C1']]).Q, undefined);
+    it('steps straight across an island platform to the lift of the other track, but never along it', () => {
+        // Track 2's car 1 stands across from track 1's car 5, where the only lift is.
+        const island = [...stops, stop('Q', 'Station', 0), stop('C1', 'Kolej 2 - Start', 4, 'Q'), stop('C5', 'Kolej 2 - End', 4, 'Q')];
+        const pathways = [walk('C1', 'B5', 5), walk('C1', 'C5', 15), walk('B5', 'E2', 60, '5')];
+        assert.deepEqual(buildMetroExits(island, pathways, [[5, 'B5'], [1, 'C1'], [5, 'C5']]).Q?.exits, [['ul. Dlouhá', null, [1]]]);
+    });
+
+    it('takes the step-free way out through a transfer corridor when it is the only one', () => {
+        const pathways = [walk('B1', 'E1', 10, '2'), walk('B5', 'N', 5, '1', 'Přestup A, Transfer A'), walk('N', 'E2', 60, '5')];
+        assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1'], [5, 'B5']]).P, { exits: [['E1', null, [1]]], stepFree: ['ul. Dlouhá', [5]] });
+    });
+
+    it('takes a corridor signposted as a transfer only the way it does not read as one', () => {
+        const pathways = [walk('B1', 'N', 5), { ...walk('N', 'E1', 5), sign: 'E1 Výtah/Lift', reversedSign: 'Přestup B, Transfer B' }];
+        assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1']]).P?.exits, [['E1', 'Výtah/Lift', [1]]]);
     });
 
     it('lists the far exit too, and leaves out a corridor signposted as a transfer', () => {

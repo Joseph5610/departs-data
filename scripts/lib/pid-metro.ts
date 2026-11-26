@@ -71,9 +71,9 @@ export function buildMetroExits(stopRows: readonly MetroStop[], pathways: readon
     for (const p of pathways) {
         const seconds = p.seconds ?? METRO_CONFIG.DEFAULT_TRAVERSAL_S;
         const stepped = STEPPED_MODES.has(p.mode);
-        const transfer = isTransferSign(p.sign) || isTransferSign(p.reversedSign);
-        addEdge(p.from, p.to, seconds, stepped, p.sign, transfer);
-        if (p.bidirectional) addEdge(p.to, p.from, seconds, stepped, p.reversedSign, transfer);
+        // A corridor is a transfer by the sign facing the walker: the same one reads "E2 Výtah/Lift" the other way.
+        addEdge(p.from, p.to, seconds, stepped, p.sign, isTransferSign(p.sign));
+        if (p.bidirectional) addEdge(p.to, p.from, seconds, stepped, p.reversedSign, isTransferSign(p.reversedSign));
     }
 
     const carsByPlatform = new Map<string, MetroBoarding[]>();
@@ -125,6 +125,7 @@ function nearestExit(
     stops: ReadonlyMap<string, MetroStop>,
     stepFreeOnly: boolean
 ): { exit: string; seconds: number; platformSign: string | null } | null {
+    const platform = stops.get(start)?.parent_station;
     const dist = new Map<string, number>([[start, 0]]);
     const via = new Map<string, { from: string; sign: string | null }>();
     const queue: Array<[number, string]> = [[0, start]];
@@ -137,8 +138,11 @@ function nearestExit(
         }
         for (const e of edges.get(node) ?? []) {
             if (stepFreeOnly && e.stepped) continue;
-            // Walking along the platform is choosing another car, and a transfer leads to another line, not out.
-            if (e.transfer || stops.get(e.to)?.location_type === BOARDING_AREA) continue;
+            // Walking along the platform is choosing another car, and a transfer leads to another line, not out,
+            // unless it is the only step-free way up (Můstek B); stepping straight across an island platform is the same spot.
+            if (e.transfer && !stepFreeOnly) continue;
+            const to = stops.get(e.to);
+            if (to?.location_type === BOARDING_AREA && !(node === start && to.parent_station !== platform)) continue;
             const nd = d + e.seconds;
             if (nd < (dist.get(e.to) ?? Infinity)) { dist.set(e.to, nd); via.set(e.to, { from: node, sign: e.sign }); queue.push([nd, e.to]); }
         }
