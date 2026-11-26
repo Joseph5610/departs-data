@@ -90,20 +90,18 @@ export function buildMetroExits(stopRows: readonly MetroStop[], pathways: readon
     for (const [platform, cars] of [...carsByPlatform].sort(([a], [b]) => a.localeCompare(b))) {
         cars.sort((a, b) => a[0] - b[0]);
         // PID maps one exit as several entrances, so rows merge by the name the passenger reads.
-        const byExit = new Map<string, { name: string; sign: string | null; cars: Set<number> }>();
+        const byExit = new Map<string, { name: string; sign: string | null; seconds: number; cars: Set<number> }>();
         const stepFree: Array<{ car: number; seconds: number; name: string }> = [];
         // From each car's section, the way out its own stairs, escalator or lift lead to: where to stand for that exit.
+        // An exit keeps only its nearest cars, not those whose stairs reach it round by a transfer bridge (Florenc C).
         for (const [car, area] of cars) {
             const nearest = nearestExit(area, edges, stops, false);
             const name = nearest && exitNameOf(nearest.exit);
-            if (nearest && name) {
-                let row = byExit.get(name);
-                if (!row) {
-                    const sign = nearest.platformSign ?? entranceSign(nearest.exit, signs);
-                    row = { name, sign: sign !== name ? sign : null, cars: new Set() };
-                    byExit.set(name, row);
-                }
-                row.cars.add(car);
+            const row = name ? byExit.get(name) : undefined;
+            if (nearest && name && row && nearest.seconds === row.seconds) row.cars.add(car);
+            else if (nearest && name && (!row || nearest.seconds < row.seconds)) {
+                const sign = nearest.platformSign ?? entranceSign(nearest.exit, signs);
+                byExit.set(name, { name, sign: sign !== name ? sign : null, seconds: nearest.seconds, cars: new Set([car]) });
             }
             const free = nearestExit(area, edges, stops, true);
             const freeName = free && exitNameOf(free.exit);
