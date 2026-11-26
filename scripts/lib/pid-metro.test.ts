@@ -93,6 +93,16 @@ describe('buildMetroExits', () => {
         assert.deepEqual(buildMetroExits(hall, pathways, [[1, 'B1'], [5, 'B5']]).P?.exits, [['E1', null, [1]]]);
     });
 
+    it('puts the row of stairs up to the very lift the step-free row names at the lift, but keeps an escalator to that exit', () => {
+        // Car 1 climbs stairs to the lift by car 5; both reach E1 only by that lift.
+        const lift = [...stops, stop('L', '', 3)];
+        const toLift = [walk('B1', 'L', 5, '2'), walk('B5', 'L', 20), walk('L', 'E1', 30, '5')];
+        assert.deepEqual(buildMetroExits(lift, toLift, [[1, 'B1'], [5, 'B5']]).P, { exits: [['E1', null, [5]]], stepFree: ['E1', [5]] });
+        // An escalator by car 1 and a lift by car 5, both up to E1: two ways, both kept.
+        const twoWays = [walk('B1', 'E1', 10, '4'), walk('B5', 'E1', 40, '5')];
+        assert.deepEqual(buildMetroExits(stops, twoWays, [[1, 'B1'], [5, 'B5']]).P, { exits: [['E1', null, [1]]], stepFree: ['E1', [5]] });
+    });
+
     it('skips a platform whose only way out has no public name', () => {
         assert.deepEqual(buildMetroExits(withStop(stop('E1', '(-)', 2)), [walk('B1', 'E1', 10)], [[1, 'B1']]), {});
     });
