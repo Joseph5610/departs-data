@@ -3,7 +3,7 @@ import type AdmZip from 'adm-zip';
 import { outputDir, removeRetired, writeStopsAndRoutes } from './lib/emit.ts';
 import { nightFlag, type RouteInfo } from './lib/contract.ts';
 import { fetchZip, readTable } from './lib/feed.ts';
-import { readStops } from './lib/stops.ts';
+import { readStops, type GtfsStop } from './lib/stops.ts';
 import { readGtfsShapes, writeShapeBuckets } from './lib/shapes.ts';
 import { buildNetwork, writeNetwork, type NetworkMode } from './lib/network.ts';
 import { buildPragueStops, type GtfsStopFeature, type PidEnrichment } from './lib/pid-stops.ts';
@@ -88,13 +88,14 @@ async function main(): Promise<void> {
     const zip = await fetchZip(CONFIG.GTFS_URL, 'GTFS_ZIP');
     const routes = readPragueRoutes(zip);
 
-    const gtfsStops = readGtfsStops(zip);
+    const stopRows = readStops(zip);
+    const gtfsStops = toGtfsStopFeatures(stopRows);
     const { features, stopRoutes } = buildPragueStops(gtfsStops, enrichmentMap, readStopInterchanges(zip), routeIdsOf);
     writeStopsAndRoutes(dataDir, gtfsStopsFile(features, stopRoutes, new Map(), routes), routes, { stationsByPlatforms: true });
 
     writePragueShapes(zip, dataDir, routes);
     writePragueConnections(zip, dataDir);
-    writeMetroExits(zip, dataDir);
+    writeMetroExits(zip, stopRows, dataDir);
 }
 
 const isDigit = (c: string) => c >= '0' && c <= '9';
@@ -116,8 +117,8 @@ function compareStopIds(a: string, b: string): number {
 }
 
 /** Every stop in the PID GTFS as a point feature. */
-function readGtfsStops(zip: AdmZip): GtfsStopFeature[] {
-    const rows = readStops(zip).sort((a, b) => compareStopIds(a.stop_id, b.stop_id));
+function toGtfsStopFeatures(stopRows: readonly GtfsStop[]): GtfsStopFeature[] {
+    const rows = [...stopRows].sort((a, b) => compareStopIds(a.stop_id, b.stop_id));
     const stops = rows.map((s): GtfsStopFeature => ({
         type: 'Feature',
         geometry: { coordinates: [s.lon ?? 0, s.lat ?? 0], type: 'Point' },
