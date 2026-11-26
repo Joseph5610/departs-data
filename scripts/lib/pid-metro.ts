@@ -19,6 +19,7 @@ const TABLES = {
 /** GTFS `pathway_mode` values a wheelchair or pram cannot use: stairs and escalators. */
 const STEPPED_MODES = new Set(['2', '4']);
 const ENTRANCE = 2;
+const BOARDING_AREA = 4;
 
 export interface MetroPathway { from: string; to: string; mode: string; bidirectional: boolean; seconds: number | null; sign: string | null; reversedSign: string | null }
 /** `[car number, boarding area id]`, car 1 at the front of the train. */
@@ -54,7 +55,7 @@ export function readMetroLinks(zip: AdmZip): { pathways: MetroPathway[]; boardin
 }
 
 /**
- * Which metro car to ride for the nearest way out at each platform, keyed by the platform's GTFS stop id,
+ * At which metro car the stairs, escalator or lift to each way out leave each platform, keyed by the platform's GTFS stop id,
  * from PID's `vehicle_boardings` (car -> boarding area on the platform) and `pathways` (area -> exits).
  */
 export function buildMetroExits(stopRows: readonly MetroStop[], pathways: readonly MetroPathway[], boardings: readonly MetroBoarding[]): MetroExitsFile {
@@ -83,6 +84,7 @@ export function buildMetroExits(stopRows: readonly MetroStop[], pathways: readon
         list.push([car, area]);
     }
 
+    const carOfArea = new Map(boardings.map(([car, area]) => [area, car]));
     const exitNameOf = (exit: string) => exitName(stops.get(exit)?.stop_name ?? '');
     const out: MetroExitsFile = {};
     for (const [platform, cars] of [...carsByPlatform].sort(([a], [b]) => a.localeCompare(b))) {
@@ -90,10 +92,12 @@ export function buildMetroExits(stopRows: readonly MetroStop[], pathways: readon
         // PID maps one signposted exit as several entrances, so rows merge by what the passenger reads.
         const byExit = new Map<string, { name: string; sign: string | null; cars: Set<number> }>();
         const stepFree: Array<{ car: number; seconds: number; name: string }> = [];
-        for (const [car, area] of cars) {
+        // Each car's nearest way out, credited to the car where it leaves the platform: that is where to stand.
+        for (const [, area] of cars) {
             const nearest = nearestExit(area, edges, stops, false);
             const name = nearest && exitNameOf(nearest.exit);
-            if (nearest && name) {
+            const car = nearest && carOfArea.get(nearest.leaves);
+            if (nearest && name && typeof car === 'number') {
                 const sign = signFor(nearest.exit, stops, signs);
                 const key = `${name}|${sign ?? ''}`;
                 let row = byExit.get(key);
@@ -102,15 +106,14 @@ export function buildMetroExits(stopRows: readonly MetroStop[], pathways: readon
             }
             const free = nearestExit(area, edges, stops, true);
             const freeName = free && exitNameOf(free.exit);
-            if (free && freeName) stepFree.push({ car, seconds: free.seconds, name: freeName });
+            const freeCar = free && carOfArea.get(free.leaves);
+            if (free && freeName && typeof freeCar === 'number') stepFree.push({ car: freeCar, seconds: free.seconds, name: freeName });
         }
         if (byExit.size === 0) continue;
 
-        const entry: MetroPlatformExits = { exits: [...byExit.values()].map(row => [row.name, row.sign, [...row.cars]]) };
+        const entry: MetroPlatformExits = { exits: [...byExit.values()].map(row => [row.name, row.sign, [...row.cars].sort((a, b) => a - b)]) };
         const best = stepFree.reduce<(typeof stepFree)[number] | null>((a, s) => (!a || s.seconds < a.seconds ? s : a), null);
-        // Only the cars as near as the best: an untimed walk along the platform is counted as a few seconds, so any margin takes in its far end.
-        const tied = best ? stepFree.filter(s => s.name === best.name && s.seconds === best.seconds) : [];
-        if (best) entry.stepFree = [best.name, [...new Set(tied.map(s => s.car))]];
+        if (best) entry.stepFree = [best.name, [...new Set(stepFree.filter(s => s.name === best.name).map(s => s.car))].sort((a, b) => a - b)];
         out[platform] = entry;
     }
     return out;
@@ -121,19 +124,28 @@ function nearestExit(
     edges: ReadonlyMap<string, Edge[]>,
     stops: ReadonlyMap<string, MetroStop>,
     stepFreeOnly: boolean
-): { exit: string; seconds: number } | null {
+): { exit: string; seconds: number; leaves: string } | null {
     const dist = new Map<string, number>([[start, 0]]);
+    const via = new Map<string, string>();
     const queue: Array<[number, string]> = [[0, start]];
     while (queue.length > 0) {
         queue.sort((a, b) => a[0] - b[0]);
         const [d, node] = queue.shift()!;
         if (d > (dist.get(node) ?? Infinity)) continue;
-        if (stops.get(node)?.location_type === ENTRANCE) return { exit: node, seconds: d };
+        if (stops.get(node)?.location_type === ENTRANCE) return { exit: node, seconds: d, leaves: lastOnPlatform(node, via, stops) ?? start };
         for (const e of edges.get(node) ?? []) {
             if (stepFreeOnly && e.stepped) continue;
             const nd = d + e.seconds;
-            if (nd < (dist.get(e.to) ?? Infinity)) { dist.set(e.to, nd); queue.push([nd, e.to]); }
+            if (nd < (dist.get(e.to) ?? Infinity)) { dist.set(e.to, nd); via.set(e.to, node); queue.push([nd, e.to]); }
         }
+    }
+    return null;
+}
+
+/** The last boarding area on the walk back from `node`: where the way out leaves the platform. */
+function lastOnPlatform(node: string, via: ReadonlyMap<string, string>, stops: ReadonlyMap<string, MetroStop>): string | null {
+    for (let at: string | undefined = node; at !== undefined; at = via.get(at)) {
+        if (stops.get(at)?.location_type === BOARDING_AREA) return at;
     }
     return null;
 }

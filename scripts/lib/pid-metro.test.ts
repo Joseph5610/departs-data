@@ -37,9 +37,15 @@ describe('buildMetroExits', () => {
         assert.deepEqual(buildMetroExits(twin, pathways, [[1, 'B1'], [5, 'B5']]).P?.exits, [['E1', null, [1, 5]]]);
     });
 
-    it('routes the step-free way around stairs and escalators', () => {
+    it('routes the step-free way around stairs and escalators, at the car where the lift leaves', () => {
         const pathways = [walk('B1', 'E1', 10, '4'), walk('B1', 'B5', 30), walk('B5', 'E2', 30, '5')];
-        assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1']]).P?.stepFree, ['ul. Dlouhá', [1]]);
+        assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1'], [5, 'B5']]).P?.stepFree, ['ul. Dlouhá', [5]]);
+    });
+
+    it('names only the car at the escalator when every car walks to it', () => {
+        // Like Florenc B: one escalator up, at car 5's section; car 1 walks along the platform to it.
+        const pathways = [walk('B1', 'B5', 15), walk('B5', 'E1', 40, '4')];
+        assert.deepEqual(buildMetroExits(stops, pathways, [[1, 'B1'], [5, 'B5']]).P?.exits, [['E1', null, [5]]]);
     });
 
     it('lists for the step-free exit only cars whose own step-free way leads there', () => {
