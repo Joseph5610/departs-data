@@ -45,8 +45,6 @@ const CONFIG = {
     RAIL_PLATFORM_RADIUS_M: 300,
     /** The app's DÚK train colour (`routeTypeColors.train`), which Spojenka does not carry. */
     RAIL_ROUTE_COLOR: '#004B90',
-    /** Trains' own folder of earlier builds, removed from the staged output since they are trips. */
-    LEGACY_RAIL_TRIPS_DIR: 'rail_trips',
     DOWNLOAD_TIMEOUT_S: 600,
     DOWNLOAD_ATTEMPTS: 4,
     JDF_CACHE_MAX_AGE_MS: 12 * 3_600_000,
@@ -926,7 +924,6 @@ async function main(): Promise<void> {
     // JDF has no geometry; the app draws the route stop to stop.
     writeCityFiles(DATA_DIR, { features, routes, tripRoutes, tripWindows: windowsFile, stopRoutes: platformRoutes, tripCalls: [...tripStops.values()].map(stops => stops.map(stop => stop.stop_id)) });
     writeFeedIndex(DATA_DIR, STATION_NAMES_FILE, index.names);
-    fs.rmSync(path.join(DATA_DIR, CONFIG.LEGACY_RAIL_TRIPS_DIR), { recursive: true, force: true });
     console.log(`Wrote ${servedNodes.size} stations and ${Object.keys(routes).length} routes`);
 
     writeDepartures(DATA_DIR, departuresByStop, parentChildMap);
