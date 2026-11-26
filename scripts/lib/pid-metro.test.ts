@@ -87,10 +87,10 @@ describe('buildMetroExits', () => {
     });
 
     it('keeps for an exit only the cars with the shortest way to it', () => {
-        // Car 1's stairs reach E1 round by a bridge; car 5's lead straight up.
-        const pathways = [walk('B1', 'N', 15), walk('N', 'H', 15), walk('B5', 'H', 15), walk('H', 'E1', 15)];
+        // Car 5's stairs reach E1 round by a bridge; car 1's lead straight up.
+        const pathways = [walk('B5', 'N', 15), walk('N', 'H', 15), walk('B1', 'H', 15), walk('H', 'E1', 15)];
         const hall = [...stops, stop('H', '', 3)];
-        assert.deepEqual(buildMetroExits(hall, pathways, [[1, 'B1'], [5, 'B5']]).P?.exits, [['E1', null, [5]]]);
+        assert.deepEqual(buildMetroExits(hall, pathways, [[1, 'B1'], [5, 'B5']]).P?.exits, [['E1', null, [1]]]);
     });
 
     it('skips a platform whose only way out has no public name', () => {
