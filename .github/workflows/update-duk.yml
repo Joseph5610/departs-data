@@ -48,6 +48,22 @@ jobs:
           mkdir -p out
           cp -a data-branch/duk out/duk
 
+      # Route shapes are map-matched on OSM (scripts/lib/pfaedle.ts); without the extract the build keeps the published ones.
+      - name: OSM extract for route shapes
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q osmium-tool
+          mkdir -p osm
+          if curl -fsSL --retry 3 --retry-all-errors --retry-delay 30 -o osm/cz.osm.pbf https://download.geofabrik.de/europe/czech-republic-latest.osm.pbf \
+            || curl -fsSL --retry 3 --retry-all-errors --retry-delay 30 -o osm/cz.osm.pbf https://download.openstreetmap.fr/extracts/europe/czech_republic-latest.osm.pbf; then
+            # Mirrors POST_BOUNDS in build-duk.ts: the kraj and its cross-border termini.
+            osmium extract -b 12.0,49.8,15.5,51.3 osm/cz.osm.pbf -o osm/duk.osm.pbf
+            rm osm/cz.osm.pbf
+            echo "SHAPES_OSM=$PWD/osm/duk.osm.pbf" >> "$GITHUB_ENV"
+          else
+            echo "::warning::OSM extract unavailable; route shapes stay as published"
+          fi
+
       - name: Download and Process JDF
         run: node scripts/build-duk.ts
         env:

@@ -11,6 +11,8 @@ import { buildDepartures, tripWindows, writeDepartures, writeTrips, type Boardin
 import { linesOf, outputDir, safetyCheck, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
 import { buildTripTracks } from './lib/tracks.ts';
 import { railLineName, trainTrips, type TrainCall, type TrainRun } from './lib/rail.ts';
+import { shapePatterns, shapesFromOsm } from './lib/pfaedle.ts';
+import { writeShapeBuckets } from './lib/shapes.ts';
 import {
     CALENDAR, LAYOUTS, NOT_VIA, PASSES, SYMBOL, TRIP_CODE_FIELDS, WEEKDAY_SYMBOLS,
     decodeJdf, jdfDate, jdfTime, parseRows,
@@ -117,6 +119,9 @@ const CONFIG = {
         TOURIST_LINES: ['LD', '20', '21'],
         COLORS: { bus: '#4AB280', trolleybus: '#212855', night: '#D10C15', tourist: '#F7C914' },
     },
+
+    /** Decimals kept on shape coordinates, as for the other cities (about a metre). */
+    SHAPE_COORD_DECIMALS: 5,
 
     /** Abort thresholds guarding against an empty or truncated upstream export. */
     MIN_DEPARTURE_STOPS: 1500,
@@ -902,13 +907,24 @@ async function main(): Promise<void> {
     // --- SAFETY CHECK ---
     safetyCheck(departuresByStop.size, activeTrips.size, CONFIG.MIN_DEPARTURE_STOPS, CONFIG.MIN_ACTIVE_TRIPS);
 
-    // JDF has no geometry; the app draws the route stop to stop.
     writeCityFiles(DATA_DIR, { features, routes, tripRoutes, tripWindows: windowsFile, stopRoutes: platformRoutes, tripCalls: [...tripStops.values()].map(stops => stops.map(stop => stop.stop_id)) });
     writeFeedIndex(DATA_DIR, STATION_NAMES_FILE, index.names);
     console.log(`Wrote ${servedNodes.size} stations and ${Object.keys(routes).length} routes`);
 
     writeDepartures(DATA_DIR, departuresByStop, parentChildMap);
     writeTrips(DATA_DIR, tripStops, windowsFile, tripRoutes);
+
+    // --- SHAPES: JDF and Spojenka carry none, so pfaedle draws them on OSM where the workflow provides it ---
+    const osmFile = process.env.SHAPES_OSM;
+    if (osmFile) {
+        const { patterns, tripShapes } = shapePatterns(tripStops, tripId => routes[tripRoutes[tripId]!]?.type ?? CONFIG.DEFAULT_ROUTE_TYPE);
+        const shapes = shapesFromOsm(osmFile, patterns, CONFIG.SHAPE_COORD_DECIMALS);
+        const shaped = Object.fromEntries(Object.entries(tripShapes).filter(([, shapeId]) => shapes.has(shapeId)));
+        const largest = writeShapeBuckets(DATA_DIR, shaped, shapes);
+        console.log(`Wrote shapes for ${Object.keys(shaped).length} of ${tripStops.size} trips (${shapes.size} of ${patterns.size} stop runs), largest ${(largest / 1024).toFixed(0)}KB`);
+    } else {
+        console.log('SHAPES_OSM unset: route shapes left as published');
+    }
 
     const tracks = buildTripTracks(tripStops, windowsFile.trips);
     const largestTrack = writeChunks(path.join(DATA_DIR, TRACKS_DIR), tracks);
