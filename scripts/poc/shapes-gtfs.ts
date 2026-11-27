@@ -1,16 +1,18 @@
 /**
  * PoC: a minimal GTFS of a few published DÚK lines (one trip per stop pattern), for pfaedle to draw shapes on.
- * Usage: node scripts/poc/shapes-gtfs.ts <out dir> <route id>...
+ * Usage: [DATA_DIR=<data branch>/duk] node scripts/poc/shapes-gtfs.ts <out dir> <route id>...
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { tripBucketId } from '../lib/contract.ts';
 
-const BASE = 'https://data.departs.app/duk';
+/** The published DÚK folder: a checkout of the data branch (DATA_DIR), else data.departs.app. */
+const BASE = process.env.DATA_DIR ?? 'https://data.departs.app/duk';
 const [outDir, ...routeIds] = process.argv.slice(2);
 if (!outDir || routeIds.length === 0) throw new Error('usage: shapes-gtfs.ts <out dir> <route id>...');
 
 const get = async <T>(url: string): Promise<T> => {
+    if (!/^https?:/.test(url)) return JSON.parse(fs.readFileSync(url, 'utf8')) as T;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`${url}: ${res.status}`);
     return res.json() as Promise<T>;

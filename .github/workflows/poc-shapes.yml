@@ -12,12 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          ref: data
+          path: data-branch
+          fetch-depth: 1
+          sparse-checkout: duk
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
       - run: npm ci
       - name: Mini GTFS of sample lines
-        run: node scripts/poc/shapes-gtfs.ts poc/gtfs 595070 595088 595085 592450 592458 U1 U3
+        run: DATA_DIR=data-branch/duk node scripts/poc/shapes-gtfs.ts poc/gtfs 595070 595088 595085 592450 592458 U1 U3
       - name: OSM extract of the kraj
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq osmium-tool
