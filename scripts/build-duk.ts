@@ -246,6 +246,9 @@ function railPostFinder(nodes: Iterable<Node>, platformsOf: Map<string, NodePlat
 }
 
 /** A Spojenka call resolved to the station it stops at. */
+/** Spojenka lists some stations abroad at 0,0. */
+const isLocated = (p: Point) => Number.isFinite(p.lat) && Number.isFinite(p.lon) && (p.lat !== 0 || p.lon !== 0);
+
 interface StationCall extends TrainCall { station: { name: string; lat: number; lon: number }; isRequestStop: boolean; alightOnly: boolean }
 
 /**
@@ -347,7 +350,7 @@ function readTrains(zip: AdmZip, days: ServiceDay[], railPostAt: (station: Point
                 node: post?.node ?? null,
                 name: call.station.name,
                 platform: post?.platform ?? null,
-                pos: call.station,
+                ...(isLocated(call.station) ? { pos: call.station } : {}),
                 alightOnly: call.alightOnly,
             };
         });
