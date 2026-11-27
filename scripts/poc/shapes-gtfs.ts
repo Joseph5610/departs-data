@@ -19,7 +19,8 @@ const get = async <T>(url: string): Promise<T> => {
 };
 
 const routes = await get<Record<string, { name: string; type: string }>>(`${BASE}/routes.json`);
-const GTFS_TYPE: Record<string, number> = { bus: 3, trolleybus: 11, tram: 0, train: 2, ferry: 4, funicular: 7 };
+/** pfaedle has no trolleybus profile; a trolleybus keeps to the roads a bus does. */
+const GTFS_TYPE: Record<string, number> = { bus: 3, trolleybus: 3, tram: 0, train: 2, ferry: 4, funicular: 7 };
 
 const tripsOfRoute = new Map<string, Set<string>>();
 for (let h = 0; h < 24; h++) {

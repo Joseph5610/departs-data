@@ -62,4 +62,5 @@ def draw(name, bbox, title):
 draw('overview.png', (13.25, 50.30, 14.45, 50.85), 'DÚK sample lines')
 draw('usti.png', (13.98, 50.635, 14.08, 50.685), 'Ústí nad Labem centre')
 draw('usti-wide.png', (13.93, 50.60, 14.13, 50.72), 'Ústí nad Labem')
+draw('usti-north.png', (14.00, 50.655, 14.05, 50.685), 'Ústí nad Labem north of the centre')
 print('\n'.join(lines))
