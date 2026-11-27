@@ -5,7 +5,7 @@ import type { ParentChildMap, RouteInfo, StopFeature, TripStop } from './lib/con
 import { STATION_NAMES_FILE, TRACKS_DIR } from './lib/contract.ts';
 import { downloadLargeZip, fetchJson, parseCSV, readTable } from './lib/feed.ts';
 import { czechHolidays, formatTime, getServiceDays, timeToMinutes, type ServiceDay } from './lib/time.ts';
-import { distanceM, fanOutColocated, localXY, round6, type Point } from './lib/geo.ts';
+import { distanceM, fanOutColocated, round6, type Point } from './lib/geo.ts';
 import { readServiceDates } from './lib/calendar.ts';
 import { buildDepartures, tripWindows, writeDepartures, writeTrips, type Boarding, type WindowedTrip } from './lib/timetable.ts';
 import { linesOf, outputDir, safetyCheck, writeChunks, writeCityFiles, writeFeedIndex } from './lib/emit.ts';
@@ -67,14 +67,14 @@ const CONFIG = {
 
     /** Portabo's catch-all platform, which only repeats another platform's position. */
     VIRTUAL_POST: 999,
+    /** Code of the platform a node's city lines are published at, its post unknown; mirrors CITY_POST_CODE in departs-app. */
+    CITY_POST_CODE: 'MHD',
     /** Posts from here on are Portabo's rail and ferry stops, not numbered bus platforms. */
     FIRST_UNNUMBERED_POST: 90,
     /** Posts from here on are ferry landings. */
     FERRY_POST_START: 200,
     /** Platforms Portabo puts on the exact same point are fanned out on a circle this wide, as for Brno. */
     STACKED_PLATFORM_OFFSET_DEG: 0.00012,
-    /** Detour, in metres, that outweighs a platform being left of the direction of travel. */
-    LEFT_SIDE_PENALTY_M: 500,
     /** [w, s, e, n] around the kraj and its cross-border termini; Portabo parks unknown platforms in Tallinn. */
     POST_BOUNDS: [12.0, 49.8, 15.5, 51.3],
     /** A name match further than this from the rest of its line is a namesake elsewhere. */
@@ -667,42 +667,6 @@ interface ActiveTrip { routeId: string; headsign: string; wheelchair: number; st
 const jdfWindow = (t: ActiveTrip): WindowedTrip =>
     ({ dates: t.dates, startMin: t.stopTimes[0]!.departure, endMin: t.stopTimes[t.stopTimes.length - 1]!.departure });
 
-/**
- * Estimates the platform each located stop call uses, for drawing the trip's route; JDF names the
- * stop, not the platform. Traffic keeps right, so the platform right of the direction of travel
- * wins, then the one closest to the line between the neighbouring calls.
- */
-function assignPlatforms(trip: ActiveTrip, platformsOf: Map<string, NodePlatform[]>, routeType: string | undefined): void {
-    const located = trip.stopTimes.filter(st => st.node);
-    const isFerry = routeType === CONFIG.ROUTE_TYPES.P;
-    located.forEach((st, i) => {
-        const all = platformsOf.get(st.node!.id) ?? [];
-        const ofMode = all.filter(p => (Number(p.post) >= CONFIG.FERRY_POST_START) === isFerry && (isFerry || Number(p.post) < CONFIG.FIRST_UNNUMBERED_POST));
-        const platforms = ofMode.length ? ofMode : all;
-        if (platforms.length <= 1) {
-            st.platform = platforms[0] ?? null;
-            return;
-        }
-        const prev = i > 0 ? (located[i - 1]!.platform ?? located[i - 1]!.node) : null;
-        const next = i < located.length - 1 ? located[i + 1]!.node : null;
-        const from = localXY(st.node!, prev ?? st.node!);
-        const to = localXY(st.node!, next ?? st.node!);
-        const dir = { x: to.x - from.x, y: to.y - from.y };
-        const hasDirection = Math.hypot(dir.x, dir.y) > 0;
-
-        let best: NodePlatform | null = null;
-        let bestScore = Infinity;
-        for (const platform of platforms) {
-            const p = localXY(st.node!, platform);
-            const isLeft = hasDirection && dir.x * p.y - dir.y * p.x > 0;
-            const detour = (prev ? distanceM(prev, platform) : 0) + (next ? distanceM(platform, next) : 0);
-            const score = detour + (isLeft ? CONFIG.LEFT_SIDE_PENALTY_M : 0);
-            if (score < bestScore) { bestScore = score; best = platform; }
-        }
-        st.platform = best;
-    });
-}
-
 /** Served stops of a trip in travel order, with times made monotonic across midnight. */
 function tripStopTimes(trip: JdfTrip, isReversed: boolean): { stopId: string; arrival: number; departure: number; symbols: Set<string> }[] {
     const ordered = [...trip.stops].sort((a, b) => (isReversed ? b.tariff - a.tariff : a.tariff - b.tariff));
@@ -768,6 +732,10 @@ async function main(): Promise<void> {
         const name = CONFIG.LINE_NAMES[line] ?? timetables.find(t => t.designation)?.designation ?? String(Number(line.slice(-3)));
         routes[line] = { name, type: regular.routeType, route_color: routeColorFor(line, name, regular.routeType) };
     }
+
+    /** Lines JDF types as city lines (městská, městská s přesahem): Portabo places none of them on a post. */
+    const cityLines = new Set([...timetablesByLine].filter(([, timetables]) =>
+        (CONFIG.CITY_LINE_TYPES as readonly string[]).includes((timetables.find(t => !t.isDetour) ?? timetables[0]!).lineType)).map(([line]) => line));
 
     // --- ACTIVE TRIPS ---
     const days = getServiceDays(CONFIG.TIMEZONE, CONFIG.DAY_OFFSETS, czechHolidays);
@@ -838,7 +806,6 @@ async function main(): Promise<void> {
         const fanned = fanOutColocated(node.platforms, CONFIG.STACKED_PLATFORM_OFFSET_DEG);
         platformsOf.set(node.id, node.platforms.map((p, i) => ({ post: p.post, lon: fanned[i]![0], lat: fanned[i]![1] })));
     }
-    for (const t of activeTrips.values()) assignPlatforms(t, platformsOf, routes[t.routeId]?.type);
 
     // --- TRAINS: Spojenka's, boarded at each station's Portabo rail post ---
     const railZip = downloadLargeZip(CONFIG.RAIL_GTFS_URL, 'spojenka-gtfs', {
@@ -869,13 +836,16 @@ async function main(): Promise<void> {
             boardings.push({ tripId, stopId: st.node.id, offsetMs: st.departure * 60_000, isRequestStop: st.symbols.has(SYMBOL.REQUEST_STOP) });
         });
 
-        // An empty stop_id marks an unlocated stop; the app renders it without a map point or link.
+        // A bus call is at its node, JDF naming no post; a train's at its rail post. An empty stop_id marks an
+        // unlocated stop, which the app renders without a map point or link.
         tripStops.set(tripId, t.stopTimes.map((st): TripStop => ({
-            stop_id: st.platform ? `${st.node!.id}-${st.platform.post}` : '',
+            stop_id: st.platform ? `${st.node!.id}-${st.platform.post}` : st.node?.id ?? '',
             name: st.name,
             arrival_time: formatTime(st.arrival),
             departure_time: formatTime(st.departure),
-            ...(st.platform ? { lat: round6(st.platform.lat), lon: round6(st.platform.lon) } : st.pos ? { lat: round6(st.pos.lat), lon: round6(st.pos.lon) } : {}),
+            ...(st.platform ? { lat: round6(st.platform.lat), lon: round6(st.platform.lon) }
+                : st.node ? { lat: round6(st.node.lat), lon: round6(st.node.lon) }
+                : st.pos ? { lat: round6(st.pos.lat), lon: round6(st.pos.lon) } : {}),
             is_passed: false,
             zone_id: st.node?.zone_id ?? null,
             is_request_stop: st.symbols.has(SYMBOL.REQUEST_STOP),
@@ -893,7 +863,10 @@ async function main(): Promise<void> {
 
     const features: StopFeature[] = [];
     const parentChildMap: ParentChildMap = {};
-    /** Every platform of a node serves the node's routes: JDF places trips at a node, not a post. */
+    /**
+     * Which post a trip uses is unknown (JDF names the node), so a node's posts serve its regional lines and, where
+     * it has city lines, one more platform at the posts' centre (`CITY_POST_CODE`) serves those.
+     */
     const platformRoutes = new Map<string, Set<string>>();
     for (const node of servedNodes.values()) {
         // A station is its bare CIS node (`952`), which its platforms `<node>-<post>` and the departures chunks share.
@@ -904,18 +877,26 @@ async function main(): Promise<void> {
             properties: { stop_id: parentId, stop_name: node.name, platform_code: null, location_type: 1, parent_station: null, zone_id: node.zone_id, lines: [] },
         });
         parentChildMap[parentId] = [];
-        for (const platform of platformsOf.get(node.id)!) {
-            const id = `${node.id}-${platform.post}`;
-            const platformCode = Number(platform.post) < CONFIG.FIRST_UNNUMBERED_POST ? platform.post : null;
-            const lines = linesOf(stopRoutes.get(node.id), routes);
+        const nodeRoutes = [...stopRoutes.get(node.id) ?? []];
+        const posts = platformsOf.get(node.id)!;
+        const hasRealPosts = posts.some(p => Number(p.post) !== CONFIG.VIRTUAL_POST);
+        const cityRoutes = new Set(hasRealPosts ? nodeRoutes.filter(r => cityLines.has(r)) : []);
+        const addPlatform = (post: string, code: string | null, at: Point, served: Set<string>) => {
+            const id = `${node.id}-${post}`;
+            const lines = linesOf(served, routes);
             features.push({
                 type: 'Feature',
-                geometry: { type: 'Point', coordinates: [round6(platform.lon), round6(platform.lat)] },
-                properties: { stop_id: id, stop_name: node.name, platform_code: platformCode, location_type: 0, parent_station: parentId, zone_id: node.zone_id, is_drop_off_only: lines.length === 0 || undefined, lines },
+                geometry: { type: 'Point', coordinates: [round6(at.lon), round6(at.lat)] },
+                properties: { stop_id: id, stop_name: node.name, platform_code: code, location_type: 0, parent_station: parentId, zone_id: node.zone_id, is_drop_off_only: lines.length === 0 || undefined, lines },
             });
             parentChildMap[parentId]!.push(id);
-            platformRoutes.set(id, stopRoutes.get(node.id) ?? new Set());
+            platformRoutes.set(id, served);
+        };
+        const regional = new Set(nodeRoutes.filter(r => !cityRoutes.has(r)));
+        for (const platform of posts) {
+            addPlatform(platform.post, Number(platform.post) < CONFIG.FIRST_UNNUMBERED_POST ? platform.post : null, platform, regional);
         }
+        if (cityRoutes.size > 0) addPlatform(String(CONFIG.VIRTUAL_POST), CONFIG.CITY_POST_CODE, node, cityRoutes);
     }
 
     // --- SAFETY CHECK ---
