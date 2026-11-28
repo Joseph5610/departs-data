@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[15.319038,49.669884],[15.319083,49.669899]]},"properties":{"k":"steps","lv":[0],"name":"Lávka"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[15.318521,49.669409],[15.318502,49.669438],[15.318484,49.669435]]},"properties":{"k":"steps","lv":[0]}}]}

@@ -1,0 +1,3884 @@
+{
+  "DPMB": [
+    {
+      "min": 1000,
+      "max": 1017,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1018,
+      "max": 1122,
+      "vehicle_type": "Pragoimex VarioLF2R.E"
+    },
+    {
+      "min": 1123,
+      "max": 1123,
+      "vehicle_type": "ČKD Tatra K2"
+    },
+    {
+      "min": 1124,
+      "max": 1132,
+      "vehicle_type": "Pragoimex VarioLF2R.E"
+    },
+    {
+      "min": 1133,
+      "max": 1200,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1201,
+      "max": 1246,
+      "vehicle_type": "ČKD Tatra T6A5"
+    },
+    {
+      "min": 1247,
+      "max": 1496,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1497,
+      "max": 1666,
+      "vehicle_type": "ČKD Tatra T3 / Pragoimex T3"
+    },
+    {
+      "min": 1667,
+      "max": 1700,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1701,
+      "max": 1738,
+      "vehicle_type": "ČKD Tatra KT8D5"
+    },
+    {
+      "min": 1739,
+      "max": 1750,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1751,
+      "max": 1754,
+      "vehicle_type": "Pars Nova K3R-N"
+    },
+    {
+      "min": 1755,
+      "max": 1759,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1760,
+      "max": 1799,
+      "vehicle_type": "Škoda 45T",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 1800,
+      "max": 1806,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1807,
+      "max": 1817,
+      "vehicle_type": "Škoda 03T Anitra"
+    },
+    {
+      "min": 1818,
+      "max": 1821,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1822,
+      "max": 1862,
+      "vehicle_type": "Pragoimex EVO2",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 1863,
+      "max": 1899,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 1900,
+      "max": 1929,
+      "vehicle_type": "Škoda 13T",
+      "is_air_conditioned": false
+    },
+    {
+      "min": 1930,
+      "max": 1949,
+      "vehicle_type": "Škoda 13T",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 1950,
+      "max": 1999,
+      "vehicle_type": "Tramvaj"
+    },
+    {
+      "min": 2000,
+      "max": 2000,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 2001,
+      "max": 2044,
+      "vehicle_type": "Iveco Urbanway 18M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 2045,
+      "max": 2622,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 2623,
+      "max": 2646,
+      "vehicle_type": "Solaris Urbino 18",
+      "is_air_conditioned": false
+    },
+    {
+      "min": 2647,
+      "max": 2691,
+      "vehicle_type": "Solaris Urbino 18",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 2692,
+      "max": 2910,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 2911,
+      "max": 2914,
+      "vehicle_type": "Iveco Crossway LE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 2915,
+      "max": 2999,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 3000,
+      "max": 3029,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 3030,
+      "max": 3030,
+      "vehicle_type": "Škoda 21Tr",
+      "is_air_conditioned": false
+    },
+    {
+      "min": 3031,
+      "max": 3064,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 3065,
+      "max": 3076,
+      "vehicle_type": "SOR TNS 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 3077,
+      "max": 3282,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 3283,
+      "max": 3283,
+      "vehicle_type": "Škoda 14 Tr17/6M",
+      "is_air_conditioned": false,
+      "is_wheelchair_accessible": false
+    },
+    {
+      "min": 3284,
+      "max": 3300,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 3301,
+      "max": 3310,
+      "vehicle_type": "Škoda 26Tr"
+    },
+    {
+      "min": 3311,
+      "max": 3350,
+      "vehicle_type": "Škoda 32Tr",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 3351,
+      "max": 3489,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 3490,
+      "max": 3515,
+      "vehicle_type": "Škoda 15Tr"
+    },
+    {
+      "min": 3516,
+      "max": 3617,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 3618,
+      "max": 3647,
+      "vehicle_type": "Škoda 31Tr"
+    },
+    {
+      "min": 3648,
+      "max": 3687,
+      "vehicle_type": "Škoda 27Tr",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 3688,
+      "max": 3999,
+      "vehicle_type": "Trolejbus"
+    },
+    {
+      "min": 4800,
+      "max": 4800,
+      "vehicle_type": "Loď"
+    },
+    {
+      "min": 4801,
+      "max": 4801,
+      "vehicle_type": "Loď - Brno"
+    },
+    {
+      "min": 4802,
+      "max": 4804,
+      "vehicle_type": "Loď"
+    },
+    {
+      "min": 4805,
+      "max": 4805,
+      "vehicle_type": "Loď - Morava"
+    },
+    {
+      "min": 4806,
+      "max": 4822,
+      "vehicle_type": "Loď"
+    },
+    {
+      "min": 4823,
+      "max": 4823,
+      "vehicle_type": "Loď - Lipsko"
+    },
+    {
+      "min": 4824,
+      "max": 4824,
+      "vehicle_type": "Loď - Utrecht"
+    },
+    {
+      "min": 4825,
+      "max": 4825,
+      "vehicle_type": "Loď - Vídeň"
+    },
+    {
+      "min": 4826,
+      "max": 4826,
+      "vehicle_type": "Loď - Stuttgart"
+    },
+    {
+      "min": 4827,
+      "max": 4827,
+      "vehicle_type": "Loď - Dallas"
+    },
+    {
+      "min": 4828,
+      "max": 4899,
+      "vehicle_type": "Loď"
+    },
+    {
+      "min": 7000,
+      "max": 7000,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 7001,
+      "max": 7006,
+      "vehicle_type": "SOR NBG 12"
+    },
+    {
+      "min": 7007,
+      "max": 7012,
+      "vehicle_type": "Irisbus Citelis 12M CNG"
+    },
+    {
+      "min": 7013,
+      "max": 7044,
+      "vehicle_type": "SOR NBG 12"
+    },
+    {
+      "min": 7045,
+      "max": 7100,
+      "vehicle_type": "Iveco Urbanway 12M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7101,
+      "max": 7101,
+      "vehicle_type": "SOR NBG 12",
+      "is_air_conditioned": false
+    },
+    {
+      "min": 7102,
+      "max": 7116,
+      "vehicle_type": "SOR NBG 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7117,
+      "max": 7525,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 7526,
+      "max": 7526,
+      "vehicle_type": "Isuzu Novo Citi Life",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7527,
+      "max": 7570,
+      "vehicle_type": "Iveco Urbanway 12M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7571,
+      "max": 7671,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 7672,
+      "max": 7686,
+      "vehicle_type": "Iveco Urbanway 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7687,
+      "max": 7737,
+      "vehicle_type": "SOR NS 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7738,
+      "max": 7825,
+      "vehicle_type": "Autobus"
+    },
+    {
+      "min": 7826,
+      "max": 7830,
+      "vehicle_type": "Iveco Crossway LE City",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7831,
+      "max": 7848,
+      "vehicle_type": "SOR ICN 9,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 7849,
+      "max": 7999,
+      "vehicle_type": "Autobus"
+    }
+  ],
+  "České dráhy": [
+    {
+      "min": 31001,
+      "max": 31001,
+      "vehicle_type": "Škoda Moravia Erilon"
+    },
+    {
+      "min": 31002,
+      "max": 31002,
+      "vehicle_type": "Škoda Moravia Aurelius"
+    },
+    {
+      "min": 31003,
+      "max": 31003,
+      "vehicle_type": "Škoda Moravia Pálava"
+    },
+    {
+      "min": 31004,
+      "max": 31004,
+      "vehicle_type": "Škoda Moravia Florianka"
+    },
+    {
+      "min": 31005,
+      "max": 31005,
+      "vehicle_type": "Škoda Moravia Hibernal"
+    },
+    {
+      "min": 31006,
+      "max": 31006,
+      "vehicle_type": "Škoda Moravia Chardonnay"
+    },
+    {
+      "min": 31007,
+      "max": 31007,
+      "vehicle_type": "Škoda Moravia Irsai Oliver"
+    },
+    {
+      "min": 31008,
+      "max": 31008,
+      "vehicle_type": "Škoda Moravia Malverina"
+    },
+    {
+      "min": 31009,
+      "max": 31009,
+      "vehicle_type": "Škoda Moravia Müller Thurgau"
+    },
+    {
+      "min": 31010,
+      "max": 31010,
+      "vehicle_type": "Škoda Moravia Muškát moravský"
+    },
+    {
+      "min": 31011,
+      "max": 31011,
+      "vehicle_type": "Škoda Moravia Muškát Ottonel"
+    },
+    {
+      "min": 31012,
+      "max": 31012,
+      "vehicle_type": "Škoda Moravia Neuburské"
+    },
+    {
+      "min": 31013,
+      "max": 31013,
+      "vehicle_type": "Škoda Moravia Rulandské bílé"
+    },
+    {
+      "min": 31014,
+      "max": 31014,
+      "vehicle_type": "Škoda Moravia Rulandské šedé"
+    },
+    {
+      "min": 31015,
+      "max": 31015,
+      "vehicle_type": "Škoda Moravia Ryzlink rýnský"
+    },
+    {
+      "min": 31016,
+      "max": 31016,
+      "vehicle_type": "Škoda Moravia Ryzlink vlašský"
+    },
+    {
+      "min": 31017,
+      "max": 31017,
+      "vehicle_type": "Škoda Moravia Sauvignon"
+    },
+    {
+      "min": 31018,
+      "max": 31018,
+      "vehicle_type": "Škoda Moravia Sylvánské zelené"
+    },
+    {
+      "min": 31019,
+      "max": 31019,
+      "vehicle_type": "Škoda Moravia Tramín červený"
+    },
+    {
+      "min": 31020,
+      "max": 31020,
+      "vehicle_type": "Škoda Moravia Veltlínské červené rané"
+    },
+    {
+      "min": 31021,
+      "max": 31021,
+      "vehicle_type": "Škoda Moravia Veltlínské zelené"
+    },
+    {
+      "min": 31022,
+      "max": 31022,
+      "vehicle_type": "Škoda Moravia André"
+    },
+    {
+      "min": 31023,
+      "max": 31023,
+      "vehicle_type": "Škoda Moravia Cabernet Moravia"
+    },
+    {
+      "min": 31024,
+      "max": 31024,
+      "vehicle_type": "Škoda Moravia Cabernet Sauvignon"
+    },
+    {
+      "min": 31025,
+      "max": 31025,
+      "vehicle_type": "Škoda Moravia Dornfelder"
+    },
+    {
+      "min": 31026,
+      "max": 31026,
+      "vehicle_type": "Škoda Moravia Frankovka"
+    },
+    {
+      "min": 31027,
+      "max": 31027,
+      "vehicle_type": "Škoda Moravia Merlot"
+    },
+    {
+      "min": 31028,
+      "max": 31028,
+      "vehicle_type": "Škoda Moravia Modrý Portugal"
+    },
+    {
+      "min": 31029,
+      "max": 31029,
+      "vehicle_type": "Škoda Moravia Rulandské modré"
+    },
+    {
+      "min": 31030,
+      "max": 31030,
+      "vehicle_type": "Škoda Moravia Svatovavřinecké"
+    },
+    {
+      "min": 31031,
+      "max": 31031,
+      "vehicle_type": "Škoda Moravia Zweigeltrebe"
+    },
+    {
+      "min": 31051,
+      "max": 31051,
+      "vehicle_type": "Škoda Moravia Neronet"
+    },
+    {
+      "min": 31052,
+      "max": 31052,
+      "vehicle_type": "Škoda Moravia Savilon"
+    },
+    {
+      "min": 31053,
+      "max": 31053,
+      "vehicle_type": "Škoda Moravia Veritas"
+    },
+    {
+      "min": 31054,
+      "max": 31054,
+      "vehicle_type": "Škoda Moravia Lena"
+    },
+    {
+      "min": 31055,
+      "max": 31055,
+      "vehicle_type": "Škoda Moravia Rubinet"
+    },
+    {
+      "min": 31056,
+      "max": 31056,
+      "vehicle_type": "Škoda Moravia Fratava"
+    }
+  ],
+  "Zlatovánek": [
+    {
+      "min": 15539,
+      "max": 15539,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    }
+  ],
+  "FTL - First Transport Lines": [
+    {
+      "min": 19801,
+      "max": 19801,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    }
+  ],
+  "BORS BUS": [
+    {
+      "min": 21003,
+      "max": 21003,
+      "vehicle_type": "Iveco Crossway LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21106,
+      "max": 21106,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21130,
+      "max": 21131,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21162,
+      "max": 21162,
+      "vehicle_type": "Iveco Crossway LINE 13M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21187,
+      "max": 21187,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21281,
+      "max": 21281,
+      "vehicle_type": "SOR NSG 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21408,
+      "max": 21408,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21451,
+      "max": 21451,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21630,
+      "max": 21630,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21739,
+      "max": 21739,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21788,
+      "max": 21788,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21839,
+      "max": 21839,
+      "vehicle_type": "SOR NSG 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21855,
+      "max": 21855,
+      "vehicle_type": "SOR NSG 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21864,
+      "max": 21864,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21869,
+      "max": 21869,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21910,
+      "max": 21910,
+      "vehicle_type": "SOR NSG 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21976,
+      "max": 21976,
+      "vehicle_type": "Iveco Crossway LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21981,
+      "max": 21981,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21983,
+      "max": 21983,
+      "vehicle_type": "Iveco Crossway LINE 12M",
+      "is_air_conditioned": true
+    }
+  ],
+  "ČSAD Tišnov": [
+    {
+      "min": 21004,
+      "max": 21004,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21040,
+      "max": 21040,
+      "vehicle_type": "Iveco Crossway LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21041,
+      "max": 21041,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21119,
+      "max": 21119,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21155,
+      "max": 21155,
+      "vehicle_type": "MAN LEÜ 360 Lion’s Intercity LE 12 EfficientHybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21197,
+      "max": 21197,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21279,
+      "max": 21279,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21287,
+      "max": 21287,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21296,
+      "max": 21296,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21331,
+      "max": 21331,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21344,
+      "max": 21344,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21347,
+      "max": 21347,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21358,
+      "max": 21358,
+      "vehicle_type": "SOR CN 9,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21409,
+      "max": 21409,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21446,
+      "max": 21446,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21447,
+      "max": 21447,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21449,
+      "max": 21449,
+      "vehicle_type": "Iveco Crossway LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21467,
+      "max": 21467,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21481,
+      "max": 21481,
+      "vehicle_type": "Iveco Crossway LE LINE 12M Hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21487,
+      "max": 21487,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21496,
+      "max": 21496,
+      "vehicle_type": "MAN LEÜ 360 Lion’s Intercity LE 12 EfficientHybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21500,
+      "max": 21500,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21509,
+      "max": 21509,
+      "vehicle_type": "MAN LEÜ 360 Lion’s Intercity LE 12 EfficientHybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21528,
+      "max": 21528,
+      "vehicle_type": "SOR CN 9,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21534,
+      "max": 21534,
+      "vehicle_type": "SOR CN 9,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21535,
+      "max": 21535,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21537,
+      "max": 21537,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21544,
+      "max": 21544,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21553,
+      "max": 21553,
+      "vehicle_type": "Iveco Crossway LE LINE 12M Hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21560,
+      "max": 21560,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21562,
+      "max": 21562,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21567,
+      "max": 21567,
+      "vehicle_type": "SOR CNG 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21582,
+      "max": 21582,
+      "vehicle_type": "Iveco Crossway LE LINE 12M Hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21607,
+      "max": 21607,
+      "vehicle_type": "Iveco Crossway LE LINE 12M Hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21610,
+      "max": 21610,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21626,
+      "max": 21626,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21629,
+      "max": 21629,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21638,
+      "max": 21638,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21648,
+      "max": 21648,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21653,
+      "max": 21653,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21659,
+      "max": 21659,
+      "vehicle_type": "SOR CN 9,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21666,
+      "max": 21666,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21686,
+      "max": 21686,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21687,
+      "max": 21687,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21699,
+      "max": 21699,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21703,
+      "max": 21703,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21707,
+      "max": 21707,
+      "vehicle_type": "Iveco Crossway LE LINE 12M Hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21712,
+      "max": 21712,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21716,
+      "max": 21716,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21723,
+      "max": 21723,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21732,
+      "max": 21732,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21742,
+      "max": 21742,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21755,
+      "max": 21755,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21756,
+      "max": 21756,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21799,
+      "max": 21799,
+      "vehicle_type": "Iveco Urbanway 12M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21802,
+      "max": 21802,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21813,
+      "max": 21813,
+      "vehicle_type": "MAN LEÜ 360 Lion’s Intercity LE 12 EfficientHybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21827,
+      "max": 21827,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21840,
+      "max": 21840,
+      "vehicle_type": "Iveco Crossway LE LINE 10,8M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21848,
+      "max": 21848,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21850,
+      "max": 21850,
+      "vehicle_type": "Iveco Crossway LE LINE 12M Hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21871,
+      "max": 21871,
+      "vehicle_type": "Iveco Crossway LE LINE 12M Hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21878,
+      "max": 21878,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21883,
+      "max": 21883,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21892,
+      "max": 21892,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21900,
+      "max": 21900,
+      "vehicle_type": "MAN LEÜ 360 Lion’s Intercity LE 12 EfficientHybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21934,
+      "max": 21934,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21950,
+      "max": 21950,
+      "vehicle_type": "MAN LEÜ 360 Lion’s Intercity LE 12 EfficientHybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21960,
+      "max": 21960,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21966,
+      "max": 21966,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21967,
+      "max": 21967,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21972,
+      "max": 21972,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    }
+  ],
+  "BDS-BUS": [
+    {
+      "min": 21007,
+      "max": 21007,
+      "vehicle_type": "MAN NL 283 Lion’s City",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21018,
+      "max": 21018,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21023,
+      "max": 21023,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21027,
+      "max": 21027,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21030,
+      "max": 21030,
+      "vehicle_type": "MAN LEÜ 360 Lion’s Intercity LE 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21031,
+      "max": 21031,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21037,
+      "max": 21037,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21043,
+      "max": 21043,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21044,
+      "max": 21044,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21061,
+      "max": 21061,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21079,
+      "max": 21079,
+      "vehicle_type": "MAN LEÜ 330 Lion’s Intercity LE 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21082,
+      "max": 21082,
+      "vehicle_type": "MAN LEÜ 330 Lion’s Intercity LE 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21085,
+      "max": 21085,
+      "vehicle_type": "Iveco Urbanway 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21090,
+      "max": 21090,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21107,
+      "max": 21107,
+      "vehicle_type": "Iveco Crossway LE CITY 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21123,
+      "max": 21123,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21125,
+      "max": 21125,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21138,
+      "max": 21139,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21142,
+      "max": 21142,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21150,
+      "max": 21150,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21153,
+      "max": 21153,
+      "vehicle_type": "Irisbus Crossway LE 12M"
+    },
+    {
+      "min": 21159,
+      "max": 21159,
+      "vehicle_type": "MAN EL 293 Lion’s City LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21192,
+      "max": 21192,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21198,
+      "max": 21198,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21202,
+      "max": 21202,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21206,
+      "max": 21206,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21212,
+      "max": 21212,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21238,
+      "max": 21238,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21245,
+      "max": 21245,
+      "vehicle_type": "ROŠERO - P First FCLEI",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21251,
+      "max": 21251,
+      "vehicle_type": "MAN EL 293 Lion’s City LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21261,
+      "max": 21261,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21268,
+      "max": 21268,
+      "vehicle_type": "MAN LEÜ 330 Lion’s Intercity LE 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21271,
+      "max": 21271,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21291,
+      "max": 21291,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21293,
+      "max": 21293,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21297,
+      "max": 21297,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21313,
+      "max": 21313,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21324,
+      "max": 21324,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21336,
+      "max": 21336,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21346,
+      "max": 21346,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21371,
+      "max": 21371,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21387,
+      "max": 21387,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21399,
+      "max": 21399,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21402,
+      "max": 21402,
+      "vehicle_type": "MAN LEÜ 330 Lion’s Intercity LE 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21412,
+      "max": 21412,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21428,
+      "max": 21428,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21432,
+      "max": 21432,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21456,
+      "max": 21456,
+      "vehicle_type": "Iveco Crossway LE CITY 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21463,
+      "max": 21463,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21465,
+      "max": 21465,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21490,
+      "max": 21490,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21511,
+      "max": 21511,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21522,
+      "max": 21522,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21527,
+      "max": 21527,
+      "vehicle_type": "Iveco Crossway LE CITY 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21531,
+      "max": 21531,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21539,
+      "max": 21539,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21549,
+      "max": 21549,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21550,
+      "max": 21550,
+      "vehicle_type": "Iveco Crossway LE CITY 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21555,
+      "max": 21555,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21568,
+      "max": 21568,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21569,
+      "max": 21569,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21574,
+      "max": 21574,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21593,
+      "max": 21593,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21596,
+      "max": 21596,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21613,
+      "max": 21613,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21635,
+      "max": 21635,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21636,
+      "max": 21636,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21639,
+      "max": 21639,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21660,
+      "max": 21660,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21664,
+      "max": 21664,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21671,
+      "max": 21671,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21674,
+      "max": 21674,
+      "vehicle_type": "MAN LEÜ 330 Lion’s Intercity LE 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21682,
+      "max": 21682,
+      "vehicle_type": "SOR CN 9,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21704,
+      "max": 21704,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21708,
+      "max": 21708,
+      "vehicle_type": "MAN NL 283 Lion’s City",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21711,
+      "max": 21711,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21718,
+      "max": 21718,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21720,
+      "max": 21720,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21725,
+      "max": 21725,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21729,
+      "max": 21729,
+      "vehicle_type": "Iveco Crossway LE CITY 13M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21746,
+      "max": 21746,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21761,
+      "max": 21761,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21774,
+      "max": 21774,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21783,
+      "max": 21783,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21794,
+      "max": 21794,
+      "vehicle_type": "Iveco Crossway LE CITY 13M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21801,
+      "max": 21801,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21804,
+      "max": 21804,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21808,
+      "max": 21808,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21814,
+      "max": 21814,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21819,
+      "max": 21819,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21820,
+      "max": 21820,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21828,
+      "max": 21828,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21830,
+      "max": 21830,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21841,
+      "max": 21841,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21847,
+      "max": 21847,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21852,
+      "max": 21853,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21857,
+      "max": 21857,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21870,
+      "max": 21870,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21887,
+      "max": 21887,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21893,
+      "max": 21893,
+      "vehicle_type": "ROŠERO - P First FCLEI",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21915,
+      "max": 21915,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21924,
+      "max": 21924,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21932,
+      "max": 21932,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21961,
+      "max": 21961,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21986,
+      "max": 21986,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21992,
+      "max": 21992,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21995,
+      "max": 21995,
+      "vehicle_type": "Iveco Crossway LE CITY 13M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21997,
+      "max": 21997,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    }
+  ],
+  "ČSAD Ústí nad Orlicí": [
+    {
+      "min": 21008,
+      "max": 21008,
+      "vehicle_type": "Setra S 418 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21011,
+      "max": 21011,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21020,
+      "max": 21020,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21022,
+      "max": 21022,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21029,
+      "max": 21029,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21033,
+      "max": 21033,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21036,
+      "max": 21036,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21052,
+      "max": 21052,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21054,
+      "max": 21054,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21062,
+      "max": 21062,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21081,
+      "max": 21081,
+      "vehicle_type": "Setra S 418 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21110,
+      "max": 21110,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21127,
+      "max": 21127,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21128,
+      "max": 21128,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21132,
+      "max": 21132,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21144,
+      "max": 21144,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21158,
+      "max": 21158,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21166,
+      "max": 21166,
+      "vehicle_type": "Setra S 418 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21167,
+      "max": 21167,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21170,
+      "max": 21170,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21172,
+      "max": 21173,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21178,
+      "max": 21178,
+      "vehicle_type": "Setra S 515 LE hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21179,
+      "max": 21179,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21181,
+      "max": 21181,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21184,
+      "max": 21184,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21188,
+      "max": 21188,
+      "vehicle_type": "Setra S 418 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21220,
+      "max": 21220,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21225,
+      "max": 21225,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21246,
+      "max": 21246,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21299,
+      "max": 21299,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21333,
+      "max": 21333,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21355,
+      "max": 21355,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21360,
+      "max": 21360,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21392,
+      "max": 21392,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21396,
+      "max": 21396,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21403,
+      "max": 21403,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21413,
+      "max": 21413,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21425,
+      "max": 21425,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21441,
+      "max": 21441,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21450,
+      "max": 21450,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21457,
+      "max": 21457,
+      "vehicle_type": "Setra S 515 LE hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21464,
+      "max": 21464,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21482,
+      "max": 21482,
+      "vehicle_type": "Setra S 418 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21506,
+      "max": 21506,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21524,
+      "max": 21524,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21552,
+      "max": 21552,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21564,
+      "max": 21564,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21595,
+      "max": 21595,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21601,
+      "max": 21601,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21615,
+      "max": 21615,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21628,
+      "max": 21628,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21632,
+      "max": 21632,
+      "vehicle_type": "Setra S 515 LE hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21691,
+      "max": 21691,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21696,
+      "max": 21696,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21733,
+      "max": 21733,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21757,
+      "max": 21757,
+      "vehicle_type": "Mercedes-Benz Citaro C2 LE MÜ hybrid",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21770,
+      "max": 21770,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21780,
+      "max": 21781,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21800,
+      "max": 21800,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21831,
+      "max": 21831,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21844,
+      "max": 21844,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21860,
+      "max": 21860,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21867,
+      "max": 21867,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21874,
+      "max": 21874,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21903,
+      "max": 21903,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21909,
+      "max": 21909,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21929,
+      "max": 21929,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21946,
+      "max": 21947,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21949,
+      "max": 21949,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21952,
+      "max": 21952,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21957,
+      "max": 21957,
+      "vehicle_type": "Setra S 515 LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21958,
+      "max": 21958,
+      "vehicle_type": "Setra S 418 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21998,
+      "max": 21999,
+      "vehicle_type": "Setra S 418 LE business",
+      "is_air_conditioned": true
+    }
+  ],
+  "ZDS Psota": [
+    {
+      "min": 21009,
+      "max": 21009,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21012,
+      "max": 21012,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21035,
+      "max": 21035,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21047,
+      "max": 21047,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21059,
+      "max": 21059,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21094,
+      "max": 21094,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21136,
+      "max": 21136,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21163,
+      "max": 21163,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21199,
+      "max": 21199,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21241,
+      "max": 21241,
+      "vehicle_type": "SOR CN 12"
+    },
+    {
+      "min": 21290,
+      "max": 21290,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21304,
+      "max": 21304,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21318,
+      "max": 21318,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21359,
+      "max": 21359,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21363,
+      "max": 21363,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21380,
+      "max": 21380,
+      "vehicle_type": "SOR BN 9,5"
+    },
+    {
+      "min": 21401,
+      "max": 21401,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21424,
+      "max": 21424,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21429,
+      "max": 21429,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21438,
+      "max": 21438,
+      "vehicle_type": "SOR CNG 10,5"
+    },
+    {
+      "min": 21440,
+      "max": 21440,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21483,
+      "max": 21483,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21495,
+      "max": 21495,
+      "vehicle_type": "Scania Citywide Suburban LE 12,6M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21529,
+      "max": 21529,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21559,
+      "max": 21559,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21578,
+      "max": 21578,
+      "vehicle_type": "SOR CN 9,5"
+    },
+    {
+      "min": 21586,
+      "max": 21586,
+      "vehicle_type": "SOR CN 12"
+    },
+    {
+      "min": 21618,
+      "max": 21618,
+      "vehicle_type": "SOR CN 9,5"
+    },
+    {
+      "min": 21637,
+      "max": 21637,
+      "vehicle_type": "SOR CN 9,5"
+    },
+    {
+      "min": 21650,
+      "max": 21650,
+      "vehicle_type": "Solaris Urbino 12 IV LE",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21655,
+      "max": 21655,
+      "vehicle_type": "SOR CN 12,3",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21678,
+      "max": 21678,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21692,
+      "max": 21692,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21811,
+      "max": 21811,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21881,
+      "max": 21881,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22000,
+      "max": 22000,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    }
+  ],
+  "ČSAD Hodonín": [
+    {
+      "min": 21010,
+      "max": 21010,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21014,
+      "max": 21014,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21057,
+      "max": 21057,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21076,
+      "max": 21076,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21116,
+      "max": 21116,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21118,
+      "max": 21118,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21120,
+      "max": 21120,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21122,
+      "max": 21122,
+      "vehicle_type": "SOR BN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21175,
+      "max": 21175,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21186,
+      "max": 21186,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21196,
+      "max": 21196,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21229,
+      "max": 21229,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21244,
+      "max": 21244,
+      "vehicle_type": "SOR CN 9,5"
+    },
+    {
+      "min": 21255,
+      "max": 21255,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21262,
+      "max": 21262,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21322,
+      "max": 21322,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21327,
+      "max": 21327,
+      "vehicle_type": "SOR CN 9,5"
+    },
+    {
+      "min": 21362,
+      "max": 21362,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21366,
+      "max": 21366,
+      "vehicle_type": "SOR C 9,5"
+    },
+    {
+      "min": 21383,
+      "max": 21383,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21385,
+      "max": 21385,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21391,
+      "max": 21391,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21394,
+      "max": 21394,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21400,
+      "max": 21400,
+      "vehicle_type": "SOR CN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21418,
+      "max": 21418,
+      "vehicle_type": "SOR CN 9,5"
+    },
+    {
+      "min": 21421,
+      "max": 21421,
+      "vehicle_type": "SOR CN 12"
+    },
+    {
+      "min": 21484,
+      "max": 21484,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 21491,
+      "max": 21491,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21493,
+      "max": 21493,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 21502,
+      "max": 21502,
+      "vehicle_type": "SOR CN 12"
+    },
+    {
+      "min": 21503,
+      "max": 21503,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21514,
+      "max": 21514,
+      "vehicle_type": "SOR CN 12"
+    },
+    {
+      "min": 21515,
+      "max": 21515,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21519,
+      "max": 21519,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21525,
+      "max": 21525,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21543,
+      "max": 21543,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21570,
+      "max": 21570,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21571,
+      "max": 21571,
+      "vehicle_type": "SOR BN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21585,
+      "max": 21585,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21588,
+      "max": 21588,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21604,
+      "max": 21604,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21611,
+      "max": 21611,
+      "vehicle_type": "SOR CN 12"
+    },
+    {
+      "min": 21619,
+      "max": 21619,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 21623,
+      "max": 21623,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21647,
+      "max": 21647,
+      "vehicle_type": "SOR CN 9,5"
+    },
+    {
+      "min": 21657,
+      "max": 21657,
+      "vehicle_type": "SOR BN 10,5"
+    },
+    {
+      "min": 21697,
+      "max": 21697,
+      "vehicle_type": "SOR CN 12"
+    },
+    {
+      "min": 21706,
+      "max": 21706,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21722,
+      "max": 21722,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21743,
+      "max": 21743,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 21748,
+      "max": 21748,
+      "vehicle_type": "SOR CN 9,5"
+    },
+    {
+      "min": 21749,
+      "max": 21749,
+      "vehicle_type": "SOR BN 10,5"
+    },
+    {
+      "min": 21767,
+      "max": 21767,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 21803,
+      "max": 21803,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21845,
+      "max": 21845,
+      "vehicle_type": "SOR BN 10,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21854,
+      "max": 21854,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21875,
+      "max": 21875,
+      "vehicle_type": "Iveco Crossway LE LINE 14,5M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21882,
+      "max": 21882,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21894,
+      "max": 21895,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21899,
+      "max": 21899,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21901,
+      "max": 21901,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21911,
+      "max": 21911,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21930,
+      "max": 21930,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21951,
+      "max": 21951,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21956,
+      "max": 21956,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21974,
+      "max": 21974,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    }
+  ],
+  "Tourbus": [
+    {
+      "min": 21013,
+      "max": 21013,
+      "vehicle_type": "MAN ÜL 364 Lion’s Regio L",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21228,
+      "max": 21228,
+      "vehicle_type": "MAN ÜL 364 Lion’s Regio L",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21242,
+      "max": 21242,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21305,
+      "max": 21305,
+      "vehicle_type": "Scania Interlink LD 14,7M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21334,
+      "max": 21334,
+      "vehicle_type": "Scania Interlink LD 14,7M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21377,
+      "max": 21377,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21510,
+      "max": 21510,
+      "vehicle_type": "MAN ÜL 364 Lion’s Regio L",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21620,
+      "max": 21620,
+      "vehicle_type": "SOR CN 12"
+    }
+  ],
+  "AKV bus": [
+    {
+      "min": 21046,
+      "max": 21046,
+      "vehicle_type": "Isuzu NOVO Citi Life Class I.",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21063,
+      "max": 21063,
+      "vehicle_type": "Isuzu NOVO Citi Life Class I.",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21171,
+      "max": 21171,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21180,
+      "max": 21180,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21269,
+      "max": 21269,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21317,
+      "max": 21317,
+      "vehicle_type": "Isuzu NOVO Citi Life Class I.",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21499,
+      "max": 21499,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21566,
+      "max": 21566,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21587,
+      "max": 21587,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21597,
+      "max": 21597,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21605,
+      "max": 21605,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21741,
+      "max": 21741,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21772,
+      "max": 21772,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21786,
+      "max": 21786,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21789,
+      "max": 21789,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21816,
+      "max": 21816,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21884,
+      "max": 21884,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21955,
+      "max": 21955,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21959,
+      "max": 21959,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21985,
+      "max": 21985,
+      "vehicle_type": "SOR BN 8,5",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22028,
+      "max": 22028,
+      "vehicle_type": "Mercedes-Benz Conecto LF II",
+      "is_air_conditioned": true
+    }
+  ],
+  "DOPAZ": [
+    {
+      "min": 21050,
+      "max": 21050,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21235,
+      "max": 21235,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21295,
+      "max": 21295,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21352,
+      "max": 21352,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21365,
+      "max": 21365,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21369,
+      "max": 21369,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21517,
+      "max": 21517,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21600,
+      "max": 21600,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21643,
+      "max": 21643,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21728,
+      "max": 21728,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21737,
+      "max": 21737,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    }
+  ],
+  "ČSAD Kyjov Bus": [
+    {
+      "min": 21060,
+      "max": 21060,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21070,
+      "max": 21070,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21087,
+      "max": 21087,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21092,
+      "max": 21093,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21098,
+      "max": 21098,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21100,
+      "max": 21100,
+      "vehicle_type": "Iveco Crossway LE LINE 12M"
+    },
+    {
+      "min": 21101,
+      "max": 21101,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21103,
+      "max": 21103,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21117,
+      "max": 21117,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21133,
+      "max": 21133,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21145,
+      "max": 21145,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21149,
+      "max": 21149,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21182,
+      "max": 21182,
+      "vehicle_type": "Mercedes-Benz Conecto LF"
+    },
+    {
+      "min": 21183,
+      "max": 21183,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21215,
+      "max": 21215,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21222,
+      "max": 21222,
+      "vehicle_type": "Iveco Crossway LINE 12M"
+    },
+    {
+      "min": 21232,
+      "max": 21232,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21236,
+      "max": 21236,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21240,
+      "max": 21240,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21243,
+      "max": 21243,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21248,
+      "max": 21248,
+      "vehicle_type": "Iveco Crossway LE LINE 12M"
+    },
+    {
+      "min": 21256,
+      "max": 21256,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21278,
+      "max": 21278,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21282,
+      "max": 21282,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21292,
+      "max": 21292,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21330,
+      "max": 21330,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21332,
+      "max": 21332,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21364,
+      "max": 21364,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21374,
+      "max": 21374,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21382,
+      "max": 21382,
+      "vehicle_type": "Iveco Crossway LINE 12M"
+    },
+    {
+      "min": 21435,
+      "max": 21435,
+      "vehicle_type": "Iveco Crossway LINE 12M"
+    },
+    {
+      "min": 21443,
+      "max": 21443,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21468,
+      "max": 21468,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21479,
+      "max": 21479,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21492,
+      "max": 21492,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21504,
+      "max": 21505,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21526,
+      "max": 21526,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21532,
+      "max": 21532,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21557,
+      "max": 21557,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21579,
+      "max": 21579,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21589,
+      "max": 21589,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21602,
+      "max": 21603,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21617,
+      "max": 21617,
+      "vehicle_type": "Iveco Crossway LINE 12M"
+    },
+    {
+      "min": 21669,
+      "max": 21669,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21735,
+      "max": 21735,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21750,
+      "max": 21751,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21754,
+      "max": 21754,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21797,
+      "max": 21797,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21805,
+      "max": 21805,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21821,
+      "max": 21821,
+      "vehicle_type": "Iveco Crossway LINE 12M"
+    },
+    {
+      "min": 21822,
+      "max": 21822,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21842,
+      "max": 21842,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21866,
+      "max": 21866,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21898,
+      "max": 21898,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21913,
+      "max": 21913,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21917,
+      "max": 21917,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21921,
+      "max": 21921,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21925,
+      "max": 21925,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21989,
+      "max": 21989,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22013,
+      "max": 22013,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22020,
+      "max": 22020,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22023,
+      "max": 22023,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22025,
+      "max": 22025,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22027,
+      "max": 22027,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22029,
+      "max": 22029,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22033,
+      "max": 22033,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22036,
+      "max": 22036,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22037,
+      "max": 22037,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22039,
+      "max": 22039,
+      "vehicle_type": "Iveco Crossway LE LINE 12M NP",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22040,
+      "max": 22042,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    }
+  ],
+  "Z-Group bus": [
+    {
+      "min": 21073,
+      "max": 21073,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21259,
+      "max": 21259,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21427,
+      "max": 21427,
+      "vehicle_type": "Iveco Crossway LE LINE 10,8M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21668,
+      "max": 21668,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21752,
+      "max": 21752,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21779,
+      "max": 21779,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21807,
+      "max": 21807,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21861,
+      "max": 21861,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    }
+  ],
+  "SEBUS-bus": [
+    {
+      "min": 21074,
+      "max": 21074,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21113,
+      "max": 21113,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21315,
+      "max": 21315,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21376,
+      "max": 21376,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21838,
+      "max": 21838,
+      "vehicle_type": "SOR CN 12"
+    },
+    {
+      "min": 21868,
+      "max": 21868,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21877,
+      "max": 21877,
+      "vehicle_type": "Setra S 415 LE business",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21962,
+      "max": 21962,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    }
+  ],
+  "ADOSA": [
+    {
+      "min": 21129,
+      "max": 21129,
+      "vehicle_type": "Iveco Crossway LE CITY 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21157,
+      "max": 21157,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21176,
+      "max": 21176,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21219,
+      "max": 21219,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21226,
+      "max": 21226,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21288,
+      "max": 21288,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 21306,
+      "max": 21306,
+      "vehicle_type": "Irisbus Crossway LE 12M"
+    },
+    {
+      "min": 21314,
+      "max": 21314,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21410,
+      "max": 21410,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 21442,
+      "max": 21442,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21448,
+      "max": 21448,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21454,
+      "max": 21454,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21473,
+      "max": 21473,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21477,
+      "max": 21477,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21480,
+      "max": 21480,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21489,
+      "max": 21489,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21598,
+      "max": 21598,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21614,
+      "max": 21614,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21625,
+      "max": 21625,
+      "vehicle_type": "Iveco Crossway PRO 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21644,
+      "max": 21644,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21670,
+      "max": 21670,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21681,
+      "max": 21681,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21683,
+      "max": 21683,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21688,
+      "max": 21688,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21693,
+      "max": 21693,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21701,
+      "max": 21701,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21721,
+      "max": 21721,
+      "vehicle_type": "SOR ICN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21724,
+      "max": 21724,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21784,
+      "max": 21784,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21846,
+      "max": 21846,
+      "vehicle_type": "SOR CN 12",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21862,
+      "max": 21862,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 21906,
+      "max": 21906,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 21916,
+      "max": 21916,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 22083,
+      "max": 22084,
+      "vehicle_type": "SOR C 12"
+    },
+    {
+      "min": 22085,
+      "max": 22085,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 22089,
+      "max": 22089,
+      "vehicle_type": "Irisbus Crossway LE 12M"
+    }
+  ],
+  "Břežanská dopravní společnost": [
+    {
+      "min": 21266,
+      "max": 21266,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21592,
+      "max": 21592,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    }
+  ],
+  "ČAD Blansko": [
+    {
+      "min": 21300,
+      "max": 21300,
+      "vehicle_type": "Iveco Urbanway 12M"
+    },
+    {
+      "min": 21824,
+      "max": 21824,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21896,
+      "max": 21896,
+      "vehicle_type": "Irisbus Crossway LE 12M"
+    },
+    {
+      "min": 21941,
+      "max": 21941,
+      "vehicle_type": "Irisbus Citelis 12M"
+    }
+  ],
+  "BORS Břeclav": [
+    {
+      "min": 21339,
+      "max": 21339,
+      "vehicle_type": "Scania Citywide LF 12M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21542,
+      "max": 21542,
+      "vehicle_type": "Scania Citywide LF 12M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21818,
+      "max": 21818,
+      "vehicle_type": "Scania Citywide II LF 11,5M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21833,
+      "max": 21833,
+      "vehicle_type": "Scania Citywide LF 12M CNG",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21938,
+      "max": 21938,
+      "vehicle_type": "Scania Citywide LF 12M CNG",
+      "is_air_conditioned": true
+    }
+  ],
+  "ČD Bus": [
+    {
+      "min": 21762,
+      "max": 21762,
+      "vehicle_type": "Irisbus Crossway LE 12M",
+      "is_air_conditioned": true
+    },
+    {
+      "min": 21795,
+      "max": 21795,
+      "vehicle_type": "Iveco Crossway LE LINE 12M",
+      "is_air_conditioned": true
+    }
+  ],
+  "TRADO-BUS": [
+    {
+      "min": 21792,
+      "max": 21792,
+      "vehicle_type": "Mercedes-Benz Citaro C2 LE MÜ hybrid",
+      "is_air_conditioned": true
+    }
+  ]
+}

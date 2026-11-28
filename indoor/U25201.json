@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[16.5971,49.055722],[16.597179,49.055823]]},"properties":{"k":"steps","lv":[0]}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[16.597356,49.055771],[16.597295,49.055632]]},"properties":{"k":"steps","lv":[0]}}]}

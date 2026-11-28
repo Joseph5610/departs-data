@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[16.634149,49.190718]},"properties":{"k":"shop","lv":[0],"name":"KNB Barber"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[16.631733,49.18907],[16.631643,49.189036],[16.631614,49.189041],[16.631537,49.189083]]},"properties":{"k":"steps","lv":[0]}}]}
