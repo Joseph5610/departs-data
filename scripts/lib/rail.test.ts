@@ -45,12 +45,12 @@ describe('trainTrips', () => {
 });
 
 describe('railLineName', () => {
-    it('prefers the DÚK line of several networks', () => {
-        assert.equal(railLineName('S4/S43/U4'), 'U4');
-        assert.equal(railLineName('S32/U32'), 'U32');
+    it('keeps the first line of several networks, as the traffic feed does', () => {
+        assert.equal(railLineName('S4/S43/U4'), 'S4');
+        assert.equal(railLineName('S32/U32'), 'S32');
     });
 
-    it('keeps the first line, without the train name, where none is DÚK\'s', () => {
+    it('drops the train name', () => {
         assert.equal(railLineName('Ex5/Ex3 Hungaria'), 'Ex5');
         assert.equal(railLineName('R15 Krušnohor'), 'R15');
         assert.equal(railLineName('R45/S50/S57'), 'R45');

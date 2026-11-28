@@ -61,14 +61,10 @@ export function trainTrips<C extends TrainCall>(runs: Iterable<TrainRun<C>>): Ma
     return trips;
 }
 
-/** DÚK's prefix for its regional train lines. */
-const DUK_LINE = /^U\d+$/;
-
 /**
- * The line a DÚK board shows for a train: of the networks' designations Spojenka joins (`S4/U4`), the DÚK
- * one, else the first, without the train's name (`Ex5 Berliner` is Ex5).
+ * A train's line: the first of the networks' designations Spojenka joins (`S4/U4` is S4, as Portabo's
+ * traffic feed names it), without the train's name (`Ex5 Berliner` is Ex5).
  */
 export function railLineName(shortName: string): string {
-    const lines = shortName.split('/').map(part => part.trim().split(/\s+/)[0]!).filter(Boolean);
-    return lines.find(line => DUK_LINE.test(line)) ?? lines[0] ?? '';
+    return shortName.split('/').map(part => part.trim().split(/\s+/)[0]!).find(Boolean) ?? '';
 }
